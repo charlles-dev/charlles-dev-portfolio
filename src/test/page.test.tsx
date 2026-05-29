@@ -12,7 +12,7 @@ describe("home page", () => {
         name: /Charlles Augusto/i
       })
     ).toBeInTheDocument();
-    expect(screen.getByText(/Desenvolvedor focado em produtos web/i)).toBeInTheDocument();
+    expect(screen.getByText(/Produtos web, automação e segurança aplicada/i)).toBeInTheDocument();
 
     expect(screen.getByRole("link", { name: /Conectar no LinkedIn/i })).toHaveAttribute(
       "href",
@@ -69,6 +69,10 @@ describe("home page", () => {
     expect(screen.getByText(/Resumo profissional/i)).toBeInTheDocument();
     expect(screen.getByText(/Frentes profissionais/i)).toBeInTheDocument();
     expect(screen.getByText(/Ferramentas de trabalho/i)).toBeInTheDocument();
+    expect(screen.getByText(/^Agora$/i)).toBeInTheDocument();
+    expect(screen.getByText("Projeto em foco")).toBeInTheDocument();
+    expect(screen.getByText("Melhoria recente")).toBeInTheDocument();
+    expect(screen.getByText("Prática técnica")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /Notas de campo/i })).toBeInTheDocument();
     expect(screen.getByText(/Como entrego/i)).toBeInTheDocument();
   });

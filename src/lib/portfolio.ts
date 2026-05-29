@@ -65,6 +65,15 @@ export type NowItem = {
   icon: IconName;
 };
 
+export type NowSignal = {
+  label: string;
+  title: string;
+  description: string;
+  proof: string;
+  icon: IconName;
+  href?: string;
+};
+
 export type InterestArea = {
   title: string;
   description: string;
@@ -90,7 +99,7 @@ export const profile: Profile = {
   name: "Charlles Augusto",
   handle: "Charlles.dev",
   role: "Desenvolvedor web e automações",
-  headline: "Desenvolvedor focado em produtos web, automação e segurança aplicada.",
+  headline: "Produtos web, automação e segurança aplicada.",
   coverLine:
     "Construo interfaces, automações e integrações com foco em clareza, operação e utilidade real. Minha base em cibersegurança e automação entra como diferencial técnico, não como rótulo.",
   intro:
@@ -229,6 +238,34 @@ export const nowItems: NowItem[] = [
     title: "Segurança aplicada",
     description: "Uso de fundamentos de defesa e automação com critério para criar produtos mais confiáveis.",
     icon: "brain"
+  }
+];
+
+export const nowSignals: NowSignal[] = [
+  {
+    label: "Projeto em foco",
+    title: "Astrolink em evolução",
+    description:
+      "Organizando o projeto como um case técnico de conectividade, documentação e próximos passos verificáveis.",
+    proof: "Go / conectividade / documentação",
+    icon: "network",
+    href: "https://github.com/charlles-dev/Astrolink"
+  },
+  {
+    label: "Melhoria recente",
+    title: "Portfólio como produto",
+    description:
+      "Refinando a página para comunicar presença profissional, decisões técnicas e uma identidade visual própria.",
+    proof: "Next.js / Tailwind / identidade",
+    icon: "sparkles"
+  },
+  {
+    label: "Prática técnica",
+    title: "Segurança aplicada no fluxo",
+    description:
+      "Usando fundamentos de defesa, redes e automação para avaliar decisões de produto com mais critério.",
+    proof: "Cybersecurity / automação / revisão",
+    icon: "shield"
   }
 ];
 

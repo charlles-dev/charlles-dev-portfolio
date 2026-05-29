@@ -5,6 +5,7 @@ import {
   learningTimeline,
   navItems,
   nowItems,
+  nowSignals,
   profile,
   profileHighlights,
   projects,
@@ -16,13 +17,28 @@ import {
 describe("portfolio content", () => {
   it("keeps the landing focused on Charlles' professional positioning", () => {
     expect(profile.name).toBe("Charlles Augusto");
-    expect(profile.headline).toContain("produtos web");
+    expect(profile.headline).toContain("Produtos web");
     expect(profile.role).toBe("Desenvolvedor web e automações");
     expect(profile.coverLine).toContain("interfaces, automações e integrações");
     expect(profile.coverLine).not.toMatch(/ciberseguran.a e IA/i);
     expect(profile.tagline).not.toMatch(/cyber e IA/i);
     expect(profile.location).toBe("Campina Grande-PB, Brazil");
     expect(profile.email).toBe("charllesgst@gmail.com");
+  });
+
+  it("defines the premium-controlled now signals contract", () => {
+    expect(profile.headline).toBe("Produtos web, automação e segurança aplicada.");
+    expect(profile.coverLine).toContain("interfaces, automações e integrações");
+    expect(profile.coverLine).not.toMatch(/ciberseguran.a e IA|produto de IA|AI product/i);
+    expect(nowSignals).toHaveLength(3);
+    expect(nowSignals.map((item) => item.label)).toEqual([
+      "Projeto em foco",
+      "Melhoria recente",
+      "Prática técnica"
+    ]);
+    expect(
+      nowSignals.every((signal) => signal.title && signal.description && signal.proof && signal.icon)
+    ).toBe(true);
   });
 
   it("defines the exact navigation surface for the one-page V1", () => {
