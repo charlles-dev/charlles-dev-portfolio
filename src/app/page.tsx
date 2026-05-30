@@ -2,18 +2,17 @@ import Image from "next/image";
 
 import { HeroSignature } from "@/components/hero-signature";
 import { IconGlyph, type IconName } from "@/components/icon-glyph";
+import { NowSignals } from "@/components/now-signals";
 import { ProjectBento } from "@/components/project-bento";
 import {
   heroSignals,
   interestAreas,
   learningTimeline,
   navItems,
-  nowItems,
   profile,
   projects,
   socialLinks,
-  stack,
-  workPrinciples
+  stack
 } from "@/lib/portfolio";
 
 const primaryLink = socialLinks.find((link) => link.primary) ?? socialLinks[0];
@@ -134,14 +133,6 @@ function SocialButton({
       <span>{label}</span>
       {variant === "primary" ? <ArrowIcon /> : null}
     </a>
-  );
-}
-
-function IconBadge({ name }: { name: IconName }) {
-  return (
-    <span className="flex size-11 shrink-0 items-center justify-center rounded-lg border border-accent/20 bg-accent/10 text-accent">
-      <IconGlyph name={name} className="size-5" />
-    </span>
   );
 }
 
@@ -353,92 +344,6 @@ function About() {
             </div>
           </div>
         </aside>
-      </div>
-    </section>
-  );
-}
-
-function CurrentWork() {
-  return (
-    <section aria-labelledby="now-heading" className="px-5 py-16 sm:px-8 lg:py-24">
-      <div className="mx-auto grid max-w-[1320px] gap-12 lg:grid-cols-[0.68fr_1.32fr]">
-        <SectionIntro
-          eyebrow="Atuação"
-          title="Onde aplico engenharia hoje."
-          description="Frentes que conectam produto, automação, segurança e documentação de forma profissional."
-          headingId="now-heading"
-          className="lg:sticky lg:top-32 lg:self-start"
-        />
-        <div className="glass-panel relative overflow-hidden rounded-[1.35rem] border border-white/10 bg-[#07100d]/78 p-5 shadow-[0_34px_110px_rgba(0,0,0,0.3)] sm:p-6 lg:p-8">
-          <div className="absolute -right-28 top-12 size-80 rounded-full bg-accent/8 blur-3xl" />
-          <div className="relative mb-7 flex flex-col gap-4 border-b border-white/10 pb-6 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="font-mono text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-accent">
-                Frentes profissionais
-              </p>
-              <p className="mt-3 max-w-[560px] text-[0.98rem] leading-7 text-white/50">
-                Um painel vivo do que está sendo construído, refinado e preparado para entrega.
-              </p>
-            </div>
-            <span className="inline-flex w-fit items-center gap-2 rounded-full border border-accent/20 bg-accent/10 px-4 py-2 font-mono text-[0.64rem] font-semibold uppercase tracking-[0.2em] text-accent">
-              <IconGlyph name="solar-pulse" className="size-4" />
-              Em produção
-            </span>
-          </div>
-
-          <div className="relative divide-y divide-white/10">
-            {nowItems.map((item, index) => (
-              <article
-                className="grid gap-5 py-7 first:pt-0 last:pb-0 sm:grid-cols-[5.2rem_1fr] lg:grid-cols-[5.2rem_1fr_auto] lg:items-center"
-                key={item.title}
-              >
-                <div className="flex items-center gap-3 sm:block">
-                  <IconBadge name={item.icon} />
-                  <span className="font-mono text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-accent sm:mt-4 sm:block">
-                    {item.label}
-                  </span>
-                </div>
-                <div>
-                  <h3 className="text-[1.35rem] font-semibold text-white">{item.title}</h3>
-                  <p className="mt-3 max-w-[620px] text-[0.98rem] leading-7 text-white/54">
-                    {item.description}
-                  </p>
-                  <div className="mt-5 h-px w-full max-w-[520px] overflow-hidden rounded-full bg-white/8">
-                    <div
-                      className="h-full rounded-full bg-gradient-to-r from-accent via-white/50 to-transparent"
-                      style={{ width: `${74 + index * 8}%` }}
-                    />
-                  </div>
-                </div>
-                <span className="hidden font-mono text-[3.4rem] font-semibold leading-none text-white/[0.045] lg:block">
-                  0{index + 1}
-                </span>
-              </article>
-            ))}
-          </div>
-
-          <div className="mt-8 border-t border-white/10 pt-7">
-            <p className="font-mono text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-accent">
-              Como entrego
-            </p>
-            <div className="mt-6 grid gap-5 md:grid-cols-3">
-              {workPrinciples.map((principle) => (
-                <article
-                  className="project-shimmer relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.032] p-5 transition duration-300 hover:-translate-y-1 hover:border-accent/35 hover:bg-accent/8"
-                  key={principle.title}
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="flex size-10 items-center justify-center rounded-xl border border-accent/20 bg-accent/10 text-accent">
-                      <IconGlyph name={principle.icon} className="size-5" />
-                    </span>
-                    <h3 className="text-[1.02rem] font-semibold text-white">{principle.title}</h3>
-                  </div>
-                  <p className="mt-3 text-[0.92rem] leading-6 text-white/50">{principle.description}</p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   );
@@ -769,7 +674,7 @@ export default function Home() {
       <CinematicDivider label="Contexto" />
       <About />
       <SignalTicker />
-      <CurrentWork />
+      <NowSignals />
       <CinematicDivider label="Entrega" />
       <Projects />
       <InterestAreas />

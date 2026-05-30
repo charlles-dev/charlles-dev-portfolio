@@ -70,14 +70,29 @@ describe("home page", () => {
     render(<Home />);
 
     expect(screen.getByText(/Resumo profissional/i)).toBeInTheDocument();
-    expect(screen.getByText(/Frentes profissionais/i)).toBeInTheDocument();
     expect(screen.getByText(/Ferramentas de trabalho/i)).toBeInTheDocument();
     expect(screen.getByText(/^Agora$/i)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /O que está em construção/i })).toBeInTheDocument();
     expect(screen.getByText("Projeto em foco")).toBeInTheDocument();
     expect(screen.getByText("Melhoria recente")).toBeInTheDocument();
     expect(screen.getByText("Prática técnica")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /Notas de campo/i })).toBeInTheDocument();
-    expect(screen.getByText(/Como entrego/i)).toBeInTheDocument();
+  });
+
+  it("renders a controlled Agora section without feed or blog promises", () => {
+    render(<Home />);
+
+    const agora = screen.getByRole("region", { name: /O que está em construção/i });
+
+    expect(within(agora).getByText("Projeto em foco")).toBeInTheDocument();
+    expect(within(agora).getByText("Astrolink em evolução")).toBeInTheDocument();
+    expect(within(agora).getByText("Melhoria recente")).toBeInTheDocument();
+    expect(within(agora).getByText("Portfólio como produto")).toBeInTheDocument();
+    expect(within(agora).getByText("Prática técnica")).toBeInTheDocument();
+    expect(within(agora).getByText("Segurança aplicada no fluxo")).toBeInTheDocument();
+    expect(within(agora).getByText(/promessa editorial, lista infinita ou painel artificial/i)).toBeInTheDocument();
+    expect(within(agora).queryByText(/blog/i)).not.toBeInTheDocument();
+    expect(within(agora).queryByText(/feed/i)).not.toBeInTheDocument();
   });
 
   it("avoids generic ai-product chrome in visible section labels", () => {
