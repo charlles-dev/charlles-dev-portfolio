@@ -26,7 +26,7 @@ describe("home page", () => {
     );
   });
 
-  it("renders the selected projects as linked evidence", () => {
+  it("renders the selected projects as public mini cases", () => {
     render(<Home />);
 
     const projects = screen.getByRole("region", { name: /Trabalhos p.blicos/i });
@@ -36,8 +36,9 @@ describe("home page", () => {
       "https://github.com/charlles-dev/Astrolink"
     );
     expect(within(projects).getAllByText("Problema")).toHaveLength(3);
-    expect(within(projects).getAllByText("O que fiz")).toHaveLength(3);
+    expect(within(projects).getAllByText("Decisão técnica")).toHaveLength(3);
     expect(within(projects).getAllByText("Próximo passo")).toHaveLength(3);
+    expect(within(projects).getAllByText(/Mini case/i).length).toBeGreaterThanOrEqual(1);
     expect(within(projects).getByRole("link", { name: /Laudos Proxxima/i })).toBeInTheDocument();
     expect(within(projects).getByRole("link", { name: /3035 Teach/i })).toBeInTheDocument();
   });

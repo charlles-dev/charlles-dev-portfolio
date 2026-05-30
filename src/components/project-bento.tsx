@@ -29,8 +29,8 @@ function ProjectLink({
 }) {
   return (
     <a
-      className={`project-shimmer group relative isolate overflow-hidden rounded-[1.35rem] border border-white/10 bg-[#08110e]/82 shadow-[0_30px_100px_rgba(0,0,0,0.28)] transition duration-500 hover:-translate-y-1 hover:border-accent/50 hover:bg-[#0b1713] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent ${
-        featured ? "min-h-[560px] p-6 sm:p-8 lg:col-span-7" : "min-h-[268px] p-5 sm:p-6 lg:col-span-5"
+      className={`project-shimmer group relative isolate overflow-hidden rounded-[1.35rem] border border-white/10 bg-[#07100d]/78 shadow-[0_30px_100px_rgba(0,0,0,0.28)] transition duration-500 hover:-translate-y-1 hover:border-accent/50 hover:bg-[#0b1713] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent ${
+        featured ? "min-h-[520px] p-6 sm:p-8 lg:col-span-7" : "min-h-[268px] p-5 sm:p-6 lg:col-span-5"
       }`}
       href={project.href}
       target="_blank"
@@ -44,6 +44,9 @@ function ProjectLink({
 
       <div className="relative z-10 flex h-full flex-col justify-between gap-10">
         <div>
+          <p className="mb-4 font-mono text-[0.62rem] font-semibold uppercase tracking-[0.22em] text-white/34">
+            Mini case público
+          </p>
           <div className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent/10 px-3 py-1.5 font-mono text-[0.64rem] font-semibold uppercase tracking-[0.18em] text-accent">
               <span className="size-1.5 rounded-full bg-accent shadow-[0_0_14px_rgba(34,186,157,0.8)]" />
@@ -85,7 +88,7 @@ function ProjectLink({
           <div className={featured ? "grid gap-4 md:grid-cols-3" : "grid gap-4"}>
             {[
               ["Problema", project.problem],
-              ["O que fiz", project.built],
+              ["Decisão técnica", project.built],
               ["Próximo passo", project.next]
             ].map(([label, value]) => (
               <div className="border-t border-white/10 pt-4" key={label}>
