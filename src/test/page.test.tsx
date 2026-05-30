@@ -3,7 +3,7 @@ import { fireEvent, render, screen, within } from "@testing-library/react";
 import Home from "@/app/page";
 
 describe("home page", () => {
-  it("renders the professional hero identity and primary contact path", () => {
+  it("renders the premium hero signature and primary contact path", () => {
     render(<Home />);
 
     expect(
@@ -13,14 +13,17 @@ describe("home page", () => {
       })
     ).toBeInTheDocument();
     expect(screen.getByText(/Produtos web, automação e segurança aplicada/i)).toBeInTheDocument();
+    expect(screen.getByText(/marca tipográfica/i)).toBeInTheDocument();
+    expect(screen.getByAltText(/Retrato editorial de Charlles Augusto/i)).toBeInTheDocument();
 
     expect(screen.getByRole("link", { name: /Conectar no LinkedIn/i })).toHaveAttribute(
       "href",
       "https://www.linkedin.com/in/charlles-augusto/"
     );
-    expect(screen.getAllByText(/Cyber \+ automa/i).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByRole("heading", { name: /Onde aplico engenharia hoje/i })).toBeInTheDocument();
-    expect(screen.getByText(/Como entrego/i)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Ver GitHub/i })).toHaveAttribute(
+      "href",
+      "https://github.com/charlles-dev"
+    );
   });
 
   it("renders the selected projects as linked evidence", () => {

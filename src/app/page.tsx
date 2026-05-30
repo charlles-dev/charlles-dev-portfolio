@@ -1,5 +1,6 @@
 import Image from "next/image";
 
+import { HeroSignature } from "@/components/hero-signature";
 import { IconGlyph, type IconName } from "@/components/icon-glyph";
 import { ProjectBento } from "@/components/project-bento";
 import {
@@ -9,7 +10,6 @@ import {
   navItems,
   nowItems,
   profile,
-  profileHighlights,
   projects,
   socialLinks,
   stack,
@@ -225,53 +225,6 @@ function Header() {
   );
 }
 
-function PortraitFrame({ className = "" }: { className?: string }) {
-  return (
-    <div className={`relative mx-auto w-full max-w-[510px] ${className}`}>
-      <div className="absolute -inset-5 rounded-[1.6rem] border border-accent/15 opacity-60" />
-      <div className="absolute inset-x-8 bottom-20 h-32 rounded-full bg-accent/14 blur-3xl" />
-      <div className="hud-panel absolute -right-4 top-8 z-20 hidden w-56 rounded-2xl border border-white/10 bg-[#050807]/72 p-4 shadow-[0_22px_70px_rgba(0,0,0,0.34)] backdrop-blur-xl xl:block">
-        <div className="flex items-center gap-3">
-          <span className="relative flex size-3">
-            <span className="absolute inline-flex size-full animate-ping rounded-full bg-accent opacity-55" />
-            <span className="relative inline-flex size-3 rounded-full bg-accent" />
-          </span>
-          <span className="font-mono text-[0.62rem] font-semibold uppercase tracking-[0.2em] text-white/72">
-            Disponível para conversas
-          </span>
-        </div>
-        <p className="mt-4 text-[0.92rem] leading-6 text-white/56">
-          Construindo interfaces, automações e presença técnica.
-        </p>
-      </div>
-      <div className="hud-panel absolute -left-7 bottom-16 z-20 hidden w-44 rounded-2xl border border-white/10 bg-[#050807]/76 p-4 shadow-[0_22px_70px_rgba(0,0,0,0.34)] backdrop-blur-xl xl:block">
-        <IconGlyph name="solar-radar" className="size-6 text-accent" />
-        <p className="mt-4 font-mono text-[0.62rem] font-semibold uppercase tracking-[0.2em] text-white/42">
-          Foco
-        </p>
-        <p className="mt-2 text-[1rem] font-semibold leading-tight text-white">Projetos públicos</p>
-      </div>
-      <div className="relative overflow-hidden rounded-[1.5rem] border border-white/14 bg-[#dce7e1] shadow-[0_38px_120px_rgba(0,0,0,0.48)]">
-        <div className="relative aspect-[0.82]">
-          <Image
-            src="/assets/charlles-portrait.png"
-            alt="Retrato de Charlles Augusto"
-            fill
-            priority
-            sizes="(max-width: 768px) 88vw, 510px"
-            className="object-cover object-center saturate-[0.92]"
-          />
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,8,7,0.00)_52%,rgba(5,8,7,0.36)_100%)]" />
-          <div className="scanline absolute inset-0 opacity-35" />
-        </div>
-        <div className="absolute inset-x-5 bottom-5 rounded-full border border-white/14 bg-[#050807]/86 px-5 py-4 text-center font-mono text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-white shadow-[0_18px_46px_rgba(0,0,0,0.36)] sm:text-[0.74rem]">
-          {profile.tagline}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function SignalTicker() {
   const tickerItems = [
     "Produto web",
@@ -301,72 +254,6 @@ function SignalTicker() {
         ))}
       </div>
     </div>
-  );
-}
-
-function HeroHighlights({ className = "" }: { className?: string }) {
-  return (
-    <div className={`grid max-w-[690px] grid-cols-2 gap-x-6 gap-y-5 border-y border-white/10 py-5 sm:grid-cols-4 ${className}`}>
-      {profileHighlights.map((item) => (
-        <div className="min-w-0" key={item.label}>
-          <div className="flex items-center gap-2">
-            <IconGlyph name={item.icon} className="size-4 shrink-0 text-accent" />
-            <p className="font-mono text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-white/38">
-              {item.label}
-            </p>
-          </div>
-          <p className="mt-2 text-[1rem] font-semibold leading-tight text-white">{item.value}</p>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function Hero() {
-  return (
-    <section
-      id="top"
-      className="relative isolate overflow-hidden px-5 pb-10 pt-28 sm:px-8 lg:pb-12 lg:pt-32"
-      aria-labelledby="hero-title"
-    >
-      <div className="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_72%_28%,rgba(34,186,157,0.14),transparent_30%),linear-gradient(135deg,#050807_0%,#0d1512_42%,#111614_100%)]" />
-      <div className="cinematic-grid absolute inset-0 -z-10 opacity-45" />
-      <div className="aura-field absolute inset-x-0 top-10 -z-10 mx-auto h-[520px] max-w-[1180px]" />
-
-      <div className="mx-auto grid max-w-[1320px] items-center gap-12 lg:grid-cols-[0.95fr_0.85fr]">
-        <div className="scene-in max-w-[760px] pb-2">
-          <h1
-            id="hero-title"
-            className="max-w-[760px] text-[4.2rem] font-semibold leading-[0.82] tracking-normal text-white sm:text-[6.2rem] lg:text-[8.5rem] xl:text-[9.5rem]"
-          >
-            {profile.name}
-          </h1>
-          <p className="mt-8 max-w-[720px] text-[1.35rem] leading-[1.18] text-white/82 sm:text-[1.9rem] lg:text-[2.35rem]">
-            {profile.headline}
-          </p>
-          <p className="mt-6 max-w-[660px] text-[1.05rem] leading-[1.8] text-white/58 sm:text-[1.18rem]">
-            {profile.coverLine}
-          </p>
-          <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
-            <SocialButton
-              href={primaryLink.href}
-              label="Conectar no LinkedIn"
-              variant="primary"
-              iconName={socialIconMap.linkedin}
-            />
-            {githubLink ? (
-              <SocialButton href={githubLink.href} label="Ver GitHub" iconName={socialIconMap.github} />
-            ) : null}
-          </div>
-          <HeroHighlights className="mt-12 hidden sm:grid" />
-        </div>
-
-        <div className="scene-in scene-delay w-full max-w-[360px] justify-self-center lg:max-w-[510px] lg:justify-self-end">
-          <PortraitFrame className="max-w-[360px] lg:mx-0 lg:max-w-[510px]" />
-          <HeroHighlights className="mt-8 sm:hidden" />
-        </div>
-      </div>
-    </section>
   );
 }
 
@@ -878,7 +765,7 @@ export default function Home() {
     <main className="relative overflow-hidden">
       <div className="film-grain pointer-events-none fixed inset-0 z-[60]" />
       <Header />
-      <Hero />
+      <HeroSignature />
       <CinematicDivider label="Contexto" />
       <About />
       <SignalTicker />
