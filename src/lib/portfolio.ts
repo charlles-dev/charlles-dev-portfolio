@@ -272,7 +272,7 @@ export const nowSignals: NowSignal[] = [
 export const interestAreas: InterestArea[] = [
   {
     title: "Desenvolvimento web",
-    description: "Interfaces, landing pages, dashboards e produtos com boa usabilidade.",
+    description: "Interfaces, landing pages e produtos com boa usabilidade.",
     icon: "device-laptop",
     tools: ["React", "Next.js", "TypeScript"]
   },

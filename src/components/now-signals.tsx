@@ -8,7 +8,7 @@ function DescriptionText() {
   return (
     <p className="mt-6 max-w-[620px] text-[1.02rem] leading-8 text-white/56">
       Um recorte pequeno e verificável do que está avançando agora, sem transformar o
-      portfólio em promessa editorial, lista infinita ou painel artificial.
+      portfólio em promessa editorial, lista infinita ou interface encenada.
     </p>
   );
 }

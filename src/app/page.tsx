@@ -647,7 +647,7 @@ function SignatureFooter() {
         </div>
 
         <div className="p-6 sm:p-8 lg:p-10">
-          <p className="font-mono text-[clamp(3.4rem,12vw,11rem)] font-bold uppercase leading-[0.82] tracking-normal text-white">
+          <p className="signature-word font-mono text-[clamp(3.4rem,12vw,11rem)] font-bold uppercase leading-[0.82] tracking-normal text-white">
             Charlles
             <br />
             Augusto

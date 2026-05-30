@@ -97,7 +97,7 @@ export function HeroSignature() {
           <h1
             id="hero-title"
             aria-label={profile.name}
-            className="mt-7 max-w-[840px] text-[4.8rem] font-semibold leading-[0.8] tracking-normal text-white sm:text-[7rem] lg:text-[9rem] xl:text-[10rem]"
+            className="signature-word mt-7 max-w-[840px] text-[4.8rem] font-semibold leading-[0.8] tracking-normal text-white sm:text-[7rem] lg:text-[9rem] xl:text-[10rem]"
           >
             <span className="block">Charlles</span>{" "}
             <span className="block">Augusto</span>

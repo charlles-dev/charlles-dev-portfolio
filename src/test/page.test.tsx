@@ -67,6 +67,24 @@ describe("home page", () => {
     expect(screen.getByText(/git remote github/i)).toBeInTheDocument();
   });
 
+  it("keeps the footer as a typographic signature with direct contact", () => {
+    render(<Home />);
+
+    const footer = screen.getByRole("contentinfo", { name: /Construindo produto/i });
+
+    expect(within(footer).getByText(/Contato direto/i)).toBeInTheDocument();
+    expect(within(footer).getAllByText(/Charlles/i).length).toBeGreaterThan(0);
+    expect(within(footer).getAllByText(/Augusto/i).length).toBeGreaterThan(0);
+    expect(within(footer).getByRole("link", { name: /open linkedin/i })).toHaveAttribute(
+      "href",
+      "https://www.linkedin.com/in/charlles-augusto/"
+    );
+    expect(within(footer).getByRole("link", { name: /mailto charllesgst/i })).toHaveAttribute(
+      "href",
+      "mailto:charllesgst@gmail.com"
+    );
+  });
+
   it("renders richer professional surfaces beyond the hero and projects", () => {
     render(<Home />);
 
@@ -91,7 +109,7 @@ describe("home page", () => {
     expect(within(agora).getByText("Portfólio como produto")).toBeInTheDocument();
     expect(within(agora).getByText("Prática técnica")).toBeInTheDocument();
     expect(within(agora).getByText("Segurança aplicada no fluxo")).toBeInTheDocument();
-    expect(within(agora).getByText(/promessa editorial, lista infinita ou painel artificial/i)).toBeInTheDocument();
+    expect(within(agora).getByText(/promessa editorial, lista infinita ou interface encenada/i)).toBeInTheDocument();
     expect(within(agora).queryByText(/blog/i)).not.toBeInTheDocument();
     expect(within(agora).queryByText(/feed/i)).not.toBeInTheDocument();
   });
@@ -109,5 +127,8 @@ describe("home page", () => {
     expect(screen.queryByText(/IA aplicada ao produto/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/software, cyber e IA/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/ciberseguran.a e IA/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/HUD/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/dashboard/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/painel artificial/i)).not.toBeInTheDocument();
   });
 });
