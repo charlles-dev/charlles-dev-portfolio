@@ -4,7 +4,7 @@ function normalizeRepoName(name: string) {
   return name.trim().toLowerCase();
 }
 
-export const projectOverrides: Record<string, ProjectOverride> = {
+export const projectOverrides: Partial<Record<string, ProjectOverride>> = {
   astrolink: {
     featured: true,
     order: 1,
@@ -45,6 +45,6 @@ export const projectOverrides: Record<string, ProjectOverride> = {
   },
 };
 
-export function getProjectOverride(name: string) {
+export function getProjectOverride(name: string): ProjectOverride | undefined {
   return projectOverrides[normalizeRepoName(name)];
 }
