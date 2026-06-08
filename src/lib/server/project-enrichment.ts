@@ -1,31 +1,17 @@
 import "server-only";
 
-import type {
-  GitHubRepository,
-  PortfolioProject,
-  PortfolioProjectCategory,
-  PortfolioProjectMaturity,
-  ProjectEnrichment,
-  ProjectOverride,
+import {
+  projectCategories,
+  projectMaturities,
+  type GitHubRepository,
+  type PortfolioProject,
+  type PortfolioProjectCategory,
+  type PortfolioProjectMaturity,
+  type ProjectEnrichment,
+  type ProjectOverride,
 } from "@/lib/projects/types";
 
 export const PROJECT_ENRICHMENT_SCHEMA_VERSION = "github-groq-projects-v1";
-
-const categories = [
-  "web",
-  "automation",
-  "infra",
-  "technical-base",
-  "experiment",
-] as const satisfies readonly PortfolioProjectCategory[];
-
-const maturities = [
-  "production-minded",
-  "prototype",
-  "study",
-  "experiment",
-  "archived",
-] as const satisfies readonly PortfolioProjectMaturity[];
 
 const copyFields = [
   "summary",
@@ -65,14 +51,14 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 function isCategory(value: unknown): value is PortfolioProjectCategory {
   return (
     typeof value === "string" &&
-    categories.includes(value as PortfolioProjectCategory)
+    projectCategories.includes(value as PortfolioProjectCategory)
   );
 }
 
 function isMaturity(value: unknown): value is PortfolioProjectMaturity {
   return (
     typeof value === "string" &&
-    maturities.includes(value as PortfolioProjectMaturity)
+    projectMaturities.includes(value as PortfolioProjectMaturity)
   );
 }
 
@@ -86,6 +72,7 @@ function plainText(value: unknown, fallback: string): string {
   }
 
   const cleaned = value
+    .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, " ")
     .replace(/<[^>]*>/g, " ")
     .replace(/\s+/g, " ")
     .trim()
@@ -195,11 +182,11 @@ export function buildEnrichmentPrompt(repositories: GitHubRepository[]) {
               {
                 name: "repository name",
                 summary: "short professional summary",
-                category: categories,
+                category: projectCategories,
                 problem: "problem or purpose",
                 technicalDecision: "technical decision grounded in metadata",
                 nextStep: "practical next step",
-                maturity: maturities,
+                maturity: projectMaturities,
                 featuredReason: "why it matters in a public portfolio",
                 tags: ["up to 6 concise tags"],
               },
@@ -286,15 +273,18 @@ export function toPortfolioProject(
 
   return {
     ...repo,
-    summary: merged.summary,
+    summary: plainText(merged.summary, enrichment.summary),
     category: merged.category,
-    problem: merged.problem,
-    technicalDecision: merged.technicalDecision,
-    nextStep: merged.nextStep,
+    problem: plainText(merged.problem, enrichment.problem),
+    technicalDecision: plainText(
+      merged.technicalDecision,
+      enrichment.technicalDecision,
+    ),
+    nextStep: plainText(merged.nextStep, enrichment.nextStep),
     maturity: merged.maturity,
-    featuredReason: merged.featuredReason,
-    tags: merged.tags,
-    displayName: override.displayName ?? repo.name,
+    featuredReason: plainText(merged.featuredReason, enrichment.featuredReason),
+    tags: cleanTags(merged.tags),
+    displayName: plainText(override.displayName, repo.name),
     featured: override.featured ?? false,
     order: override.order ?? 1000,
     hidden: override.hidden ?? false,

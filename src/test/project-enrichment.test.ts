@@ -70,6 +70,33 @@ describe("project enrichment", () => {
     });
   });
 
+  it("sanitizes HTML from otherwise valid Groq JSON", () => {
+    const enrichment = parseGroqEnrichmentResponse(
+      JSON.stringify({
+        repositories: [
+          {
+            name: "Astrolink",
+            summary:
+              "<strong>Repositorio</strong> <script>alert('x')</script> em Go.",
+            category: "infra",
+            problem: "<p>Explora conectividade.</p>",
+            technicalDecision: "<em>Usa Go</em> para uma base simples.",
+            nextStep: "<a href='https://example.com'>Melhorar README</a>.",
+            maturity: "prototype",
+            featuredReason: "<span>Mostra repertorio tecnico publico.</span>",
+            tags: ["<script>alert('tag')</script>Go", "<b>network</b>"],
+          },
+        ],
+      }),
+    );
+
+    const serialized = JSON.stringify(enrichment.astrolink);
+
+    expect(enrichment.astrolink).toBeDefined();
+    expect(serialized).not.toContain("<script");
+    expect(serialized).not.toMatch(/<\/?[a-z][^>]*>/i);
+  });
+
   it("rejects unsafe or invalid Groq content", () => {
     expect(parseGroqEnrichmentResponse("<script>alert(1)</script>")).toEqual(
       {},
@@ -120,6 +147,30 @@ describe("project enrichment", () => {
       enrichmentStatus: "override",
     });
     expect(project).not.toHaveProperty("apiKey");
+  });
+
+  it("sanitizes HTML from portfolio project overrides", () => {
+    const fallback: ProjectEnrichment = createFallbackEnrichment(repo);
+    const project = toPortfolioProject(repo, fallback, {
+      displayName: "<img src=x onerror=alert(1)>Astrolink",
+      summary: "<script>alert('summary')</script>Resumo curado.",
+      tags: ["<b>Go</b>", "<script>alert('tag')</script>network"],
+    });
+
+    const serialized = JSON.stringify({
+      displayName: project.displayName,
+      summary: project.summary,
+      tags: project.tags,
+    });
+
+    expect(project).toMatchObject({
+      displayName: "Astrolink",
+      summary: "Resumo curado.",
+      tags: ["Go", "network"],
+      enrichmentStatus: "override",
+    });
+    expect(serialized).not.toContain("<script");
+    expect(serialized).not.toMatch(/<\/?[a-z][^>]*>/i);
   });
 
   it("classifies JavaScript repositories as web", () => {
