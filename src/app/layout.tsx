@@ -19,6 +19,10 @@ export const metadata: Metadata = {
   description:
     "Portfólio de Charlles Augusto, desenvolvedor focado em produtos web, automações e segurança aplicada.",
   authors: [{ name: "Charlles Augusto" }],
+  icons: {
+    icon: "/assets/favicon.ico",
+    shortcut: "/assets/favicon.ico"
+  },
   openGraph: {
     title: "Charlles Augusto | Desenvolvimento web e automações",
     description:
