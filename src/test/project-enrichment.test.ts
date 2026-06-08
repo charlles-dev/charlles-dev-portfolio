@@ -70,6 +70,34 @@ describe("project enrichment", () => {
     });
   });
 
+  it("also keys Groq enrichment by short repo name when the model returns fullName", () => {
+    const enrichment = parseGroqEnrichmentResponse(
+      JSON.stringify({
+        repositories: [
+          {
+            name: "charlles-dev/Astrolink",
+            summary: "Repositorio em Go com foco em conectividade.",
+            category: "infra",
+            problem: "Explora conectividade de baixo custo.",
+            technicalDecision: "Usa Go para uma base simples.",
+            nextStep: "Melhorar README e exemplos.",
+            maturity: "prototype",
+            featuredReason: "Mostra repertorio tecnico publico.",
+            tags: ["Go", "network"],
+          },
+        ],
+      }),
+    );
+
+    expect(enrichment["charlles-dev/astrolink"]).toMatchObject({
+      category: "infra",
+    });
+    expect(enrichment.astrolink).toMatchObject({
+      category: "infra",
+      maturity: "prototype",
+    });
+  });
+
   it("sanitizes HTML from otherwise valid Groq JSON", () => {
     const enrichment = parseGroqEnrichmentResponse(
       JSON.stringify({

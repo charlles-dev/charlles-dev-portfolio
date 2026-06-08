@@ -86,8 +86,8 @@ function composeProject(
   aiByRepo: Awaited<ReturnType<typeof enrichRepositoriesWithGroq>>,
 ): PortfolioProject {
   const override = getProjectOverride(repo.name);
-  const key = projectKey(repo.name);
-  const aiEnrichment = aiByRepo[key];
+  const aiEnrichment =
+    aiByRepo[projectKey(repo.name)] ?? aiByRepo[projectKey(repo.fullName)];
   const enrichment = aiEnrichment ?? createFallbackEnrichment(repo);
   const project = toPortfolioProject(repo, enrichment, override);
 

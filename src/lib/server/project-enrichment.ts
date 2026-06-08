@@ -66,6 +66,13 @@ export function projectKey(name: string): string {
   return name.trim().toLowerCase();
 }
 
+function projectKeyCandidates(name: string): string[] {
+  const normalized = projectKey(name);
+  const shortName = projectKey(normalized.split("/").pop() ?? normalized);
+
+  return Array.from(new Set([normalized, shortName].filter(Boolean)));
+}
+
 function plainText(value: unknown, fallback: string): string {
   if (typeof value !== "string") {
     return fallback;
@@ -239,7 +246,7 @@ export function parseGroqEnrichmentResponse(
       continue;
     }
 
-    enrichments[projectKey(name)] = {
+    const enrichment = {
       summary: plainText(item.summary, "Resumo indisponivel."),
       category: item.category,
       problem: plainText(item.problem, "Problema ainda nao documentado."),
@@ -255,6 +262,10 @@ export function parseGroqEnrichmentResponse(
       ),
       tags: cleanTags(item.tags),
     };
+
+    for (const key of projectKeyCandidates(name)) {
+      enrichments[key] = enrichment;
+    }
   }
 
   return Object.keys(enrichments).length > 0 ? enrichments : {};

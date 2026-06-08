@@ -157,6 +157,56 @@ describe("projects service", () => {
     });
   });
 
+  it("uses AI enrichment when Groq returns full repository names", async () => {
+    const aiRepo = makeApiRepo({
+      id: 5,
+      name: "Public-AI-Repo",
+      full_name: "charlles-dev/Public-AI-Repo",
+      html_url: "https://github.com/charlles-dev/Public-AI-Repo",
+      description: "Automation helper",
+      language: "TypeScript",
+    });
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValueOnce(githubResponse([aiRepo]))
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          choices: [
+            {
+              message: {
+                content: JSON.stringify({
+                  repositories: [
+                    {
+                      name: "charlles-dev/Public-AI-Repo",
+                      summary: "Repositorio enriquecido pela IA.",
+                      category: "automation",
+                      problem: "Organizar uma automacao publica.",
+                      technicalDecision: "Usa TypeScript para estruturar o fluxo.",
+                      nextStep: "Documentar uso e limites.",
+                      maturity: "prototype",
+                      featuredReason: "Mostra capacidade de organizar automacoes.",
+                      tags: ["TypeScript", "automacao"],
+                    },
+                  ],
+                }),
+              },
+            },
+          ],
+        }),
+      });
+
+    const payload = await getPortfolioProjects({ env, fetchImpl });
+
+    expect(payload.projects[0]).toMatchObject({
+      name: "Public-AI-Repo",
+      enrichmentStatus: "ai",
+      summary: "Repositorio enriquecido pela IA.",
+      category: "automation",
+    });
+  });
+
   it("uses cached payload while TTL is active", async () => {
     const fetchImpl = vi.fn().mockResolvedValue(githubResponse());
 
