@@ -22,6 +22,7 @@ describe("portfolio content", () => {
     expect(profile.coverLine).toContain("interfaces, automações e integrações");
     expect(profile.coverLine).not.toMatch(/ciberseguran.a e IA/i);
     expect(profile.tagline).not.toMatch(/cyber e IA/i);
+    expect(profile.tagline).not.toMatch(/Campina Grande/i);
     expect(profile.location).toBe("Campina Grande-PB, Brazil");
     expect(profile.email).toBe("charllesgst@gmail.com");
   });
@@ -97,8 +98,8 @@ describe("portfolio content", () => {
     expect(profileHighlights.map((item) => item.value)).toEqual([
       "Campina Grande-PB",
       "Web & APIs",
-      "Cyber + automação",
-      "Conexões"
+      "Segurança + automação",
+      "Projetos & vagas"
     ]);
     expect(heroSignals.map((signal) => signal.title)).toEqual([
       "Entrega visível",

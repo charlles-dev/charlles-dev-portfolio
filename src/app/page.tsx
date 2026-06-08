@@ -28,8 +28,8 @@ const socialIconMap = {
 const identitySignals: Array<{ label: string; value: string; detail: string; icon: IconName }> = [
   {
     label: "Base",
-    value: profile.location,
-    detail: "Construindo de Campina Grande para a web aberta.",
+    value: "Atuação remota",
+    detail: "Atuação remota, entrega pública e documentação clara.",
     icon: "solar-map"
   },
   {
@@ -88,21 +88,23 @@ function ArrowIcon() {
 function Brand() {
   return (
     <a
-      className="group inline-flex items-center gap-3 text-white"
+      className="group inline-flex items-center gap-3.5 text-white"
       href="#top"
       aria-label="Voltar ao topo"
     >
-      <span className="relative flex size-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.04]">
+      <span className="relative flex size-9 shrink-0 items-center justify-center">
         <Image
           src="/assets/charlles-dev.svg"
           alt=""
-          width={26}
-          height={26}
+          width={18}
+          height={20}
           priority
-          className="transition-transform duration-500 group-hover:scale-110"
+          className="drop-shadow-[0_0_18px_rgba(34,186,157,0.22)] transition-transform duration-500 group-hover:scale-110"
         />
       </span>
-      <span className="text-[0.92rem] font-semibold">{profile.handle}</span>
+      <span className="brand-wordmark text-[1.02rem] font-semibold lowercase text-white">
+        charlles<span className="text-accent">.</span>dev
+      </span>
     </a>
   );
 }
@@ -225,7 +227,7 @@ function SignalTicker() {
     "Go",
     "TypeScript",
     "Documentação",
-    "Campina Grande-PB"
+    "Segurança aplicada"
   ];
   const loop = [...tickerItems, ...tickerItems];
 
@@ -606,7 +608,7 @@ function SignatureFooter() {
               Construindo produto, automação e presença técnica com clareza.
             </h2>
             <div className="mt-10 flex flex-wrap gap-x-5 gap-y-3 border-t border-white/10 pt-6 font-mono text-[0.76rem] font-semibold uppercase tracking-[0.18em] text-white/42">
-              <span>{profile.location}</span>
+              <span>Projetos web e automação</span>
               <span className="hidden text-white/18 sm:inline">/</span>
               <span>{profile.role}</span>
               <span className="hidden text-white/18 sm:inline">/</span>
@@ -653,7 +655,7 @@ function SignatureFooter() {
             Augusto
           </p>
           <div className="mt-8 flex flex-col gap-5 border-t border-white/10 pt-6 text-[0.78rem] uppercase tracking-[0.18em] text-white/36 sm:flex-row sm:items-center sm:justify-between">
-            <p className="font-mono font-semibold">© 2026 / Portfólio pessoal em Next.js</p>
+            <p className="font-mono font-semibold">© 2026 / charlles-dev</p>
             <div className="flex items-center gap-3 font-mono">
               <Image src="/assets/charlles-dev.svg" alt="" width={20} height={20} />
               <span>{profile.handle}</span>
@@ -668,7 +670,6 @@ function SignatureFooter() {
 export default function Home() {
   return (
     <main className="relative overflow-hidden">
-      <div className="film-grain pointer-events-none fixed inset-0 z-[60]" />
       <Header />
       <HeroSignature />
       <CinematicDivider label="Contexto" />

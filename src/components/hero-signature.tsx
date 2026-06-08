@@ -50,7 +50,6 @@ function EditorialPortrait() {
             className="object-cover object-center saturate-[0.94]"
           />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,8,7,0.00)_58%,rgba(5,8,7,0.34)_100%)]" />
-          <div className="scanline absolute inset-0 opacity-30" />
         </div>
         <div className="absolute inset-x-5 bottom-5 rounded-full border border-white/14 bg-[#050807]/86 px-5 py-4 text-center font-mono text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-white shadow-[0_18px_46px_rgba(0,0,0,0.36)] sm:text-[0.74rem]">
           {profile.tagline}
@@ -88,11 +87,12 @@ export function HeroSignature() {
       <div className="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_76%_28%,rgba(34,186,157,0.12),transparent_30%),linear-gradient(135deg,#050807_0%,#0d1512_42%,#111614_100%)]" />
       <div className="cinematic-grid absolute inset-0 -z-10 opacity-45" />
       <div className="aura-field absolute inset-x-0 top-10 -z-10 mx-auto h-[520px] max-w-[1180px]" />
+      <div className="film-grain pointer-events-none absolute inset-0 -z-10" />
 
       <div className="mx-auto grid max-w-[1320px] items-center gap-12 lg:grid-cols-[0.95fr_0.85fr]">
         <div className="scene-in max-w-[820px] pb-2">
           <p className="font-mono text-[0.72rem] font-semibold uppercase tracking-[0.26em] text-accent">
-            Marca tipográfica / presença editorial
+            Portfólio profissional / software aplicado
           </p>
           <h1
             id="hero-title"

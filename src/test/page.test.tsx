@@ -13,8 +13,12 @@ describe("home page", () => {
       })
     ).toBeInTheDocument();
     expect(screen.getByText(/Produtos web, automação e segurança aplicada/i)).toBeInTheDocument();
-    expect(screen.getByText(/marca tipográfica/i)).toBeInTheDocument();
+    expect(screen.getByText(/Portf.lio profissional/i)).toBeInTheDocument();
+    expect(screen.queryByText(/marca tipogr.fica/i)).not.toBeInTheDocument();
     expect(screen.getByAltText(/Retrato editorial de Charlles Augusto/i)).toBeInTheDocument();
+    expect(within(screen.getByRole("link", { name: /Voltar ao topo/i })).getByText(/charlles/i)).toHaveClass(
+      "brand-wordmark"
+    );
 
     expect(screen.getByRole("link", { name: /Conectar no LinkedIn/i })).toHaveAttribute(
       "href",
@@ -75,6 +79,8 @@ describe("home page", () => {
     expect(within(footer).getByText(/Contato direto/i)).toBeInTheDocument();
     expect(within(footer).getAllByText(/Charlles/i).length).toBeGreaterThan(0);
     expect(within(footer).getAllByText(/Augusto/i).length).toBeGreaterThan(0);
+    expect(within(footer).getByText("© 2026 / charlles-dev")).toBeInTheDocument();
+    expect(within(footer).queryByText(/Portf.lio pessoal em Next.js/i)).not.toBeInTheDocument();
     expect(within(footer).getByRole("link", { name: /open linkedin/i })).toHaveAttribute(
       "href",
       "https://www.linkedin.com/in/charlles-augusto/"
@@ -130,5 +136,8 @@ describe("home page", () => {
     expect(screen.queryByText(/HUD/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/dashboard/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/painel artificial/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Marca tipogr.fica/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Aberto a/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/^Conex.es$/i)).not.toBeInTheDocument();
   });
 });

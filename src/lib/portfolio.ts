@@ -103,11 +103,11 @@ export const profile: Profile = {
   coverLine:
     "Construo interfaces, automações e integrações com foco em clareza, operação e utilidade real. Minha base em cibersegurança e automação entra como diferencial técnico, não como rótulo.",
   intro:
-    "Sou Charlles Augusto, desenvolvedor em Campina Grande. Trabalho entre web, automação e segurança aplicada para transformar problemas práticos em software bem apresentado e fácil de evoluir.",
+    "Sou Charlles Augusto, desenvolvedor web. Trabalho entre produto, automação e segurança aplicada para transformar problemas práticos em software bem apresentado e fácil de evoluir.",
   manifestoTitle: "Construo software com clareza, contexto e utilidade.",
   manifestoBody:
     "Meu foco é entregar produtos digitais simples de entender, bem documentados e úteis para fluxos reais. A página mostra projetos, decisões técnicas, ferramentas e credenciais que sustentam meu trabalho como desenvolvedor.",
-  tagline: "Campina Grande-PB / web, automação e segurança",
+  tagline: "web, APIs e automação operacional",
   location: "Campina Grande-PB, Brazil",
   email: "charllesgst@gmail.com"
 };
@@ -195,8 +195,8 @@ export const projects: Project[] = [
 export const profileHighlights: ProfileHighlight[] = [
   { label: "Local", value: "Campina Grande-PB", icon: "map-pin" },
   { label: "Foco", value: "Web & APIs", icon: "api" },
-  { label: "Interesses", value: "Cyber + automação", icon: "shield" },
-  { label: "Aberto a", value: "Conexões", icon: "world" }
+  { label: "Diferencial", value: "Segurança + automação", icon: "shield" },
+  { label: "Oportunidades", value: "Projetos & vagas", icon: "target" }
 ];
 
 export const heroSignals: HeroSignal[] = [
