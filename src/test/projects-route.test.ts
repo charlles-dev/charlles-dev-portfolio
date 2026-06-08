@@ -122,11 +122,14 @@ describe("projects API route", () => {
 
       expect(response.status).toBe(200);
       expect(response.headers.get("cache-control")).toContain("s-maxage=60");
-      expect(payload).toMatchObject({
-        cache: "fallback",
-        featured: [],
-        projects: [],
-      });
+      expect(payload.cache).toBe("fallback");
+      expect(payload.projects.length).toBeGreaterThan(0);
+      expect(payload.featured.length).toBeGreaterThan(0);
+      expect(
+        payload.projects.some(
+          (project: { name: string }) => project.name === "Astrolink",
+        ),
+      ).toBe(true);
       expect(serialized).not.toContain("github_secret");
       expect(serialized).not.toContain("upstream error");
       expect(serialized).not.toContain("boom");

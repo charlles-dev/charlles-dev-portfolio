@@ -130,6 +130,33 @@ describe("projects service", () => {
     expect(payload.projects[0].summary).toContain("Repositorio em Go");
   });
 
+  it("includes public forks from GitHub even without local overrides", async () => {
+    const forkRepo = makeApiRepo({
+      id: 4,
+      name: "Public-Fork-No-Override",
+      full_name: "charlles-dev/Public-Fork-No-Override",
+      html_url: "https://github.com/charlles-dev/Public-Fork-No-Override",
+      fork: true,
+    });
+    const fetchImpl = vi.fn().mockResolvedValue(githubResponse([forkRepo]));
+
+    const payload = await getPortfolioProjects({
+      env: {
+        GITHUB_OWNER: "charlles-dev",
+        GROQ_API_KEY: "",
+        PROJECTS_CACHE_TTL_SECONDS: "21600",
+      },
+      fetchImpl,
+    });
+
+    expect(payload.projects).toHaveLength(1);
+    expect(payload.projects[0]).toMatchObject({
+      name: "Public-Fork-No-Override",
+      fork: true,
+      enrichmentStatus: "fallback",
+    });
+  });
+
   it("uses cached payload while TTL is active", async () => {
     const fetchImpl = vi.fn().mockResolvedValue(githubResponse());
 

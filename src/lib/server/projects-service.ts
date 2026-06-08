@@ -129,15 +129,12 @@ export async function getPortfolioProjects({
     token: env.GITHUB_TOKEN,
     fetchImpl,
   });
-  const publicRepos = repositories.filter(
-    (repo) => !repo.fork || Boolean(getProjectOverride(repo.name)),
-  );
   let cacheState: ProjectsPayload["cache"] = "miss";
   let aiByRepo: Awaited<ReturnType<typeof enrichRepositoriesWithGroq>> = {};
 
   try {
     aiByRepo = await enrichRepositoriesWithGroq({
-      repositories: publicRepos,
+      repositories,
       apiKey: env.GROQ_API_KEY,
       model: env.GROQ_MODEL,
       fetchImpl,
@@ -148,7 +145,7 @@ export async function getPortfolioProjects({
   }
 
   const projects = sortProjects(
-    publicRepos
+    repositories
       .map((repo) => composeProject(repo, aiByRepo))
       .filter((project) => !project.hidden),
   );
