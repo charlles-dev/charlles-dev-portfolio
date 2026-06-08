@@ -26,6 +26,21 @@ const apiRepo = {
   open_issues_count: 0,
 };
 
+const makeApiRepo = (overrides: Partial<typeof apiRepo> = {}) => ({
+  ...apiRepo,
+  ...overrides,
+});
+
+const makeApiRepos = (count: number, page: number) =>
+  Array.from({ length: count }, (_, index) =>
+    makeApiRepo({
+      id: page * 1000 + index,
+      name: `Repo-${page}-${index}`,
+      full_name: `charlles-dev/Repo-${page}-${index}`,
+      html_url: `https://github.com/charlles-dev/Repo-${page}-${index}`,
+    }),
+  );
+
 describe("GitHub repository projects", () => {
   it("normalizes GitHub API snake_case and null fields into safe camelCase data", () => {
     expect(normalizeGitHubRepository(apiRepo)).toMatchObject({
@@ -103,6 +118,76 @@ describe("GitHub repository projects", () => {
     expect(repos).toHaveLength(1);
     expect(repos[0]).toMatchObject({
       fullName: "charlles-dev/Astrolink",
+      private: false,
+    });
+  });
+
+  it("fetches page 2 when page 1 returns 100 repositories", async () => {
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => makeApiRepos(100, 1),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => [makeApiRepo({ id: 2001, name: "PageTwo" })],
+      });
+
+    const repos = await fetchGitHubRepositories({
+      owner: "charlles-dev",
+      fetchImpl,
+    });
+
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+    expect(fetchImpl.mock.calls[1][0]).toContain("page=2");
+    expect(repos).toHaveLength(101);
+  });
+
+  it("stops before page 11 when every allowed page is full", async () => {
+    const fetchImpl = vi.fn().mockImplementation(async (url: string) => {
+      const page = Number(new URL(url).searchParams.get("page"));
+
+      return {
+        ok: true,
+        json: async () => makeApiRepos(100, page),
+      };
+    });
+
+    await fetchGitHubRepositories({
+      owner: "charlles-dev",
+      fetchImpl,
+    });
+
+    const requestedUrls = fetchImpl.mock.calls.map(([url]) => url);
+
+    expect(fetchImpl).toHaveBeenCalledTimes(10);
+    expect(requestedUrls).not.toEqual(
+      expect.arrayContaining([expect.stringContaining("page=11")]),
+    );
+  });
+
+  it("filters private repositories from the final result", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => [
+        makeApiRepo({ id: 1, full_name: "charlles-dev/Public" }),
+        makeApiRepo({
+          id: 2,
+          full_name: "charlles-dev/Private",
+          private: true,
+        }),
+      ],
+    });
+
+    const repos = await fetchGitHubRepositories({
+      owner: "charlles-dev",
+      fetchImpl,
+    });
+
+    expect(repos).toHaveLength(1);
+    expect(repos[0]).toMatchObject({
+      fullName: "charlles-dev/Public",
       private: false,
     });
   });
