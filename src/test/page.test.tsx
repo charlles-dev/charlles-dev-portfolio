@@ -30,35 +30,42 @@ describe("home page", () => {
     );
   });
 
-  it("renders the selected projects as public mini cases", () => {
+  it("renders the professional projects showcase", () => {
     render(<Home />);
 
     const projects = screen.getByRole("region", { name: /Trabalhos p.blicos/i });
 
-    expect(within(projects).getByRole("link", { name: /Astrolink/i })).toHaveAttribute(
+    expect(within(projects).getByRole("heading", { name: /Projetos em destaque/i })).toBeInTheDocument();
+    expect(
+      within(projects).getByRole("heading", { name: /Todos os reposit[oó]rios p[úu]blicos/i })
+    ).toBeInTheDocument();
+    expect(within(projects).getAllByRole("link", { name: /Astrolink/i })[0]).toHaveAttribute(
       "href",
       "https://github.com/charlles-dev/Astrolink"
     );
-    expect(within(projects).getAllByText("Problema")).toHaveLength(3);
-    expect(within(projects).getAllByText("Decisão técnica")).toHaveLength(3);
-    expect(within(projects).getAllByText("Próximo passo")).toHaveLength(3);
-    expect(within(projects).getAllByText(/Mini case/i).length).toBeGreaterThanOrEqual(1);
-    expect(within(projects).getByRole("link", { name: /Laudos Proxxima/i })).toBeInTheDocument();
-    expect(within(projects).getByRole("link", { name: /3035 Teach/i })).toBeInTheDocument();
+    expect(within(projects).getByPlaceholderText(/Buscar por nome/i)).toBeInTheDocument();
+    expect(within(projects).getAllByText("Problema").length).toBeGreaterThanOrEqual(1);
+    expect(within(projects).getAllByText(/Decis[aã]o t[eé]cnica/i).length).toBeGreaterThanOrEqual(1);
+    expect(within(projects).getAllByText(/Pr[oó]ximo passo/i).length).toBeGreaterThanOrEqual(1);
   });
 
-  it("filters the project bento with real client-side state", () => {
+  it("searches public repositories with real client-side state", () => {
     render(<Home />);
 
     const projects = screen.getByRole("region", { name: /Trabalhos p.blicos/i });
-    const automationFilter = within(projects).getByRole("button", { name: /Automa..o/i });
+    const explorer = within(projects).getByRole("region", {
+      name: /Todos os reposit[oó]rios p[úu]blicos/i
+    });
+    const search = within(projects).getByPlaceholderText(/Buscar por nome/i);
 
-    fireEvent.click(automationFilter);
+    fireEvent.change(search, { target: { value: "Laudos" } });
 
-    expect(automationFilter).toHaveAttribute("aria-pressed", "true");
-    expect(within(projects).getByRole("link", { name: /Laudos Proxxima/i })).toBeInTheDocument();
-    expect(within(projects).queryByRole("link", { name: /Astrolink/i })).not.toBeInTheDocument();
-    expect(within(projects).getByText(/1 projeto em foco/i)).toBeInTheDocument();
+    expect(within(explorer).getByRole("link", { name: /Laudos Proxxima/i })).toBeInTheDocument();
+    expect(within(explorer).queryByRole("link", { name: /Astrolink/i })).not.toBeInTheDocument();
+
+    fireEvent.change(search, { target: { value: "sem resultado real" } });
+
+    expect(within(explorer).getByText(/Nenhum reposit[oó]rio encontrado/i)).toBeInTheDocument();
   });
 
   it("renders the living portfolio sections", () => {

@@ -3,14 +3,14 @@ import Image from "next/image";
 import { HeroSignature } from "@/components/hero-signature";
 import { IconGlyph, type IconName } from "@/components/icon-glyph";
 import { NowSignals } from "@/components/now-signals";
-import { ProjectBento } from "@/components/project-bento";
+import { ProjectShowcase } from "@/components/projects/project-showcase";
+import { fallbackProjectsPayload } from "@/lib/projects/fallback";
 import {
   heroSignals,
   interestAreas,
   learningTimeline,
   navItems,
   profile,
-  projects,
   socialLinks,
   stack
 } from "@/lib/portfolio";
@@ -371,7 +371,7 @@ function Projects() {
           </p>
         </div>
 
-        <ProjectBento projects={projects} />
+        <ProjectShowcase initialPayload={fallbackProjectsPayload} />
 
       </div>
     </section>
