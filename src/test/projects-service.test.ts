@@ -1,6 +1,9 @@
 vi.mock("server-only", () => ({}));
 
-import { getPortfolioProjects, resetProjectsCacheForTests } from "@/lib/server/projects-service";
+import {
+  getPortfolioProjects,
+  resetProjectsCacheForTests,
+} from "@/lib/server/projects-service";
 
 const apiRepo = {
   id: 1,
@@ -86,7 +89,10 @@ describe("projects service", () => {
   });
 
   it("returns safe enriched projects and featured repositories", async () => {
-    const fetchImpl = vi.fn().mockResolvedValueOnce(githubResponse()).mockResolvedValueOnce(groqResponse());
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValueOnce(githubResponse())
+      .mockResolvedValueOnce(groqResponse());
 
     const payload = await getPortfolioProjects({ env, fetchImpl });
 
@@ -147,6 +153,44 @@ describe("projects service", () => {
     expect(first.cache).toBe("miss");
     expect(second.cache).toBe("hit");
     expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
+  it("fetches fresh payloads when public cache inputs change", async () => {
+    const otherOwnerRepo = makeApiRepo({
+      id: 3,
+      name: "Other-Project",
+      full_name: "octocat/Other-Project",
+      html_url: "https://github.com/octocat/Other-Project",
+    });
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValueOnce(githubResponse([apiRepo]))
+      .mockResolvedValueOnce(githubResponse([otherOwnerRepo]))
+      .mockResolvedValueOnce(groqResponse());
+
+    const first = await getPortfolioProjects({
+      env: {
+        GITHUB_OWNER: "charlles-dev",
+        GROQ_API_KEY: "",
+        PROJECTS_CACHE_TTL_SECONDS: "21600",
+      },
+      fetchImpl,
+    });
+    const second = await getPortfolioProjects({
+      env: {
+        GITHUB_OWNER: "octocat",
+        GROQ_API_KEY: "groq_secret",
+        GROQ_MODEL: "llama-test",
+        PROJECTS_CACHE_TTL_SECONDS: "21600",
+      },
+      fetchImpl,
+    });
+
+    expect(first.cache).toBe("miss");
+    expect(first.owner).toBe("charlles-dev");
+    expect(second.cache).toBe("miss");
+    expect(second.owner).toBe("octocat");
+    expect(fetchImpl).toHaveBeenCalledTimes(3);
   });
 
   it("resetProjectsCacheForTests resets between tests", async () => {

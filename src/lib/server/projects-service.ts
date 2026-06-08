@@ -21,15 +21,48 @@ type ServiceFetch = typeof fetch;
 
 let projectsCache:
   | {
+      key: string;
       expiresAt: number;
       payload: ProjectsPayload;
     }
   | undefined;
 
+const defaultGroqModelCacheMarker = "__default_groq_model__";
+
 function ttlSeconds(env: ServiceEnv): number {
   const parsed = Number(env.PROJECTS_CACHE_TTL_SECONDS ?? "21600");
 
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 21600;
+}
+
+function createProjectsCacheKey(env: ServiceEnv, owner: string): string {
+  return JSON.stringify({
+    owner,
+    groqModel: env.GROQ_MODEL || defaultGroqModelCacheMarker,
+    hasGroqApiKey: Boolean(env.GROQ_API_KEY),
+    hasGitHubToken: Boolean(env.GITHUB_TOKEN),
+  });
+}
+
+function cloneProject(project: PortfolioProject): PortfolioProject {
+  return {
+    ...project,
+    topics: [...project.topics],
+    stats: { ...project.stats },
+    tags: [...project.tags],
+  };
+}
+
+function clonePayload(
+  payload: ProjectsPayload,
+  cache?: ProjectsPayload["cache"],
+): ProjectsPayload {
+  return {
+    ...payload,
+    cache: cache ?? payload.cache,
+    featured: payload.featured.map(cloneProject),
+    projects: payload.projects.map(cloneProject),
+  };
 }
 
 function sortProjects(projects: PortfolioProject[]): PortfolioProject[] {
@@ -80,15 +113,17 @@ export async function getPortfolioProjects({
   fetchImpl?: ServiceFetch;
 } = {}): Promise<ProjectsPayload> {
   const now = Date.now();
+  const owner = env.GITHUB_OWNER || "charlles-dev";
+  const cacheKey = createProjectsCacheKey(env, owner);
 
-  if (projectsCache && projectsCache.expiresAt > now) {
-    return {
-      ...projectsCache.payload,
-      cache: "hit",
-    };
+  if (
+    projectsCache &&
+    projectsCache.key === cacheKey &&
+    projectsCache.expiresAt > now
+  ) {
+    return clonePayload(projectsCache.payload, "hit");
   }
 
-  const owner = env.GITHUB_OWNER || "charlles-dev";
   const repositories = await fetchGitHubRepositories({
     owner,
     token: env.GITHUB_TOKEN,
@@ -128,8 +163,9 @@ export async function getPortfolioProjects({
   };
 
   projectsCache = {
+    key: cacheKey,
     expiresAt: now + ttlSeconds(env) * 1000,
-    payload,
+    payload: clonePayload(payload),
   };
 
   return payload;

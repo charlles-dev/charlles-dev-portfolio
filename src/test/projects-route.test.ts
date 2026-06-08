@@ -63,4 +63,37 @@ describe("projects API route", () => {
     expect(serialized).not.toContain("GITHUB_TOKEN");
     expect(serialized).not.toContain("github_secret");
   });
+
+  it.each([
+    ["rejects", () => Promise.reject(new Error("upstream github_secret boom"))],
+    [
+      "returns non-ok",
+      () =>
+        Promise.resolve({
+          ok: false,
+          status: 500,
+          json: async () => ({ message: "upstream error github_secret" }),
+        }),
+    ],
+  ])(
+    "returns a safe fallback response when GitHub fetch %s",
+    async (_name, fetchResponse) => {
+      global.fetch = vi.fn().mockImplementation(fetchResponse);
+
+      const response = await GET();
+      const payload = await response.json();
+      const serialized = JSON.stringify(payload);
+
+      expect(response.status).toBe(200);
+      expect(response.headers.get("cache-control")).toContain("s-maxage=60");
+      expect(payload).toMatchObject({
+        cache: "fallback",
+        featured: [],
+        projects: [],
+      });
+      expect(serialized).not.toContain("github_secret");
+      expect(serialized).not.toContain("upstream error");
+      expect(serialized).not.toContain("boom");
+    },
+  );
 });
