@@ -181,11 +181,11 @@ describe("projects service", () => {
                     {
                       name: "charlles-dev/Public-AI-Repo",
                       summary: "Repositorio enriquecido pela IA.",
-                      category: "automation",
+                      category: ["automation", "web"],
                       problem: "Organizar uma automacao publica.",
                       technicalDecision: "Usa TypeScript para estruturar o fluxo.",
                       nextStep: "Documentar uso e limites.",
-                      maturity: "prototype",
+                      maturity: ["prototype"],
                       featuredReason: "Mostra capacidade de organizar automacoes.",
                       tags: ["TypeScript", "automacao"],
                     },

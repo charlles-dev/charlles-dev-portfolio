@@ -98,6 +98,32 @@ describe("project enrichment", () => {
     });
   });
 
+  it("accepts array category and maturity values from JSON-mode models", () => {
+    const enrichment = parseGroqEnrichmentResponse(
+      JSON.stringify({
+        repositories: [
+          {
+            name: "charlles-dev-portfolio",
+            summary: "Portfolio em TypeScript.",
+            category: ["web", "technical-base"],
+            problem: "Apresentar projetos publicos.",
+            technicalDecision: "Usa Next.js para a landing.",
+            nextStep: "Refinar documentacao.",
+            maturity: ["production-minded"],
+            featuredReason: "Mostra repertorio profissional.",
+            tags: ["TypeScript", "Next.js"],
+          },
+        ],
+      }),
+    );
+
+    expect(enrichment["charlles-dev-portfolio"]).toMatchObject({
+      category: "web",
+      maturity: "production-minded",
+      summary: "Portfolio em TypeScript.",
+    });
+  });
+
   it("sanitizes HTML from otherwise valid Groq JSON", () => {
     const enrichment = parseGroqEnrichmentResponse(
       JSON.stringify({

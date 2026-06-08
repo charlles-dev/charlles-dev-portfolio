@@ -62,6 +62,30 @@ function isMaturity(value: unknown): value is PortfolioProjectMaturity {
   );
 }
 
+function pickCategory(value: unknown): PortfolioProjectCategory | undefined {
+  if (isCategory(value)) {
+    return value;
+  }
+
+  if (Array.isArray(value)) {
+    return value.find(isCategory);
+  }
+
+  return undefined;
+}
+
+function pickMaturity(value: unknown): PortfolioProjectMaturity | undefined {
+  if (isMaturity(value)) {
+    return value;
+  }
+
+  if (Array.isArray(value)) {
+    return value.find(isMaturity);
+  }
+
+  return undefined;
+}
+
 export function projectKey(name: string): string {
   return name.trim().toLowerCase();
 }
@@ -189,11 +213,11 @@ export function buildEnrichmentPrompt(repositories: GitHubRepository[]) {
               {
                 name: "repository name",
                 summary: "short professional summary",
-                category: projectCategories,
+                category: `one of: ${projectCategories.join(" | ")}`,
                 problem: "problem or purpose",
                 technicalDecision: "technical decision grounded in metadata",
                 nextStep: "practical next step",
-                maturity: projectMaturities,
+                maturity: `one of: ${projectMaturities.join(" | ")}`,
                 featuredReason: "why it matters in a public portfolio",
                 tags: ["up to 6 concise tags"],
               },
@@ -242,20 +266,23 @@ export function parseGroqEnrichmentResponse(
     }
 
     const name = plainText(item.name, "");
-    if (!name || !isCategory(item.category) || !isMaturity(item.maturity)) {
+    const category = pickCategory(item.category);
+    const maturity = pickMaturity(item.maturity);
+
+    if (!name || !category || !maturity) {
       continue;
     }
 
     const enrichment = {
       summary: plainText(item.summary, "Resumo indisponivel."),
-      category: item.category,
+      category,
       problem: plainText(item.problem, "Problema ainda nao documentado."),
       technicalDecision: plainText(
         item.technicalDecision,
         "Decisao tecnica ainda nao documentada.",
       ),
       nextStep: plainText(item.nextStep, "Documentar proximos passos."),
-      maturity: item.maturity,
+      maturity,
       featuredReason: plainText(
         item.featuredReason,
         "Projeto publico com contexto tecnico.",
