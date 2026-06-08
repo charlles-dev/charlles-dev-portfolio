@@ -108,6 +108,7 @@ function cleanTags(value: unknown): string[] {
 export function inferCategory(
   repo: GitHubRepository,
 ): PortfolioProjectCategory {
+  const language = repo.language.trim().toLowerCase();
   const searchable = [
     repo.name,
     repo.description,
@@ -134,19 +135,21 @@ export function inferCategory(
   }
 
   if (
-    searchable.includes("teach") ||
-    searchable.includes("java") ||
-    searchable.includes("study")
+    ["typescript", "javascript", "react", "next.js", "nextjs"].some((term) =>
+      searchable.includes(term),
+    ) ||
+    /\b(ts|js)\b/.test(searchable)
   ) {
-    return "technical-base";
+    return "web";
   }
 
   if (
-    ["typescript", "javascript", "react", "next.js"].some((term) =>
-      searchable.includes(term),
-    )
+    searchable.includes("teach") ||
+    language === "java" ||
+    /\bjava\b/.test(searchable) ||
+    searchable.includes("study")
   ) {
-    return "web";
+    return "technical-base";
   }
 
   return "experiment";

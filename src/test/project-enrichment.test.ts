@@ -4,9 +4,11 @@ import {
   PROJECT_ENRICHMENT_SCHEMA_VERSION,
   buildEnrichmentPrompt,
   createFallbackEnrichment,
+  inferCategory,
   parseGroqEnrichmentResponse,
   toPortfolioProject,
 } from "@/lib/server/project-enrichment";
+import { enrichRepositoriesWithGroq } from "@/lib/server/groq";
 import type { GitHubRepository, ProjectEnrichment } from "@/lib/projects/types";
 
 const repo: GitHubRepository = {
@@ -118,5 +120,169 @@ describe("project enrichment", () => {
       enrichmentStatus: "override",
     });
     expect(project).not.toHaveProperty("apiKey");
+  });
+
+  it("classifies JavaScript repositories as web", () => {
+    expect(
+      inferCategory({
+        ...repo,
+        name: "frontend-js",
+        description: "JavaScript portfolio interface",
+        language: "JavaScript",
+        topics: ["react", "js"],
+      }),
+    ).toBe("web");
+  });
+
+  it("classifies Java repositories as technical-base", () => {
+    expect(
+      inferCategory({
+        ...repo,
+        name: "java-study",
+        description: "Java study repository",
+        language: "Java",
+        topics: ["oop"],
+      }),
+    ).toBe("technical-base");
+  });
+
+  it("skips Groq enrichment without an api key", async () => {
+    const fetchImpl = vi.fn();
+
+    await expect(
+      enrichRepositoriesWithGroq({ repositories: [repo], fetchImpl }),
+    ).resolves.toEqual({});
+
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
+  it("skips Groq enrichment for an empty repository list", async () => {
+    const fetchImpl = vi.fn();
+
+    await expect(
+      enrichRepositoriesWithGroq({
+        repositories: [],
+        apiKey: "groq-secret",
+        fetchImpl,
+      }),
+    ).resolves.toEqual({});
+
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
+  it("posts repository metadata to Groq and parses repo-keyed enrichment", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        choices: [
+          {
+            message: {
+              content: JSON.stringify({
+                repositories: [
+                  {
+                    name: "Astrolink",
+                    summary: "Repositorio em Go com foco em conectividade.",
+                    category: "infra",
+                    problem: "Explora conectividade de baixo custo.",
+                    technicalDecision: "Usa Go para uma base simples.",
+                    nextStep: "Melhorar README e exemplos.",
+                    maturity: "prototype",
+                    featuredReason: "Mostra repertorio tecnico publico.",
+                    tags: ["Go", "network"],
+                  },
+                ],
+              }),
+            },
+          },
+        ],
+      }),
+    });
+
+    await expect(
+      enrichRepositoriesWithGroq({
+        repositories: [repo],
+        apiKey: "groq-secret",
+        model: "llama-test",
+        fetchImpl,
+      }),
+    ).resolves.toMatchObject({
+      astrolink: {
+        summary: "Repositorio em Go com foco em conectividade.",
+        category: "infra",
+      },
+    });
+
+    expect(fetchImpl).toHaveBeenCalledWith(
+      "https://api.groq.com/openai/v1/chat/completions",
+      expect.objectContaining({
+        method: "POST",
+        headers: {
+          authorization: "Bearer groq-secret",
+          "content-type": "application/json",
+        },
+      }),
+    );
+
+    const [, requestInit] = fetchImpl.mock.calls[0];
+    const body = JSON.parse(requestInit.body as string);
+
+    expect(body).toMatchObject({
+      model: "llama-test",
+      response_format: { type: "json_object" },
+    });
+    expect(body.messages[1].content).toContain("Astrolink");
+  });
+
+  it("uses the default Groq model when none is provided", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        choices: [
+          { message: { content: JSON.stringify({ repositories: [] }) } },
+        ],
+      }),
+    });
+
+    await enrichRepositoriesWithGroq({
+      repositories: [repo],
+      apiKey: "groq-secret",
+      fetchImpl,
+    });
+
+    const [, requestInit] = fetchImpl.mock.calls[0];
+    const body = JSON.parse(requestInit.body as string);
+
+    expect(body.model).toBe("llama-3.3-70b-versatile");
+  });
+
+  it("throws a sanitized error for failed Groq responses", async () => {
+    const json = vi.fn().mockResolvedValue({
+      error: "groq-secret leaked in body",
+    });
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 500,
+      json,
+    });
+
+    try {
+      await enrichRepositoriesWithGroq({
+        repositories: [repo],
+        apiKey: "groq-secret",
+        fetchImpl,
+      });
+      expect.unreachable("expected Groq enrichment to throw");
+    } catch (error) {
+      expect(error).toBeInstanceOf(Error);
+      expect((error as Error).message).toBe(
+        "Groq enrichment request failed with status 500",
+      );
+      expect((error as Error).message).not.toContain("groq-secret");
+      expect((error as Error).message).not.toContain("leaked in body");
+    }
+
+    expect(json).not.toHaveBeenCalled();
   });
 });
