@@ -64,6 +64,42 @@ describe("projects API route", () => {
     expect(serialized).not.toContain("github_secret");
   });
 
+  it("does not expose server-only prompt or secret material", async () => {
+    vi.stubEnv("GROQ_API_KEY", "groq_super_secret");
+    vi.stubEnv("GITHUB_TOKEN", "github_super_secret");
+    global.fetch = vi.fn().mockImplementation(async (url: string) => {
+      if (url.includes("api.groq.com")) {
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({
+            choices: [
+              {
+                message: {
+                  content: "{}",
+                },
+              },
+            ],
+          }),
+        };
+      }
+
+      return {
+        ok: true,
+        status: 200,
+        json: async () => [apiRepo],
+      };
+    });
+
+    const response = await GET();
+    const text = await response.text();
+
+    expect(text).not.toContain("groq_super_secret");
+    expect(text).not.toContain("github_super_secret");
+    expect(text).not.toContain("Do not invent production usage");
+    expect(text).not.toContain("authorization");
+  });
+
   it.each([
     ["rejects", () => Promise.reject(new Error("upstream github_secret boom"))],
     [

@@ -254,5 +254,8 @@ describe("home page", () => {
     expect(screen.queryByText(/Marca tipogr.fica/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/Aberto a/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/^Conex.es$/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/GROQ_API_KEY/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/GITHUB_TOKEN/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Do not invent production usage/i)).not.toBeInTheDocument();
   });
 });
