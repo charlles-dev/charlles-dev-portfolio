@@ -1,16 +1,30 @@
-# Charlles Dev Portfolio
+# charlles.dev
 
-Portfólio profissional de Charlles Augusto, desenvolvido em Next.js, Tailwind CSS e TypeScript. A landing apresenta identidade pessoal, projetos públicos sincronizados do GitHub e enriquecimento server-side via Groq para transformar metadados de repositórios em descrições mais claras.
+Presença digital de **Charlles Augusto**: um portfólio pessoal e profissional pensado para apresentar trajetória, projetos públicos, stack, interesses técnicos e canais de contato com uma experiência visual mais madura.
 
-Live: [charlles-dev.vercel.app](https://charlles-dev.vercel.app)
+Este repositório não é um template nem um starter. Ele sustenta a versão publicada do meu portfólio.
 
-## Sobre
+**Live:** [charlles-dev.vercel.app](https://charlles-dev.vercel.app)  
+**GitHub:** [github.com/charlles-dev](https://github.com/charlles-dev)  
+**LinkedIn:** [linkedin.com/in/charlles-augusto](https://www.linkedin.com/in/charlles-augusto/)
 
-Este projeto foi construído para funcionar como uma presença profissional enxuta: uma página rápida, visualmente polida e focada em trabalhos públicos, stack, credenciais e contato direto.
+## Intenção
 
-O portfólio evita conteúdo fictício no front. Os projetos vêm da API pública do GitHub e passam por uma rota server-side que pode usar Groq para gerar resumos, categorias e próximos passos sem expor prompts, tokens ou chaves no navegador.
+O projeto nasce com uma direção simples: transformar o portfólio em uma presença profissional clara, visualmente forte e conectada ao que eu realmente construo.
 
-## Stack
+A página combina identidade pessoal, projetos reais do GitHub, sinais de evolução técnica e uma camada discreta de IA no backend para organizar melhor as informações públicas dos repositórios.
+
+## Experiência
+
+- Hero com retrato, marca própria e posicionamento profissional.
+- Seções editoriais sobre atuação, stack, credenciais e contato.
+- Explorer de projetos públicos sincronizados com GitHub.
+- Enriquecimento server-side dos projetos para gerar resumos, categorias e próximos passos.
+- Interface responsiva, cinematográfica e focada em leitura.
+
+## Construção
+
+O portfólio foi desenvolvido com:
 
 - Next.js App Router
 - React
@@ -18,63 +32,24 @@ O portfólio evita conteúdo fictício no front. Os projetos vêm da API públic
 - Tailwind CSS
 - Iconify
 - GitHub API
-- Groq API em rota server-side
+- Groq em rota server-side
 - Vercel
 
-## Funcionalidades
+## Projetos
 
-- Landing page responsiva e cinematográfica
-- Hero com identidade visual própria
-- Projetos públicos sincronizados do GitHub
-- Enriquecimento de projetos com IA no backend
-- Fallback seguro quando GitHub ou Groq falham
-- Filtros e busca no explorer de repositórios
-- Favicon e assets próprios
-- Testes com Vitest e Testing Library
+Os projetos exibidos no site são sincronizados a partir dos repositórios públicos do perfil [charlles-dev](https://github.com/charlles-dev).
 
-## Variáveis de ambiente
-
-Crie um `.env.local` a partir de `.env.example`:
-
-```env
-GROQ_API_KEY=
-GROQ_MODEL=llama-3.3-70b-versatile
-GITHUB_OWNER=charlles-dev
-GITHUB_TOKEN=
-PROJECTS_CACHE_TTL_SECONDS=21600
-```
-
-`GROQ_API_KEY` e `GITHUB_TOKEN` são opcionais para rodar a página, mas melhoram o enriquecimento e limites de API. Eles devem ficar apenas em `.env.local` ou nas environment variables da Vercel.
-
-Nunca use `NEXT_PUBLIC_GROQ_API_KEY` ou `NEXT_PUBLIC_GITHUB_TOKEN`.
-
-## Desenvolvimento
-
-```bash
-npm install
-npm run dev
-```
-
-Abra [http://127.0.0.1:3000](http://127.0.0.1:3000).
-
-## Verificação
-
-```bash
-npm test
-npm run lint
-npm run build
-```
+A camada de IA não roda no navegador. Ela atua no servidor para transformar dados públicos dos repositórios em descrições mais úteis para quem está avaliando o trabalho: problema, entrega, contexto técnico e próximo passo.
 
 ## Segurança
 
-- A chave Groq é lida somente no servidor.
-- A rota pública `/api/projects` retorna apenas JSON seguro para o portfólio.
-- `.env.local`, `.vercel/`, `.next/`, `node_modules/` e outputs locais são ignorados pelo Git.
-- O front não recebe variáveis `GROQ_*` nem `GITHUB_TOKEN`.
+- A chave da Groq fica somente em ambiente privado.
+- Nenhum token sensível usa prefixo `NEXT_PUBLIC_`.
+- `.env.local`, `.vercel/`, `.next/`, `node_modules/` e saídas locais não entram no Git.
+- O front recebe apenas os dados já tratados pela rota pública `/api/projects`.
 
-## Deploy
+## Status
 
-O projeto está publicado na Vercel e conectado ao GitHub:
+V1 publicada e em evolução contínua.
 
-- GitHub: [charlles-dev/charlles-dev-portfolio](https://github.com/charlles-dev/charlles-dev-portfolio)
-- Produção: [charlles-dev.vercel.app](https://charlles-dev.vercel.app)
+Próximos passos previstos: refinar narrativa dos projetos, melhorar evidências de entrega, adicionar estudos de caso mais completos e evoluir a identidade visual sem perder sobriedade.
