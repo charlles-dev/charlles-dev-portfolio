@@ -45,6 +45,36 @@ describe("GitHub repository projects", () => {
       pushedAt: "2026-01-02T00:00:00Z",
       stats: { stars: 2, forks: 1, watchers: 2, openIssues: 0 },
     });
+
+    const repoWithMissingOptionalFields = {
+      id: 2,
+      name: "Defaults",
+      full_name: "charlles-dev/Defaults",
+      html_url: "https://github.com/charlles-dev/Defaults",
+      description: null,
+      homepage: null,
+      language: null,
+      archived: false,
+      fork: false,
+      private: false,
+      created_at: "2025-02-01T00:00:00Z",
+      updated_at: "2026-02-01T00:00:00Z",
+      pushed_at: null,
+      stargazers_count: 0,
+      forks_count: 0,
+      watchers_count: 0,
+      open_issues_count: 0,
+    };
+
+    expect(
+      normalizeGitHubRepository(repoWithMissingOptionalFields),
+    ).toMatchObject({
+      fullName: "charlles-dev/Defaults",
+      language: "Unknown",
+      topics: [],
+      updatedAt: "2026-02-01T00:00:00Z",
+      pushedAt: "2026-02-01T00:00:00Z",
+    });
   });
 
   it("fetches public repositories for charlles-dev with authorization when token is provided", async () => {
@@ -84,12 +114,21 @@ describe("GitHub repository projects", () => {
       text: async () => "token leaked in body",
     });
 
-    await expect(
-      fetchGitHubRepositories({
+    let thrownError: unknown;
+
+    try {
+      await fetchGitHubRepositories({
         owner: "charlles-dev",
         token: "github-token",
         fetchImpl,
-      }),
-    ).rejects.toThrow("GitHub repositories request failed with status 403");
+      });
+    } catch (error) {
+      thrownError = error;
+    }
+
+    expect(thrownError).toBeInstanceOf(Error);
+    expect((thrownError as Error).message).toBe(
+      "GitHub repositories request failed with status 403",
+    );
   });
 });
