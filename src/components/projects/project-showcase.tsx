@@ -54,6 +54,7 @@ function formatUpdatedDate(value: string) {
   return new Intl.DateTimeFormat("pt-BR", {
     day: "2-digit",
     month: "short",
+    timeZone: "UTC",
     year: "numeric",
   }).format(date);
 }
@@ -83,6 +84,7 @@ function FeaturedProjectCard({ project }: { project: PortfolioProject }) {
     <a
       className="project-shimmer group relative isolate flex min-h-[470px] flex-col justify-between overflow-hidden rounded-[1.35rem] border border-white/10 bg-[#07100d]/78 p-6 shadow-[0_30px_100px_rgba(0,0,0,0.28)] transition duration-500 hover:-translate-y-1 hover:border-accent/50 hover:bg-[#0b1713] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent sm:p-8"
       href={project.htmlUrl}
+      aria-label={project.displayName}
       target="_blank"
       rel="noreferrer"
     >
@@ -107,7 +109,7 @@ function FeaturedProjectCard({ project }: { project: PortfolioProject }) {
           <p className="font-mono text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-white/38">
             {project.featuredReason}
           </p>
-          <h3 className="mt-4 text-[3rem] font-semibold leading-[0.95] text-white sm:text-[4.6rem]">
+          <h3 className="mt-4 break-words text-[3rem] font-semibold leading-[0.95] text-white [overflow-wrap:anywhere] sm:text-[4.6rem]">
             {project.displayName}
           </h3>
           <p className="mt-7 text-[1.05rem] leading-8 text-white/58 sm:text-[1.16rem]">
@@ -151,6 +153,7 @@ function RepositoryCard({ project }: { project: PortfolioProject }) {
     <a
       className="project-shimmer group relative isolate flex min-h-[290px] flex-col justify-between overflow-hidden rounded-[1.15rem] border border-white/10 bg-white/[0.035] p-5 transition duration-300 hover:-translate-y-1 hover:border-accent/35 hover:bg-accent/8 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent sm:p-6"
       href={project.htmlUrl}
+      aria-label={project.displayName}
       target="_blank"
       rel="noreferrer"
     >
@@ -166,7 +169,7 @@ function RepositoryCard({ project }: { project: PortfolioProject }) {
         </div>
 
         <div className="mt-7 flex items-start justify-between gap-5">
-          <h3 className="text-[1.7rem] font-semibold leading-tight text-white sm:text-[2rem]">
+          <h3 className="break-words text-[1.7rem] font-semibold leading-tight text-white [overflow-wrap:anywhere] sm:text-[2rem]">
             {project.displayName}
           </h3>
           <IconGlyph
@@ -279,7 +282,11 @@ export function ProjectShowcase({ initialPayload }: { initialPayload: ProjectsPa
           </label>
         </div>
 
-        <div className="mt-5 flex w-full max-w-full gap-2 overflow-x-auto rounded-full border border-white/10 bg-[#07100d]/88 p-1.5 shadow-[0_24px_80px_rgba(0,0,0,0.28)] backdrop-blur-xl lg:w-fit">
+        <div
+          aria-label="Filtrar repositorios por categoria"
+          className="mt-5 flex w-full max-w-full gap-2 overflow-x-auto rounded-full border border-white/10 bg-[#07100d]/88 p-1.5 shadow-[0_24px_80px_rgba(0,0,0,0.28)] backdrop-blur-xl lg:w-fit"
+          role="group"
+        >
           {categoryFilters.map((filter) => {
             const selected = category === filter.value;
 

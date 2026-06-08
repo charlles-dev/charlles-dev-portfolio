@@ -1,8 +1,47 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { afterEach, beforeEach, vi } from "vitest";
 
 import Home from "@/app/page";
+import { fallbackProjectsPayload } from "@/lib/projects/fallback";
+import type { ProjectsPayload } from "@/lib/projects/types";
 
 describe("home page", () => {
+  beforeEach(() => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("fetch disabled in tests")));
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  const livePayload: ProjectsPayload = {
+    ...fallbackProjectsPayload,
+    cache: "hit",
+    featured: [
+      {
+        ...fallbackProjectsPayload.featured[0],
+        id: 404,
+        name: "live-repo",
+        displayName: "Live Repo Distinto",
+        fullName: "charlles-dev/live-repo",
+        htmlUrl: "https://github.com/charlles-dev/live-repo",
+        summary: "Projeto carregado pela API ao vivo.",
+      },
+    ],
+    projects: [
+      {
+        ...fallbackProjectsPayload.projects[0],
+        id: 404,
+        name: "live-repo",
+        displayName: "Live Repo Distinto",
+        fullName: "charlles-dev/live-repo",
+        htmlUrl: "https://github.com/charlles-dev/live-repo",
+        summary: "Projeto carregado pela API ao vivo.",
+      },
+    ],
+  };
+
   it("renders the premium hero signature and primary contact path", () => {
     render(<Home />);
 
@@ -44,9 +83,78 @@ describe("home page", () => {
       "https://github.com/charlles-dev/Astrolink"
     );
     expect(within(projects).getByPlaceholderText(/Buscar por nome/i)).toBeInTheDocument();
+    expect(
+      within(projects).getByRole("group", { name: /Filtrar repositorios por categoria/i })
+    ).toBeInTheDocument();
+    expect(
+      within(projects).getAllByRole("heading", { name: /Astrolink/i }).every((heading) =>
+        heading.classList.contains("break-words") && heading.classList.contains("[overflow-wrap:anywhere]")
+      )
+    ).toBe(true);
+    expect(within(projects).getAllByText(/Atualizado em 01 de jan. de 2026/i).length).toBeGreaterThanOrEqual(1);
     expect(within(projects).getAllByText("Problema").length).toBeGreaterThanOrEqual(1);
     expect(within(projects).getAllByText(/Decis[aã]o t[eé]cnica/i).length).toBeGreaterThanOrEqual(1);
     expect(within(projects).getAllByText(/Pr[oó]ximo passo/i).length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("replaces the fallback projects with a successful live projects response", async () => {
+    vi.mocked(fetch).mockResolvedValue({
+      ok: true,
+      json: async () => livePayload,
+    } as Response);
+
+    render(<Home />);
+
+    const projects = screen.getByRole("region", { name: /Trabalhos p.blicos/i });
+
+    const liveLinks = await within(projects).findAllByRole("link", { name: /Live Repo Distinto/i });
+
+    expect(liveLinks).toHaveLength(2);
+    expect(liveLinks.every((link) => link.getAttribute("href") === "https://github.com/charlles-dev/live-repo")).toBe(
+      true
+    );
+    await waitFor(() => {
+      expect(within(projects).queryByRole("link", { name: /Astrolink/i })).not.toBeInTheDocument();
+    });
+  });
+
+  it("preserves fallback projects when the live projects response is not ok", async () => {
+    vi.mocked(fetch).mockResolvedValue({
+      ok: false,
+      json: vi.fn(),
+    } as unknown as Response);
+
+    render(<Home />);
+
+    const projects = screen.getByRole("region", { name: /Trabalhos p.blicos/i });
+
+    await waitFor(() => expect(fetch).toHaveBeenCalledWith("/api/projects"));
+    expect(within(projects).getAllByRole("link", { name: /Astrolink/i }).length).toBeGreaterThan(0);
+  });
+
+  it("preserves fallback projects when the live projects response is empty", async () => {
+    vi.mocked(fetch).mockResolvedValue({
+      ok: true,
+      json: async () => ({ ...livePayload, featured: [], projects: [] }),
+    } as Response);
+
+    render(<Home />);
+
+    const projects = screen.getByRole("region", { name: /Trabalhos p.blicos/i });
+
+    await waitFor(() => expect(fetch).toHaveBeenCalledWith("/api/projects"));
+    expect(within(projects).getAllByRole("link", { name: /Astrolink/i }).length).toBeGreaterThan(0);
+  });
+
+  it("preserves fallback projects when the live projects request throws", async () => {
+    vi.mocked(fetch).mockRejectedValue(new Error("network unavailable"));
+
+    render(<Home />);
+
+    const projects = screen.getByRole("region", { name: /Trabalhos p.blicos/i });
+
+    await waitFor(() => expect(fetch).toHaveBeenCalledWith("/api/projects"));
+    expect(within(projects).getAllByRole("link", { name: /Astrolink/i }).length).toBeGreaterThan(0);
   });
 
   it("searches public repositories with real client-side state", () => {
