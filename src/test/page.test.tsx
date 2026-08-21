@@ -32,7 +32,7 @@ describe("reference-inspired localized home", () => {
     expect(screen.getByRole("link", { name: "Discord" })).toHaveAttribute("href", "https://discord.com/users/472347892728987658");
     expect(screen.getByRole("link", { name: "WhatsApp" })).toHaveAttribute("href", "https://wa.me/5583991141561");
     expect(screen.getByRole("link", { name: "Email" })).toHaveAttribute("href", "mailto:charllesgst@gmail.com");
-    expect(document.querySelector(".reference-video-scrub")).toHaveAttribute("poster", "/reference/charlles-hero-poster.webp");
+    expect(document.querySelector(".reference-video-scrub")).toHaveAttribute("poster", "/reference/charlles-hero-two-state-poster.webp");
     expect(document.querySelector(".reference-video-loop")).not.toBeInTheDocument();
     expect(document.querySelectorAll(".language-flag-icon")).toHaveLength(3);
     expect(document.querySelector(".reference-after-scene")).not.toBeInTheDocument();
@@ -52,7 +52,22 @@ describe("reference-inspired localized home", () => {
     fireEvent(video, new Event("loadedmetadata"));
     fireEvent.scroll(window);
 
-    expect(video.currentTime).toBeCloseTo(((0.5 - 0.08) / 0.77) * 4, 1);
+    expect(video.currentTime).toBeCloseTo(0.28 * 4 + ((0.5 - 0.28) / 0.5) * 0.5 * 4, 1);
+  });
+
+  it("switches between idle, transition and awake loop states", () => {
+    renderHome();
+    const story = document.querySelector(".reference-scroll-story") as HTMLElement;
+    Object.defineProperty(story, "offsetHeight", { configurable: true, value: 3000 });
+    const setProgress = (progress: number) => {
+      Object.defineProperty(story, "getBoundingClientRect", { configurable: true, value: () => ({ top: -progress * (3000 - window.innerHeight) }) });
+      fireEvent.scroll(window);
+      return document.querySelector(".reference-sticky-scene");
+    };
+
+    expect(setProgress(0)?.getAttribute("data-loop-state")).toBe("idle");
+    expect(setProgress(0.5)?.getAttribute("data-loop-state")).toBe("transition");
+    expect(setProgress(0.9)?.getAttribute("data-loop-state")).toBe("awake");
   });
 
   it("opens the work panel with tabs and project cards", () => {
@@ -60,12 +75,12 @@ describe("reference-inspired localized home", () => {
     fireEvent.click(screen.getByRole("button", { name: "Trabalhos" }));
 
     const dialog = screen.getByRole("dialog", { name: "Trabalhos" });
-    expect(within(dialog).getByRole("tab", { name: "Web e produto" })).toHaveAttribute("aria-selected", "true");
+    expect(within(dialog).getByRole("tab", { name: /UI\/UX & Front-end/ })).toHaveAttribute("aria-selected", "true");
     expect(within(dialog).getByRole("heading", { name: "Astrolink" })).toBeInTheDocument();
     expect(within(dialog).getByRole("heading", { name: "Laudos Proxxima" })).toBeInTheDocument();
     expect(within(dialog).getAllByRole("link", { name: /Abrir projeto/i })[0]).toHaveAttribute("href", "https://github.com/charlles-dev/Astrolink");
 
-    fireEvent.click(within(dialog).getByRole("tab", { name: "Visual e interface" }));
+    fireEvent.click(within(dialog).getByRole("tab", { name: "Visual design" }));
     expect(within(dialog).getByRole("heading", { name: /Uma mistura de detalhe visual/i })).toBeInTheDocument();
     fireEvent.click(within(dialog).getByRole("button", { name: "Fechar" }));
     expect(screen.queryByRole("dialog", { name: "Trabalhos" })).not.toBeInTheDocument();
@@ -83,7 +98,7 @@ describe("reference-inspired localized home", () => {
     const dialog = screen.getByRole("dialog", { name: "Charlles Augusto" });
     expect(within(dialog).getByText(/Gosto de conhecer pessoas/i)).toBeInTheDocument();
     expect(within(dialog).getByRole("link", { name: "Email" })).toHaveAttribute("href", "mailto:charllesgst@gmail.com");
-    fireEvent.click(within(dialog).getByRole("button", { name: "Contato" }));
+    fireEvent.click(within(dialog).getByRole("button", { name: "Fechar" }));
     expect(screen.queryByRole("dialog", { name: "Charlles Augusto" })).not.toBeInTheDocument();
   });
 

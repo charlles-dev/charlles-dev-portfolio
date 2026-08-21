@@ -27,8 +27,9 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
   const email = socialLinks.find((link) => link.kind === "email");
   const heroLines = dictionary.hero.headline.replace(". ", ".\n");
   const isScrolled = scrollProgress > 0.08;
-  const isLooping = scrollProgress >= 0.85;
-  const scrubProgress = Math.min(1, Math.max(0, (scrollProgress - 0.08) / 0.77));
+  const loopState = scrollProgress < 0.28 ? "idle" : scrollProgress >= 0.78 ? "awake" : "transition";
+  const isLooping = loopState !== "transition";
+  const transitionProgress = Math.min(1, Math.max(0, (scrollProgress - 0.28) / 0.5));
   const contrast = Math.min(1, Math.max(0, (scrollProgress - 0.28) / 0.5));
   const tone = Math.round(255 - contrast * 245);
 
@@ -70,8 +71,7 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
     let animationFrame = 0;
     let direction = 1;
     let previousTimestamp = 0;
-    const loopStartOffset = 3.6;
-    const loopEndOffset = 1.15;
+    const loopBounds = loopState === "idle" ? { start: 0.2, end: 2.1 } : { start: 6.95, end: 9.25 };
 
     const tick = (timestamp: number) => {
       if (!Number.isFinite(video.duration) || video.duration <= 0) {
@@ -79,8 +79,8 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
         return;
       }
 
-      const loopStart = Math.max(0, video.duration - loopStartOffset);
-      const loopEnd = Math.max(loopStart + 1.8, video.duration - loopEndOffset);
+      const loopStart = Math.min(loopBounds.start, Math.max(0, video.duration - 0.05));
+      const loopEnd = Math.min(loopBounds.end, Math.max(loopStart + 0.4, video.duration - 0.05));
       if (previousTimestamp === 0 || video.currentTime < loopStart || video.currentTime > loopEnd) {
         video.pause();
         video.currentTime = loopStart;
@@ -111,7 +111,7 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
       previousTimestamp = 0;
       if (!video.paused) video.pause();
     };
-  }, [isLooping]);
+  }, [isLooping, loopState]);
 
   useEffect(() => {
     const video = primaryVideo.current;
@@ -119,7 +119,7 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
 
     const syncScrub = () => {
       if (!Number.isFinite(video.duration) || video.duration <= 0) return;
-      const targetTime = Math.min(Math.max(0, video.duration - 0.05), scrubProgress * video.duration);
+      const targetTime = Math.min(Math.max(0, video.duration - 0.05), 0.28 * video.duration + transitionProgress * 0.5 * video.duration);
       if (!video.seeking && Math.abs(video.currentTime - targetTime) > 0.01) video.currentTime = targetTime;
     };
 
@@ -130,16 +130,16 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
       video.removeEventListener("loadedmetadata", syncScrub);
       video.removeEventListener("durationchange", syncScrub);
     };
-  }, [isLooping, scrubProgress]);
+  }, [isLooping, transitionProgress]);
 
   return (
     <section ref={storyRef} className="reference-scroll-story" aria-labelledby="reference-hero-title">
-      <div className={`reference-sticky-scene ${isScrolled ? "is-scrolled" : ""} ${isLooping ? "is-looping" : ""}`}>
+      <div className={`reference-sticky-scene ${isScrolled ? "is-scrolled" : ""} ${isLooping ? "is-looping" : ""} is-${loopState}-state`} data-loop-state={loopState}>
         <video
           ref={primaryVideo}
           className="reference-video reference-video-primary reference-video-scrub"
-          src="/reference/charlles-hero-biscuit.webm"
-          poster="/reference/charlles-hero-poster.webp"
+          src="/reference/charlles-hero-two-state.webm"
+          poster="/reference/charlles-hero-two-state-poster.webp"
           muted
           playsInline
           preload="auto"

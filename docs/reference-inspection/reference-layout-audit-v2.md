@@ -39,3 +39,28 @@ The corrected production route now exposes only the hero content after hydration
 ## Seamless-loop audit
 
 The supplied Davi reference clip is approximately 4.02 seconds at 48 fps (or 4.03 seconds at 30 fps) and shows a four-state progression from closed eyes to open-eyed wonder. The current Charlles clip is approximately 10 seconds and has a distinct final open-eyed reaction followed by a return to the closed-eye pose. Replaying only the final 1.4 seconds therefore creates an obvious jump. The correct approach is a ping-pong loop: play the final reaction forward, then play that reaction backward to return smoothly to its first frame, and repeat without a hard seek. This mirrors the reference's continuous-feeling final state much more closely than cutting from the endpoint back to a previous frame. A local FFmpeg simulation of the 6.4–8.85 second reaction segment played forward and then backward; the contact sheet showed a stable surprised face and a matching return frame, confirming the chosen ping-pong interval is visually suitable before browser integration. The rebuilt production route also loaded with the hero-only composition and no post-video section; a connected-browser screenshot attempt timed out during this validation.
+
+## Full Davi video reverse-engineering review
+
+The complete 30 fps reference was inspected with a dense 0.2-second contact sheet and a dedicated 0.5-second end-section sheet. It is a single continuous 4.03-second shot, not a pre-made loop. The camera stays locked in a centered medium bust shot; the perceived motion comes from the illumination and environment transformation. The character remains present from the first frame, with compact glossy dark curls, a light shirt, closed eyes and a neutral closed mouth. The first visual state is a black void with a strong warm rim light. A blue atmospheric field, white particles, clouds, crescent moon and thin orbital arcs then emerge progressively. The scene becomes a bright sky while the character stays still and centered. The eyes open only during the final transition into the bright state, and the last half-second holds an open-eyed direct gaze with a neutral mouth and no visible lateral glance or mouth animation.
+
+The final frame is not equal to the first frame: the clip intentionally resolves from darkness/closed eyes to brightness/open eyes. Therefore the reference itself does not contain a looping endpoint. Its clean appearance comes from a deliberately authored one-way transformation with stable final hold frames, not from a hard-cut loop. A prompt that claims the original video has an embedded loop would be inaccurate; the faithful reconstruction should instead reproduce this one-way 4-second transformation and, if a website loop is required, extend or regenerate a separate bright final hold designed for seamless repetition.
+
+
+## Additional literal details confirmed from saved HTML snapshots
+
+The saved Davi `Trabalhos` dialog confirms that the header is not just a title plus tabs. It contains a hidden-on-small-screen `Trabalhos` label, a rounded tablist with a sliding active-background indicator, three tab buttons with inline SVG icons, a separate `Claro`/`Escuro` segmented control on desktop, and a bordered circular close button. The content container uses `thin-scroll flex-1 overflow-x-hidden overflow-y-auto overscroll-contain` with responsive padding. Project entries are richer than the current simplified cards: each uses a grid article with a visual/media block, a long explanatory bullet list, tags, a `Ver projeto` action, a like button, and in the reference implementation screenshot/media carousel controls. The current implementation has the correct sheet geometry but still simplifies these header controls and project-entry details.
+
+The saved `Contato` HTML snapshot still serializes the same `Trabalhos` dialog because the page snapshot was captured before the contact dialog state was hydrated; the reliable contact-specific geometry comes from the interactive browser audit: a centered narrow card over a full-screen black veil, a branded gradient cover, close button in the cover, overlapping avatar, centered profile identity, compact copy, stacked direct actions and social row. The `Sobre` and `Contato` cards share the centered-card treatment but differ in title, copy and primary contact content.
+
+Source snapshots: `/home/ubuntu/upload/www.daviaxs.com.br__trabalhos_1787322423529.html` and `/home/ubuntu/upload/www.daviaxs.com.br__contato_1787326627645.html`.
+
+
+## Production preview after panel refinements
+
+The compiled preview confirms that `Trabalhos` now opens as the reference sheet with the rounded top geometry, dark veil, title, icon-bearing tabs, active tab treatment, internal `Claro`/`Escuro` segmented control, circular SVG close button, scrollable content and two-column project entry. The first project media block now includes a visible `VIEW` control and carousel-style dots. Switching to `Visual design` preserves the sheet and replaces the project list with the localized visual-focus content, matching the reference interaction model.
+
+
+## Final preview validation of profile cards
+
+The final production preview confirms that `Sobre` and `Contato` now use the centered narrow reference card over a dark veil, with the cover image, overlapping circular avatar, centered name and role, three compact stats, section-specific eyebrow, copy, stacked WhatsApp/e-mail actions and the five real SVG social links. The close button is exposed as `Fechar`, matching the reference dialog convention and the accessibility test. `Contato` keeps the direct WhatsApp CTA as the primary action and e-mail as the secondary action.
