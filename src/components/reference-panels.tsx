@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 import { IconGlyph } from "@/components/icon-glyph";
@@ -10,117 +11,217 @@ type Panel = "work" | "about" | "contact" | null;
 type WorkTab = "product" | "visual" | "motion";
 
 function PanelClose({ label, onClose }: { label: string; onClose: () => void }) {
-  return <button type="button" className="reference-panel-close" aria-label={label} onClick={onClose}>×</button>;
+  return (
+    <button type="button" className="reference-panel-close" aria-label={label} onClick={onClose}>
+      <span aria-hidden="true">×</span>
+    </button>
+  );
+}
+
+function SocialLinks() {
+  return (
+    <nav className="profile-social-links" aria-label="Social links">
+      {socialLinks.map((link) => {
+        const icon = link.kind === "github" ? "github" : link.kind === "linkedin" ? "linkedin" : link.kind === "email" ? "mail" : null;
+        return (
+          <a key={link.kind} href={link.href} target={link.kind === "email" ? undefined : "_blank"} rel={link.kind === "email" ? undefined : "noreferrer"} aria-label={link.label}>
+            {icon ? <IconGlyph name={icon} className="size-5" /> : <span aria-hidden="true" className="profile-social-letter">{link.label.slice(0, 1)}</span>}
+          </a>
+        );
+      })}
+    </nav>
+  );
 }
 
 function ContactActions({ dictionary }: { dictionary: PortfolioDictionary }) {
-  const linkedin = socialLinks.find((link) => link.kind === "linkedin");
+  const whatsapp = socialLinks.find((link) => link.kind === "whatsapp");
   const email = socialLinks.find((link) => link.kind === "email");
 
   return (
-    <div className="reference-dialog-actions">
-      {linkedin && <a className="reference-primary-button" href={linkedin.href} target="_blank" rel="noreferrer">{dictionary.contact.primaryCta}<IconGlyph name="arrow-right" className="size-4" /></a>}
-      {email && <a className="reference-secondary-button" href={email.href}>{dictionary.contact.secondaryCta}</a>}
+    <div className="profile-actions">
+      {whatsapp && (
+        <a className="profile-action profile-action-primary" href={whatsapp.href} target="_blank" rel="noreferrer">
+          <span>{dictionary.contact.primaryCta}</span>
+          <IconGlyph name="arrow-right" className="size-4" />
+        </a>
+      )}
+      {email && (
+        <a className="profile-action profile-action-secondary" href={email.href}>
+          <span>
+            <strong>{dictionary.contact.secondaryCta}</strong>
+            <small>{profile.email}</small>
+          </span>
+          <IconGlyph name="arrow-right" className="size-4" />
+        </a>
+      )}
+    </div>
+  );
+}
+
+function ProjectEntry({ dictionary, index }: { dictionary: PortfolioDictionary; index: number }) {
+  const project = projects[index];
+  const copy = dictionary.projects[project.name] ?? {
+    summary: project.description,
+    problem: project.problem,
+    decision: project.built,
+    next: project.next,
+    category: project.categoryLabel,
+    reason: project.focus,
+  };
+
+  return (
+    <li className="works-rise works-entry">
+      <article className="works-project">
+        <div className={`works-project-media works-project-media-${index + 1}`} aria-hidden="true">
+          <span>{project.categoryLabel}</span>
+          <strong>{project.scene}</strong>
+          <i />
+        </div>
+        <div className="works-project-copy">
+          <div className="works-project-kicker">
+            <span>{index === 0 ? dictionary.work.featuredLabel : copy.category}</span>
+            <span>{project.language}</span>
+          </div>
+          <h3>{project.name}</h3>
+          <p className="works-project-summary">{copy.summary}</p>
+          <ul className="works-project-bullets">
+            <li>{copy.problem}</li>
+            <li>{copy.decision}</li>
+            <li>{copy.next}</li>
+          </ul>
+          <div className="works-tech-row">
+            <span>{project.language}</span>
+            <span>{project.categoryLabel}</span>
+            <span>{project.metric}</span>
+          </div>
+          <div className="works-project-actions">
+            <a className="link-underline" href={project.href} target="_blank" rel="noreferrer">
+              {dictionary.work.openProject}
+              <IconGlyph name="arrow-right" className="size-4" />
+            </a>
+            <button type="button" aria-label={`${project.name} ${dictionary.work.featuredLabel}`} className="works-like-button">
+              <span aria-hidden="true">♡</span> 0
+            </button>
+          </div>
+        </div>
+      </article>
+    </li>
+  );
+}
+
+function WorkTabPanel({ tab, dictionary }: { tab: WorkTab; dictionary: PortfolioDictionary }) {
+  if (tab === "product") {
+    return (
+      <>
+        <ul className="works-list" role="tabpanel" aria-label={dictionary.work.tabs.product}>
+          {projects.map((_, index) => <ProjectEntry key={projects[index].name} dictionary={dictionary} index={index} />)}
+        </ul>
+        <div className="works-rise works-cta">
+          <div>
+            <p className="reference-eyebrow">{dictionary.work.eyebrow}</p>
+            <h3>{dictionary.work.description}</h3>
+          </div>
+          <a className="reference-primary-button" href={`mailto:${profile.email}`}>
+            {dictionary.contact.secondaryCta}
+            <IconGlyph name="arrow-right" className="size-4" />
+          </a>
+        </div>
+      </>
+    );
+  }
+
+  const title = tab === "visual" ? dictionary.expertise.title : dictionary.now.title;
+  const description = tab === "visual" ? dictionary.expertise.description : dictionary.now.description;
+  const items = tab === "visual" ? dictionary.expertise.items : dictionary.now.items;
+
+  return (
+    <div className="works-tab-content" role="tabpanel" aria-label={tab === "visual" ? dictionary.work.tabs.visual : dictionary.work.tabs.motion}>
+      <p className="reference-eyebrow">{tab === "visual" ? dictionary.work.tabs.visual : dictionary.work.tabs.motion}</p>
+      <h3>{title}</h3>
+      <p className="works-tab-description">{description}</p>
+      <div className="works-tab-grid">
+        {items.map((item) => (
+          <article className="works-tab-card" key={item.title}>
+            <IconGlyph name={item.icon} className="size-5" />
+            <h4>{item.title}</h4>
+            <p>{item.description}</p>
+            <span>{"tools" in item ? item.tools.join(" · ") : item.proof}</span>
+          </article>
+        ))}
+      </div>
     </div>
   );
 }
 
 function WorkPanel({ dictionary, onClose }: { dictionary: PortfolioDictionary; onClose: () => void }) {
   const [tab, setTab] = useState<WorkTab>("product");
-  const tabLabels: Record<WorkTab, string> = { product: dictionary.work.tabs.product, visual: dictionary.work.tabs.visual, motion: dictionary.work.tabs.motion };
+  const tabLabels: Record<WorkTab, string> = {
+    product: dictionary.work.tabs.product,
+    visual: dictionary.work.tabs.visual,
+    motion: dictionary.work.tabs.motion,
+  };
 
   return (
     <>
-      <div className="reference-overlay" aria-hidden="true" onClick={onClose} />
-      <section className="reference-work-panel" role="dialog" aria-modal="true" aria-labelledby="reference-work-title">
-        <header className="reference-panel-header">
-          <div className="reference-panel-heading">
-            <p className="reference-eyebrow">{dictionary.work.eyebrow}</p>
-            <h2 id="reference-work-title">{dictionary.work.panelTitle}</h2>
-          </div>
+      <div className="works-veil" aria-hidden="true" onClick={onClose} />
+      <section className="works-panel bg-card fixed inset-x-0 top-3 bottom-0 z-100 flex flex-col overflow-hidden rounded-t-3xl outline-none sm:inset-x-6 sm:top-6" data-state="open" role="dialog" aria-modal="true" aria-labelledby="reference-work-title" tabIndex={-1}>
+        <header className="works-rise border-border/70 flex shrink-0 items-center gap-2 border-b px-4 py-3 sm:gap-4 sm:px-8 sm:py-4">
+          <h2 id="reference-work-title">{dictionary.work.panelTitle}</h2>
           <div className="reference-work-tabs" role="tablist" aria-label={dictionary.work.panelTitle}>
             {(Object.keys(tabLabels) as WorkTab[]).map((value) => (
-              <button type="button" role="tab" aria-selected={tab === value} className={tab === value ? "is-active" : ""} key={value} onClick={() => setTab(value)}>{tabLabels[value]}</button>
+              <button type="button" role="tab" aria-selected={tab === value} className={tab === value ? "is-active" : ""} key={value} onClick={() => setTab(value)}>
+                {tabLabels[value]}
+              </button>
             ))}
           </div>
           <div className="reference-panel-spacer" />
           <PanelClose label={dictionary.work.panelClose} onClose={onClose} />
         </header>
-        <div className="reference-panel-scroll">
-          {tab === "product" && (
-            <div className="reference-work-grid" role="tabpanel">
-              {projects.map((project, index) => (
-                <a className={`reference-work-card work-card-${index + 1}`} href={project.href} target="_blank" rel="noreferrer" key={project.name}>
-                  <div className="reference-project-visual" aria-hidden="true"><span>{project.language}</span><strong>{String(index + 1).padStart(2, "0")}</strong></div>
-                  <div className="reference-work-card-copy"><span>{project.categoryLabel} · {project.language}</span><h3>{project.name}</h3><p>{project.description}</p><span className="reference-card-link">{dictionary.work.openProject} <IconGlyph name="arrow-right" className="size-4" /></span></div>
-                </a>
-              ))}
-            </div>
-          )}
-          {tab === "visual" && (
-            <div className="reference-tab-intro" role="tabpanel">
-              <p className="reference-eyebrow">{dictionary.work.tabs.visual}</p>
-              <h3>{dictionary.about.title}</h3>
-              <p>{dictionary.about.body}</p>
-              <div className="reference-visual-board"><span>Interface</span><span>Hierarchy</span><span>Motion</span><span>Clarity</span></div>
-            </div>
-          )}
-          {tab === "motion" && (
-            <div className="reference-tab-intro" role="tabpanel">
-              <p className="reference-eyebrow">{dictionary.work.tabs.motion}</p>
-              <h3>{dictionary.now.title}</h3>
-              <p>{dictionary.now.description}</p>
-              <div className="reference-motion-board" aria-hidden="true"><span /><span /><span /><span /><span /></div>
-            </div>
-          )}
+        <div className="works-scroll-area">
+          <WorkTabPanel tab={tab} dictionary={dictionary} />
         </div>
       </section>
     </>
   );
 }
 
-function InfoDialog({ panel, dictionary, onClose }: { panel: "about" | "contact"; dictionary: PortfolioDictionary; onClose: () => void }) {
-  const linkedin = socialLinks.find((link) => link.kind === "linkedin");
-  const email = socialLinks.find((link) => link.kind === "email");
+function ProfileDialog({ panel, dictionary, onClose }: { panel: "about" | "contact"; dictionary: PortfolioDictionary; onClose: () => void }) {
   const about = panel === "about";
   const title = about ? dictionary.about.title : dictionary.contact.title;
+  const dialogLabel = about ? dictionary.nav.about : dictionary.nav.contact;
 
   return (
     <>
-      <div className="reference-overlay reference-overlay-soft" aria-hidden="true" onClick={onClose} />
-      <section className="reference-info-dialog" role="dialog" aria-modal="true" aria-labelledby="reference-info-title">
-        <header className="reference-dialog-header">
-          <div className="reference-dialog-identity">
-            <div className="reference-dialog-avatar"><span>{profile.name.split(" ").map((part) => part[0]).join("")}</span></div>
-            <div>
-              <p className="reference-eyebrow">{about ? dictionary.about.eyebrow : dictionary.contact.eyebrow}</p>
-              <strong className="reference-dialog-name">{profile.name}</strong>
-            </div>
+      <div className="works-veil profile-veil" aria-hidden="true" onClick={onClose} />
+      <section className="profile-dialog" data-state="open" role="dialog" aria-modal="true" aria-labelledby="profile-dialog-title" tabIndex={-1}>
+        <div className="profile-dialog-cover">
+          <Image src="/reference/charlles-toy-canonical.png" alt="" fill sizes="(max-width: 640px) 100vw, 420px" priority />
+          <div className="profile-dialog-cover-tint" />
+          <PanelClose label={dialogLabel} onClose={onClose} />
+        </div>
+        <div className="profile-dialog-body">
+          <div className="profile-avatar">
+            <Image src="/reference/charlles-toy-canonical.png" alt="" fill sizes="96px" />
           </div>
-          <PanelClose label={about ? dictionary.nav.about : dictionary.nav.contact} onClose={onClose} />
-        </header>
-        <div className="reference-dialog-topline"><span>{dictionary.hero.role}</span><span className="reference-status-pill"><span className="status-dot" aria-hidden="true" />{dictionary.hero.status}</span></div>
-        <h2 id="reference-info-title">{title}</h2>
-        {about ? (
-          <>
-            <div className="reference-facts"><div><strong>+3</strong><span>{dictionary.work.featuredLabel}</span></div><div><strong>PB</strong><span>{dictionary.hero.facts[0].label}</span></div><div><strong>∞</strong><span>{dictionary.expertise.eyebrow}</span></div></div>
-            <p>{dictionary.about.body}</p>
-            <p>{dictionary.expertise.description}</p>
-            <ContactActions dictionary={dictionary} />
-          </>
-        ) : (
-          <>
-            <div className="reference-facts"><div><strong>3</strong><span>{dictionary.work.featuredLabel}</span></div><div><strong>24h</strong><span>{dictionary.hero.facts[1].label}</span></div><div><strong>BR</strong><span>{dictionary.hero.facts[0].value}</span></div></div>
+          <h2 id="profile-dialog-title">{profile.name}</h2>
+          <p className="profile-dialog-role">{profile.role}</p>
+          <div className="profile-stats">
+            <div><strong>{projects.length}+</strong><span>{dictionary.work.featuredLabel}</span></div>
+            <div><strong>PB</strong><span>{profile.location}</span></div>
+            <div><strong>∞</strong><span>{dictionary.hero.facts[1]?.label ?? dictionary.hero.role}</span></div>
+          </div>
+          <h3>{title}</h3>
+          {about ? (
+            <>
+              <p>{dictionary.about.body}</p>
+              <p>{dictionary.expertise.description}</p>
+            </>
+          ) : (
             <p>{dictionary.contact.description}</p>
-            <ContactActions dictionary={dictionary} />
-            <div className="reference-dialog-links">
-              {linkedin && <a href={linkedin.href} target="_blank" rel="noreferrer">LinkedIn</a>}
-              {email && <a href={email.href}>{profile.email}</a>}
-              {socialLinks.find((link) => link.kind === "discord") && <a href={socialLinks.find((link) => link.kind === "discord")?.href} target="_blank" rel="noreferrer">Discord</a>}
-              {socialLinks.find((link) => link.kind === "whatsapp") && <a href={socialLinks.find((link) => link.kind === "whatsapp")?.href} target="_blank" rel="noreferrer">WhatsApp</a>}
-            </div>
-          </>
-        )}
+          )}
+          <ContactActions dictionary={dictionary} />
+          <SocialLinks />
+        </div>
       </section>
     </>
   );
@@ -142,6 +243,6 @@ export function ReferencePanels({ panel, dictionary, onClose }: { panel: Panel; 
   }, [onClose, panel]);
 
   if (panel === "work") return <WorkPanel dictionary={dictionary} onClose={onClose} />;
-  if (panel === "about" || panel === "contact") return <InfoDialog panel={panel} dictionary={dictionary} onClose={onClose} />;
+  if (panel === "about" || panel === "contact") return <ProfileDialog panel={panel} dictionary={dictionary} onClose={onClose} />;
   return null;
 }

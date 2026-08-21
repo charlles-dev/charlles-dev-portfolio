@@ -17,9 +17,9 @@ import {
 describe("portfolio content", () => {
   it("keeps the landing focused on Charlles' professional positioning", () => {
     expect(profile.name).toBe("Charlles Augusto");
-    expect(profile.headline).toContain("Produtos web");
-    expect(profile.role).toBe("Desenvolvedor web e automações");
-    expect(profile.coverLine).toContain("interfaces, automações e integrações");
+    expect(profile.headline).toContain("Interfaces, sistemas");
+    expect(profile.role).toBe("Desenvolvedor de software");
+    expect(profile.coverLine).toContain("interfaces, sistemas e automações");
     expect(profile.coverLine).not.toMatch(/ciberseguran.a e IA/i);
     expect(profile.tagline).not.toMatch(/cyber e IA/i);
     expect(profile.tagline).not.toMatch(/Campina Grande/i);
@@ -28,8 +28,8 @@ describe("portfolio content", () => {
   });
 
   it("defines the premium-controlled now signals contract", () => {
-    expect(profile.headline).toBe("Produtos web, automação e segurança aplicada.");
-    expect(profile.coverLine).toContain("interfaces, automações e integrações");
+    expect(profile.headline).toBe("Interfaces, sistemas e automação.");
+    expect(profile.coverLine).toContain("interfaces, sistemas e automações");
     expect(profile.coverLine).not.toMatch(/ciberseguran.a e IA|produto de IA|AI product/i);
     expect(nowSignals).toHaveLength(3);
     expect(nowSignals.map((item) => item.label)).toEqual([

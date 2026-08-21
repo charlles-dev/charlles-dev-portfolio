@@ -65,7 +65,7 @@ describe("reference-inspired localized home", () => {
     expect(within(dialog).getAllByRole("link", { name: /Abrir projeto/i })[0]).toHaveAttribute("href", "https://github.com/charlles-dev/Astrolink");
 
     fireEvent.click(within(dialog).getByRole("tab", { name: "Visual e interface" }));
-    expect(within(dialog).getByRole("heading", { name: /Eu gosto de transformar complexidade/i })).toBeInTheDocument();
+    expect(within(dialog).getByRole("heading", { name: /Uma mistura de detalhe visual/i })).toBeInTheDocument();
     fireEvent.click(within(dialog).getByRole("button", { name: "Fechar" }));
     expect(screen.queryByRole("dialog", { name: "Trabalhos" })).not.toBeInTheDocument();
   });
@@ -74,16 +74,16 @@ describe("reference-inspired localized home", () => {
     renderHome();
 
     fireEvent.click(screen.getByRole("button", { name: "Sobre" }));
-    expect(screen.getByRole("dialog", { name: /Eu gosto de transformar complexidade/i })).toBeInTheDocument();
+    expect(screen.getByRole("dialog", { name: "Charlles Augusto" })).toBeInTheDocument();
     fireEvent.keyDown(document, { key: "Escape" });
-    expect(screen.queryByRole("dialog", { name: /Eu gosto de transformar complexidade/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("dialog", { name: "Charlles Augusto" })).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Contato" }));
-    const dialog = screen.getByRole("dialog", { name: /Se existe algo interessante/i });
-    expect(within(dialog).getByText(/Falar pelo LinkedIn/i)).toBeInTheDocument();
-    expect(within(dialog).getByRole("link", { name: /charllesgst@gmail.com/i })).toHaveAttribute("href", "mailto:charllesgst@gmail.com");
+    const dialog = screen.getByRole("dialog", { name: "Charlles Augusto" });
+    expect(within(dialog).getByText(/Gosto de conhecer pessoas/i)).toBeInTheDocument();
+    expect(within(dialog).getByRole("link", { name: "Email" })).toHaveAttribute("href", "mailto:charllesgst@gmail.com");
     fireEvent.click(within(dialog).getByRole("button", { name: "Contato" }));
-    expect(screen.queryByRole("dialog", { name: /Se existe algo interessante/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("dialog", { name: "Charlles Augusto" })).not.toBeInTheDocument();
   });
 
   it("renders localized English copy and keeps the same interaction model", () => {
