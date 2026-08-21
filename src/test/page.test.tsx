@@ -70,6 +70,22 @@ describe("reference-inspired localized home", () => {
     expect(setProgress(0.9)?.getAttribute("data-loop-state")).toBe("awake");
   });
 
+  it("pauses and resumes the hero loop when tab visibility changes", () => {
+    renderHome();
+    const video = document.querySelector(".reference-video-scrub") as HTMLVideoElement;
+    Object.defineProperty(video, "duration", { configurable: true, value: 4 });
+    const pauseSpy = vi.spyOn(video, "pause").mockImplementation(() => undefined);
+    const originalVisibility = document.visibilityState;
+
+    Object.defineProperty(document, "visibilityState", { configurable: true, value: "hidden" });
+    fireEvent(document, new Event("visibilitychange"));
+    Object.defineProperty(document, "visibilityState", { configurable: true, value: "visible" });
+    fireEvent(document, new Event("visibilitychange"));
+
+    expect(pauseSpy).toHaveBeenCalled();
+    Object.defineProperty(document, "visibilityState", { configurable: true, value: originalVisibility });
+  });
+
   it("opens the work panel with tabs and project cards", () => {
     renderHome();
     fireEvent.click(screen.getByRole("button", { name: "Trabalhos" }));

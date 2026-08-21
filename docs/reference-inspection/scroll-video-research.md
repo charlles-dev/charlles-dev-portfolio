@@ -22,3 +22,8 @@ The source video is 9.35 seconds after removing the incompatible final eye-closi
 The integrated WebM is VP9, 1280×720, 24 fps, and approximately 9.35 seconds after the incompatible eye-closing tail was removed. A 5 fps contact sheet shows the first third as the closed-eye idle state, the middle as a continuous dark-to-celestial awakening, and the final third as the open-eye state with side/diagonal glances. The new controller uses the full normalized source timeline: the idle endpoint window is 0–29% of source time, the central scroll mapping is 29–73%, and the awake endpoint window is 73–99%.
 
 The scroll range is mapped as follows: 0–16% scroll uses the idle ping-pong loop; 16–84% scrubs monotonically across the source from 29% to 73%, including the entire awakening sequence; 84–100% uses the awake ping-pong loop. Seeks in the central range are coalesced into one `requestAnimationFrame`, so rapid scroll events cannot issue competing `currentTime` writes. The endpoint controller carries the current time into the relevant window when changing state instead of resetting to a fixed frame.
+
+
+## Visibility correction
+
+The observed Alt+Tab behavior was caused by a loop driver continuing to schedule work while the browser throttled or paused visual delivery for a background tab. The controller now listens to `visibilitychange`, clears the endpoint timer when the document is hidden, cancels pending central seeks, and starts a fresh timer/seek from the current scroll position when the document becomes visible again. This prevents elapsed background time from being applied to the visible frame after returning to the tab.

@@ -83,19 +83,21 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
     const video = primaryVideo.current;
     if (!video || !isLooping) return;
 
-    let animationFrame = 0;
+    let loopTimer: number | null = null;
     let direction = 1;
     let previousTimestamp = 0;
     const bounds = loopState === "idle"
       ? { start: HERO_TIMELINE.idleTimeStart, end: HERO_TIMELINE.idleTimeEnd }
       : { start: HERO_TIMELINE.awakeTimeStart, end: HERO_TIMELINE.awakeTimeEnd };
 
-    const tick = (timestamp: number) => {
-      if (!Number.isFinite(video.duration) || video.duration <= 0) {
-        animationFrame = window.requestAnimationFrame(tick);
-        return;
-      }
+    const clearLoopTimer = () => {
+      if (loopTimer !== null) window.clearInterval(loopTimer);
+      loopTimer = null;
+    };
 
+    const tick = () => {
+      if (document.visibilityState !== "visible" || !Number.isFinite(video.duration) || video.duration <= 0) return;
+      const timestamp = performance.now();
       const loopStart = bounds.start * video.duration;
       const loopEnd = Math.min(bounds.end * video.duration, video.duration - 0.04);
       if (previousTimestamp === 0) {
@@ -116,7 +118,6 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
           direction = -1;
         }
         previousTimestamp = timestamp;
-        animationFrame = window.requestAnimationFrame(tick);
         return;
       }
 
@@ -132,13 +133,32 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
       } else {
         video.currentTime = nextTime;
       }
-      animationFrame = window.requestAnimationFrame(tick);
     };
 
-    animationFrame = window.requestAnimationFrame(tick);
-    return () => {
-      window.cancelAnimationFrame(animationFrame);
+    const startLoopTimer = () => {
+      clearLoopTimer();
+      if (document.visibilityState !== "visible") return;
       previousTimestamp = 0;
+      tick();
+      loopTimer = window.setInterval(tick, 16);
+    };
+
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") startLoopTimer();
+      else {
+        clearLoopTimer();
+        previousTimestamp = 0;
+      }
+    };
+
+    video.addEventListener("loadedmetadata", startLoopTimer);
+    document.addEventListener("visibilitychange", handleVisibility);
+    startLoopTimer();
+    return () => {
+      clearLoopTimer();
+      previousTimestamp = 0;
+      video.removeEventListener("loadedmetadata", startLoopTimer);
+      document.removeEventListener("visibilitychange", handleVisibility);
       if (!video.paused) video.pause();
     };
   }, [isLooping, loopState]);
@@ -160,17 +180,30 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
     };
 
     const syncScrub = () => {
-      if (!Number.isFinite(video.duration) || video.duration <= 0) return;
-      const middleTime = HERO_TIMELINE.idleTimeEnd + transitionProgress * (HERO_TIMELINE.awakeTimeStart - HERO_TIMELINE.idleTimeEnd);
+      if (document.visibilityState !== "visible" || !Number.isFinite(video.duration) || video.duration <= 0) return;
+      const currentProgress = scrollProgressRef.current;
+      const currentTransition = Math.min(1, Math.max(0, (currentProgress - HERO_TIMELINE.idleScrollEnd) / (HERO_TIMELINE.awakeScrollStart - HERO_TIMELINE.idleScrollEnd)));
+      const middleTime = HERO_TIMELINE.idleTimeEnd + currentTransition * (HERO_TIMELINE.awakeTimeStart - HERO_TIMELINE.idleTimeEnd);
       queueSeek(Math.min(video.duration - 0.04, Math.max(0, middleTime * video.duration)));
+    };
+
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") syncScrub();
+      else if (seekFrameRef.current !== null) {
+        window.cancelAnimationFrame(seekFrameRef.current);
+        seekFrameRef.current = null;
+        pendingSeekRef.current = null;
+      }
     };
 
     syncScrub();
     video.addEventListener("loadedmetadata", syncScrub);
     video.addEventListener("durationchange", syncScrub);
+    document.addEventListener("visibilitychange", handleVisibility);
     return () => {
       video.removeEventListener("loadedmetadata", syncScrub);
       video.removeEventListener("durationchange", syncScrub);
+      document.removeEventListener("visibilitychange", handleVisibility);
       if (seekFrameRef.current !== null) window.cancelAnimationFrame(seekFrameRef.current);
       seekFrameRef.current = null;
       pendingSeekRef.current = null;
