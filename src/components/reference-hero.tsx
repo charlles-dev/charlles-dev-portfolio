@@ -197,10 +197,6 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
         <div className="reference-scrim" aria-hidden="true" style={{ opacity: Math.max(0.12, 0.76 - scrollProgress * 0.66) }} />
         <div className="reference-top-scrim" aria-hidden="true" />
 
-        <div className="reference-stage-header">
-          <p className="reference-availability"><span className="status-dot" aria-hidden="true" />{dictionary.hero.status}</p>
-        </div>
-
         <div className="reference-hero-content">
           <div className="reference-hero-copy">
             <p className="reference-eyebrow">{dictionary.hero.eyebrow}</p>

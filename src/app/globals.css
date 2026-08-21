@@ -255,3 +255,69 @@ html:not([data-ready]) { overflow: hidden; } html[data-ready] .intro { pointer-e
 .profile-dialog-contact .profile-dialog-eyebrow { color: #f1c86a !important; }
 @media (max-width: 860px) { .reference-theme-switch { display: none; } }
 @media (max-width: 560px) { .works-panel .reference-tab-indicator { display: none; }.works-panel .reference-work-tabs button { gap: .25rem; padding-inline: .6rem; }.reference-theme-switch { display: none; } }
+
+/* Compact contact card inspired by the supplied reference */
+.contact-dialog { width: min(30rem, calc(100vw - 1.5rem)); max-height: min(39rem, calc(100dvh - 1.5rem)); overflow: hidden; border: 1px solid rgba(255,255,255,.08); border-radius: 1.35rem; background: #171719; box-shadow: 0 30px 100px rgba(0,0,0,.62); }
+.contact-dialog-body { position: relative; padding: 2.2rem 2rem 1.55rem; }
+.contact-dialog > .contact-dialog-body > .reference-panel-close { position: absolute; top: 1rem; right: 1rem; z-index: 5; width: 2.75rem; height: 2.75rem; border: 3px solid #5f6068; background: transparent; color: #9899a1; font-size: 1.6rem; }
+.contact-dialog > .contact-dialog-body > .reference-panel-close:hover { border-color: #8d8e98; background: rgba(255,255,255,.06); color: #f4f4f4; transform: none; }
+.contact-dialog-socials { display: flex; justify-content: center; align-items: center; height: 6.4rem; margin: 0 auto 1.45rem; }
+.contact-dialog-avatar, .contact-dialog-social { position: relative; display: grid; width: 6.2rem; height: 6.2rem; flex: 0 0 6.2rem; place-items: center; overflow: hidden; border: 2px solid #171719; border-radius: 50%; box-shadow: 0 6px 18px rgba(0,0,0,.2); }
+.contact-dialog-avatar { z-index: 1; background: #a6c7ea; }
+.contact-dialog-avatar img { object-fit: cover; object-position: 50% 38%; transform: scale(1.08); }
+.contact-dialog-social { z-index: 2; margin-left: -.85rem; color: #fff; transition: transform .2s ease, filter .2s ease; }
+.contact-dialog-social:hover { z-index: 3; filter: brightness(1.08); transform: translateY(-2px); }
+.contact-dialog-social-whatsapp { background: #1bd760; }
+.contact-dialog-social-discord { z-index: 3; background: #6366e8; }
+.contact-dialog-social svg { width: 2.65rem; height: 2.65rem; fill: currentColor; }
+.contact-dialog-tags { display: flex; justify-content: center; align-items: center; gap: .65rem; margin: 0 auto 1.35rem; }
+.contact-dialog-tag, .contact-dialog-status { display: inline-flex; align-items: center; min-height: 2rem; padding: .32rem .82rem; border-radius: 999px; font-size: .68rem; line-height: 1.2; white-space: nowrap; }
+.contact-dialog-tag { background: rgba(255,255,255,.08); color: rgba(255,255,255,.66); }
+.contact-dialog-status { gap: .42rem; background: rgba(0,164,112,.17); color: #17ce91; }
+.contact-dialog-status i { display: block; width: .42rem; height: .42rem; border-radius: 50%; background: currentColor; box-shadow: 0 0 0 .18rem rgba(23,206,145,.1); }
+.contact-dialog h2 { max-width: 25rem; margin: 0 auto 1.65rem; color: #f8f8fa; font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 700; letter-spacing: -.055em; line-height: 1.12; text-align: center; }
+.contact-dialog-stats { display: grid; grid-template-columns: repeat(3, 1fr); margin-bottom: 2rem; border-radius: 1.05rem; background: rgba(255,255,255,.055); }
+.contact-dialog-stats div { display: grid; justify-items: center; gap: .26rem; padding: 1.25rem .5rem 1.1rem; }
+.contact-dialog-stats strong { color: #fafafd; font-size: 1.05rem; letter-spacing: -.04em; }
+.contact-dialog-stats span { color: rgba(255,255,255,.53); font-size: .72rem; }
+.contact-dialog-actions { display: grid; gap: .8rem; }
+.contact-dialog-action { position: relative; display: flex; min-height: 3.45rem; align-items: center; gap: .75rem; padding: .7rem 1rem; border-radius: 999px; transition: transform .2s ease, background-color .2s ease, border-color .2s ease; }
+.contact-dialog-action:hover { transform: translateY(-1px); }
+.contact-dialog-action-primary { justify-content: flex-end; padding-right: 1.4rem; background: #f0f0f2; color: #171719; }
+.contact-dialog-action-primary:hover { background: #fff; }
+.contact-dialog-action-label { margin-right: auto; margin-left: 6.9rem; font-size: .96rem; font-weight: 600; white-space: nowrap; }
+.contact-dialog-action > svg { width: 1rem; height: 1rem; flex: 0 0 auto; }
+.contact-dialog-mascot { position: absolute; bottom: -.08rem; left: 1.3rem; width: 8.2rem; height: 7.2rem; pointer-events: none; }
+.contact-dialog-mascot img { object-fit: contain; object-position: center bottom; }
+.contact-dialog-action-secondary { border: 1px solid rgba(255,255,255,.16); border-radius: 1.1rem; background: rgba(255,255,255,.015); color: #f4f4f6; }
+.contact-dialog-action-secondary:hover { border-color: rgba(255,255,255,.3); background: rgba(255,255,255,.055); }
+.contact-dialog-call-icon { display: grid; width: 2.55rem; height: 2.55rem; flex: 0 0 2.55rem; place-items: center; border-radius: .62rem; background: #ffd629; color: #171719; }
+.contact-dialog-call-icon svg { width: 1.45rem; height: 1.45rem; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.65; }
+.contact-dialog-action-copy { display: grid; flex: 1; gap: .15rem; }
+.contact-dialog-action-copy strong { font-size: .9rem; }
+.contact-dialog-action-copy small { color: rgba(255,255,255,.52); font-size: .72rem; }
+@media (max-width: 560px) { .contact-dialog { width: min(30rem, calc(100vw - 1rem)); }.contact-dialog-body { padding: 1.65rem 1rem 1rem; }.contact-dialog-socials { margin-bottom: 1.05rem; transform: scale(.9); }.contact-dialog-tags { gap: .35rem; }.contact-dialog-tag, .contact-dialog-status { padding-inline: .6rem; font-size: .6rem; }.contact-dialog h2 { margin-bottom: 1.2rem; font-size: 1.42rem; }.contact-dialog-stats { margin-bottom: 1.4rem; }.contact-dialog-stats div { padding-block: .95rem; }.contact-dialog-action-label { margin-left: 5.8rem; font-size: .82rem; }.contact-dialog-mascot { left: .8rem; width: 7rem; height: 6.4rem; } }
+
+/* Reference ContactActions sprite swap: two complete transparent assets per CTA */
+.contact-action-group { position: relative; isolation: isolate; }
+.contact-sprite { position: absolute; bottom: calc(100% - .125rem); z-index: -10; display: block; width: 10rem; height: 9.82rem; padding: 0; pointer-events: none; object-fit: contain; object-position: center bottom; user-select: none; transform: translateY(.5rem) scale(0); transform-origin: bottom center; transition: transform .5s var(--ease-smooth, cubic-bezier(.16,1,.3,1)); }
+.contact-sprite-base { opacity: 1; }
+.contact-sprite-hover { z-index: 10; opacity: 0; transition: transform .5s var(--ease-smooth, cubic-bezier(.16,1,.3,1)), opacity .12s ease-out; }
+.contact-action-group-whatsapp .contact-sprite { right: 1.5rem; }
+.contact-action-group-call .contact-sprite { left: 1.5rem; }
+.contact-action-group:hover .contact-sprite-base, .contact-action-group:focus-within .contact-sprite-base { transform: translateY(0) scale(1); }
+.contact-action-group:hover .contact-sprite-hover, .contact-action-group:focus-within .contact-sprite-hover { transform: translateY(0) scale(1); opacity: 1; }
+.contact-dialog-action-primary { justify-content: center; padding-right: 1rem; }
+.contact-dialog-action-primary .contact-dialog-action-label { margin: 0; }
+.contact-dialog-action-primary > svg { position: absolute; right: 1.2rem; }
+.contact-dialog-call-icon { background: #ffd629; color: #fff; }
+@media (max-width: 560px) { .contact-sprite { width: 8.6rem; height: 8.42rem; }.contact-action-group-whatsapp .contact-sprite { right: .65rem; }.contact-action-group-call .contact-sprite { left: .65rem; } }
+
+.profile-social-links { display: flex; justify-content: center; gap: .7rem; margin-top: 1.35rem; padding-top: 1rem; border-top-color: rgba(255,255,255,.12); }
+.profile-social-links a { width: 2rem; height: 2rem; border: 1px solid rgba(141,232,190,.2); border-radius: 50%; background: rgba(141,232,190,.08); color: #9be8bf; transition: color .2s ease, background-color .2s ease, border-color .2s ease, transform .2s ease; }
+.profile-social-links a:hover { border-color: rgba(141,232,190,.6); background: rgba(141,232,190,.18); color: #fff; transform: translateY(-2px); }
+.profile-social-links svg { width: 1rem; height: 1rem; fill: currentColor; }
+
+.contact-dialog > .contact-dialog-body > .reference-panel-close svg, .profile-dialog-about .profile-dialog-cover .reference-panel-close svg { display: block; width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
+.contact-dialog > .contact-dialog-body > .reference-panel-close { color: #c8c8cf; }
+.profile-dialog-about .profile-dialog-cover .reference-panel-close { color: rgba(16,16,17,.78); }

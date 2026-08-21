@@ -148,6 +148,8 @@ export const socialLinks: SocialLink[] = [
   }
 ];
 
+export const bookingUrl = "https://call.com/charles-dev";
+
 export const projects: Project[] = [
   {
     name: "Astrolink",

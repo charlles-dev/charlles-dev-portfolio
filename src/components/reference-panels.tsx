@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { IconGlyph } from "@/components/icon-glyph";
 import type { PortfolioDictionary } from "@/lib/i18n";
 import type { IconName } from "@/components/icon-glyph";
-import { profile, projects, socialLinks } from "@/lib/portfolio";
+import { bookingUrl, profile, projects, socialLinks } from "@/lib/portfolio";
 
 type Panel = "work" | "about" | "contact" | null;
 type WorkTab = "product" | "visual" | "motion";
@@ -33,41 +33,26 @@ function ThemeGlyph({ mode }: { mode: "light" | "dark" }) {
   return mode === "light" ? <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" /></svg> : <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z" /></svg>;
 }
 
-function SocialLinks() {
+function ContactSpriteSwap({ base, hover, className }: { base: string; hover: string; className?: string }) {
+  const spriteClass = `contact-sprite ${className ?? ""}`;
+  return (
+    <>
+      <Image src={base} alt="" width={320} height={314} className={`${spriteClass} contact-sprite-base`} unoptimized draggable={false} />
+      <Image src={hover} alt="" width={320} height={314} className={`${spriteClass} contact-sprite-hover`} unoptimized draggable={false} />
+    </>
+  );
+}
+
+function AboutSocialLinks() {
   return (
     <nav className="profile-social-links" aria-label="Social links">
-      {socialLinks.map((link) => (
+      {socialLinks.filter((link) => link.kind !== "whatsapp").map((link) => (
         <a key={link.kind} href={link.href} target={link.kind === "email" ? undefined : "_blank"} rel={link.kind === "email" ? undefined : "noreferrer"} aria-label={link.label}>
           <PanelSocialGlyph kind={link.kind} />
           <span className="sr-only">{link.label}</span>
         </a>
       ))}
     </nav>
-  );
-}
-
-function ContactActions({ dictionary }: { dictionary: PortfolioDictionary }) {
-  const whatsapp = socialLinks.find((link) => link.kind === "whatsapp");
-  const email = socialLinks.find((link) => link.kind === "email");
-
-  return (
-    <div className="profile-actions">
-      {whatsapp && (
-        <a className="profile-action profile-action-primary" href={whatsapp.href} target="_blank" rel="noreferrer">
-          <span>{dictionary.contact.primaryCta}</span>
-          <IconGlyph name="arrow-right" className="size-4" />
-        </a>
-      )}
-      {email && (
-        <a className="profile-action profile-action-secondary" href={email.href}>
-          <span>
-            <strong>{dictionary.contact.secondaryCta}</strong>
-            <small>{profile.email}</small>
-          </span>
-          <IconGlyph name="arrow-right" className="size-4" />
-        </a>
-      )}
-    </div>
   );
 }
 
@@ -208,24 +193,67 @@ function WorkPanel({ dictionary, onClose }: { dictionary: PortfolioDictionary; o
   );
 }
 
-function ProfileDialog({ panel, dictionary, onClose }: { panel: "about" | "contact"; dictionary: PortfolioDictionary; onClose: () => void }) {
-  const about = panel === "about";
-  const title = about ? dictionary.about.title : dictionary.contact.title;
+function MeetGlyph() {
+  return <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4.5 6.5h9.7A2.8 2.8 0 0 1 17 9.3v5.4a2.8 2.8 0 0 1-2.8 2.8H4.5a2.5 2.5 0 0 1-2.5-2.5V9a2.5 2.5 0 0 1 2.5-2.5Z" fill="currentColor" /><path d="m17 10.1 4.2-2.4a.55.55 0 0 1 .8.48v7.7a.55.55 0 0 1-.8.48L17 13.9v-3.8Z" fill="currentColor" /></svg>;
+}
+
+function ContactDialog({ dictionary, onClose }: { dictionary: PortfolioDictionary; onClose: () => void }) {
+  const whatsapp = socialLinks.find((link) => link.kind === "whatsapp");
+  const discord = socialLinks.find((link) => link.kind === "discord");
   const dialogCloseLabel = dictionary.work.panelClose;
+  const stats = [
+    { value: dictionary.contact.stats.projects, label: dictionary.contact.stats.projectsLabel },
+    { value: dictionary.contact.stats.experience, label: dictionary.contact.stats.experienceLabel },
+    { value: dictionary.contact.stats.response, label: dictionary.contact.stats.responseLabel },
+  ];
 
   return (
     <>
       <div className="works-veil profile-veil" aria-hidden="true" onClick={onClose} />
-      <section className={`profile-dialog profile-dialog-${panel}`} data-panel={panel} data-state="open" role="dialog" aria-modal="true" aria-labelledby="profile-dialog-title" tabIndex={-1}>
+      <section className="profile-dialog profile-dialog-contact contact-dialog" data-panel="contact" data-state="open" role="dialog" aria-modal="true" aria-labelledby="contact-dialog-title" tabIndex={-1}>
+        <div className="contact-dialog-body">
+          <PanelClose label={dialogCloseLabel} onClose={onClose} />
+          <div className="contact-dialog-socials" aria-label={dictionary.contact.direct}>
+            <div className="contact-dialog-avatar"><Image src="/reference/charlles-contact-avatar.webp" alt="" fill sizes="86px" priority unoptimized /></div>
+            {whatsapp && <a className="contact-dialog-social contact-dialog-social-whatsapp" href={whatsapp.href} target="_blank" rel="noreferrer" aria-label={whatsapp.label}><PanelSocialGlyph kind="whatsapp" /></a>}
+            {discord && <a className="contact-dialog-social contact-dialog-social-discord" href={discord.href} target="_blank" rel="noreferrer" aria-label={discord.label}><PanelSocialGlyph kind="discord" /></a>}
+          </div>
+          <div className="contact-dialog-tags">
+            <span className="contact-dialog-tag">{dictionary.contact.specialty}</span>
+            <span className="contact-dialog-status"><i aria-hidden="true" />{dictionary.contact.availability}</span>
+          </div>
+          <h2 id="contact-dialog-title">{dictionary.contact.cardTitle}</h2>
+          <div className="contact-dialog-stats" aria-label={dictionary.contact.direct}>
+            {stats.map((stat) => <div key={stat.label}><strong>{stat.value}</strong><span>{stat.label}</span></div>)}
+          </div>
+          <div className="contact-dialog-actions">
+            {whatsapp && <div className="contact-action-group contact-action-group-whatsapp">
+              <ContactSpriteSwap base="/reference/charlles-contact-whatsapp.webp" hover="/reference/charlles-contact-whatsapp-hover.webp" />
+              <a className="contact-dialog-action contact-dialog-action-primary" href={whatsapp.href} target="_blank" rel="noreferrer"><span className="contact-dialog-action-label">{dictionary.contact.primaryCta}</span><IconGlyph name="external-link" className="size-4" /></a>
+            </div>}
+            <div className="contact-action-group contact-action-group-call">
+              <ContactSpriteSwap base="/reference/charlles-contact-call.webp" hover="/reference/charlles-contact-call-hover.webp" />
+              <a className="contact-dialog-action contact-dialog-action-secondary" href={bookingUrl} target="_blank" rel="noreferrer"><span className="contact-dialog-call-icon"><MeetGlyph /></span><span className="contact-dialog-action-copy"><strong>{dictionary.contact.callCta}</strong><small>{dictionary.contact.callMeta}</small></span><IconGlyph name="external-link" className="size-4" /></a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
+
+function ProfileDialog({ dictionary, onClose }: { dictionary: PortfolioDictionary; onClose: () => void }) {
+  return (
+    <>
+      <div className="works-veil profile-veil" aria-hidden="true" onClick={onClose} />
+      <section className="profile-dialog profile-dialog-about" data-panel="about" data-state="open" role="dialog" aria-modal="true" aria-labelledby="profile-dialog-title" tabIndex={-1}>
         <div className="profile-dialog-cover">
           <Image src="/reference/charlles-toy-canonical.png" alt="" fill sizes="(max-width: 640px) 100vw, 420px" priority />
           <div className="profile-dialog-cover-tint" />
-          <PanelClose label={dialogCloseLabel} onClose={onClose} />
+          <PanelClose label={dictionary.work.panelClose} onClose={onClose} />
         </div>
         <div className="profile-dialog-body">
-          <div className="profile-avatar">
-            <Image src="/reference/charlles-toy-canonical.png" alt="" fill sizes="96px" />
-          </div>
+          <div className="profile-avatar"><Image src="/reference/charlles-contact-avatar.webp" alt="" fill sizes="96px" unoptimized /></div>
           <h2 id="profile-dialog-title">{profile.name}</h2>
           <p className="profile-dialog-role">{profile.role}</p>
           <div className="profile-stats">
@@ -233,18 +261,11 @@ function ProfileDialog({ panel, dictionary, onClose }: { panel: "about" | "conta
             <div><strong>PB</strong><span>{profile.location}</span></div>
             <div><strong>∞</strong><span>{dictionary.hero.facts[1]?.label ?? dictionary.hero.role}</span></div>
           </div>
-          <p className="profile-dialog-eyebrow">{about ? dictionary.about.eyebrow : dictionary.contact.eyebrow}</p>
-          <h3>{title}</h3>
-          {about ? (
-            <>
-              <p>{dictionary.about.body}</p>
-              <p>{dictionary.expertise.description}</p>
-            </>
-          ) : (
-            <p>{dictionary.contact.description}</p>
-          )}
-          <ContactActions dictionary={dictionary} />
-          <SocialLinks />
+          <p className="profile-dialog-eyebrow">{dictionary.about.eyebrow}</p>
+          <h3>{dictionary.about.title}</h3>
+          <p>{dictionary.about.body}</p>
+          <p>{dictionary.expertise.description}</p>
+          <AboutSocialLinks />
         </div>
       </section>
     </>
@@ -267,6 +288,7 @@ export function ReferencePanels({ panel, dictionary, onClose }: { panel: Panel; 
   }, [onClose, panel]);
 
   if (panel === "work") return <WorkPanel dictionary={dictionary} onClose={onClose} />;
-  if (panel === "about" || panel === "contact") return <ProfileDialog panel={panel} dictionary={dictionary} onClose={onClose} />;
+  if (panel === "contact") return <ContactDialog dictionary={dictionary} onClose={onClose} />;
+  if (panel === "about") return <ProfileDialog dictionary={dictionary} onClose={onClose} />;
   return null;
 }

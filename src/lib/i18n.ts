@@ -101,6 +101,19 @@ export type PortfolioDictionary = {
     primaryCta: string;
     secondaryCta: string;
     direct: string;
+    specialty: string;
+    availability: string;
+    cardTitle: string;
+    stats: {
+      projects: string;
+      projectsLabel: string;
+      experience: string;
+      experienceLabel: string;
+      response: string;
+      responseLabel: string;
+    };
+    callCta: string;
+    callMeta: string;
   };
   footer: {
     availability: string;
@@ -258,6 +271,12 @@ const portuguese: PortfolioDictionary = {
     primaryCta: "Chamar no WhatsApp",
     secondaryCta: "Enviar um e-mail",
     direct: "Canais diretos",
+    specialty: "UI/UX Designer & Front-end",
+    availability: "Disponível",
+    cardTitle: "Vamos tirar sua ideia do papel?",
+    stats: { projects: "+20", projectsLabel: "Projetos", experience: "+5 anos", experienceLabel: "Experiência", response: "12h", responseLabel: "Resposta" },
+    callCta: "Agendar uma call",
+    callMeta: "30 min · Google Meet",
   },
   footer: {
     availability: "Em contato com a comunidade",
@@ -387,6 +406,12 @@ const english: PortfolioDictionary = {
     primaryCta: "Chat on WhatsApp",
     secondaryCta: "Send an email",
     direct: "Direct channels",
+    specialty: "UI/UX Designer & Front-end",
+    availability: "Available",
+    cardTitle: "Let’s take your idea off the page?",
+    stats: { projects: "+20", projectsLabel: "Projects", experience: "+5 years", experienceLabel: "Experience", response: "12h", responseLabel: "Response" },
+    callCta: "Schedule a call",
+    callMeta: "30 min · Google Meet",
   },
   footer: { availability: "In touch with the community", rights: "© 2026 Charlles Augusto", built: "Built with Next.js and attention to detail." },
   projects: {
@@ -484,6 +509,12 @@ const spanish: PortfolioDictionary = {
     primaryCta: "Hablar por WhatsApp",
     secondaryCta: "Enviar un email",
     direct: "Canales directos",
+    specialty: "UI/UX Designer & Front-end",
+    availability: "Disponible",
+    cardTitle: "¿Sacamos tu idea del papel?",
+    stats: { projects: "+20", projectsLabel: "Proyectos", experience: "+5 años", experienceLabel: "Experiencia", response: "12h", responseLabel: "Respuesta" },
+    callCta: "Agendar una llamada",
+    callMeta: "30 min · Google Meet",
   },
   footer: { availability: "En contacto con la comunidad", rights: "© 2026 Charlles Augusto", built: "Hecho con Next.js y atención al detalle." },
   projects: {

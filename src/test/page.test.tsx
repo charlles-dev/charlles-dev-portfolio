@@ -21,7 +21,8 @@ describe("reference-inspired localized home", () => {
   it("renders the pinned hero, social rail and transparent navigation", () => {
     renderHome();
 
-    expect(screen.getByRole("heading", { level: 1, name: /Construo experiências digitais/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1, name: /Construo experiências digitais que fazem sentido/i })).toBeInTheDocument();
+    expect(screen.queryByText("Construindo com intenção")).not.toBeInTheDocument();
     expect(screen.getByText(/desenvolvedor de software de Campina Grande/i)).toBeInTheDocument();
     expect(screen.getByText(/Role para explorar/i)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Trabalhos" })).toBeInTheDocument();
@@ -125,15 +126,29 @@ describe("reference-inspired localized home", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Sobre" }));
     expect(screen.getByRole("dialog", { name: "Charlles Augusto" })).toBeInTheDocument();
+    const aboutDialog = screen.getByRole("dialog", { name: "Charlles Augusto" });
+    expect(within(aboutDialog).getByRole("link", { name: "Email" })).toBeInTheDocument();
+    expect(within(aboutDialog).getByRole("link", { name: "LinkedIn" })).toBeInTheDocument();
+    expect(within(aboutDialog).queryByRole("link", { name: "WhatsApp" })).not.toBeInTheDocument();
     fireEvent.keyDown(document, { key: "Escape" });
     expect(screen.queryByRole("dialog", { name: "Charlles Augusto" })).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Contato" }));
-    const dialog = screen.getByRole("dialog", { name: "Charlles Augusto" });
-    expect(within(dialog).getByText(/Gosto de conhecer pessoas/i)).toBeInTheDocument();
-    expect(within(dialog).getByRole("link", { name: "Email" })).toHaveAttribute("href", "mailto:charllesgst@gmail.com");
+    const dialog = screen.getByRole("dialog", { name: "Vamos tirar sua ideia do papel?" });
+    expect(within(dialog).getByText("Vamos tirar sua ideia do papel?")).toBeInTheDocument();
+    expect(within(dialog).getByText("UI/UX Designer & Front-end")).toBeInTheDocument();
+    expect(within(dialog).getByText("Disponível")).toBeInTheDocument();
+    expect(within(dialog).getByText("+20")).toBeInTheDocument();
+    expect(within(dialog).getByRole("link", { name: "WhatsApp" })).toHaveAttribute("href", "https://wa.me/5583991141561");
+    expect(within(dialog).getByRole("link", { name: "Discord" })).toHaveAttribute("href", "https://discord.com/users/472347892728987658");
+    expect(within(dialog).getByRole("link", { name: /Agendar uma call/ })).toHaveAttribute("href", "https://call.com/charles-dev");
+    expect(dialog.querySelector('img[src*="charlles-contact-avatar.webp"]')).toBeInTheDocument();
+    expect(dialog.querySelector('img[src*="charlles-contact-whatsapp.webp"]')).toBeInTheDocument();
+    expect(dialog.querySelector('img[src*="charlles-contact-whatsapp-hover.webp"]')).toBeInTheDocument();
+    expect(dialog.querySelector('img[src*="charlles-contact-call.webp"]')).toBeInTheDocument();
+    expect(dialog.querySelector('img[src*="charlles-contact-call-hover.webp"]')).toBeInTheDocument();
     fireEvent.click(within(dialog).getByRole("button", { name: "Fechar" }));
-    expect(screen.queryByRole("dialog", { name: "Charlles Augusto" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("dialog", { name: "Vamos tirar sua ideia do papel?" })).not.toBeInTheDocument();
   });
 
   it("renders localized English copy and keeps the same interaction model", () => {

@@ -42,3 +42,7 @@ The public reference bundle exposes a `ScrollVideo` component with three video e
 The component uses a GSAP ticker to run one controller per render tick. It maps `p` with `t = clamp((p - 0.12) / 0.73, 0, 1) * main.duration`, rather than trying to reverse a single video at both endpoints. It pauses and resets the idle layer below the threshold, starts it from zero when entering the endpoint state, and pauses/resets it when leaving. The final loop follows the same pattern at 0.85, using a separate element and source. The section has a scroll-triggered pinned scene with a `screens` multiplier and `scrub` timing; the main video is not used as a continuously playing loop.
 
 The exact reference snippet was extracted from the public bundle `/ _next/static/immutable/chunks/18wcr0x65ebbc.js` and includes the component name `ScrollVideo`. This is a faithful behavioral port target, not a claim that the original private source repository is available.
+
+## Atualização do loop awake — 21/08/2026
+
+O asset `charlles-hero-awake-loop.webm` foi recriado diretamente a partir do vídeo completo usando a janela de **7,00 s a 9,25 s**, com reprodução para frente e reversa (ping-pong), total aproximado de 4,50 s a 24 fps. A intenção é iniciar o estado final exatamente no segundo 7, conforme a solicitação de Charlles, sem reintroduzir o tail incompatível de fechamento de olhos. Os limiares de ativação no scroll continuam em 12% para o início da transição e 85% para o estado awake.
