@@ -65,10 +65,15 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
 
   useEffect(() => {
     const video = primaryVideo.current;
-    if (!video) return;
+    if (!video || !isLooping) return;
 
-    const playFinalLoop = () => {
-      if (!Number.isFinite(video.duration) || video.duration <= 0) return;
+    let animationFrame = 0;
+    const tick = () => {
+      if (!Number.isFinite(video.duration) || video.duration <= 0) {
+        animationFrame = window.requestAnimationFrame(tick);
+        return;
+      }
+
       const loopStart = Math.max(0, video.duration - 1.4);
       const loopEnd = Math.max(loopStart + 0.3, video.duration - 0.05);
       if (video.currentTime < loopStart || video.currentTime >= loopEnd) video.currentTime = loopStart;
@@ -77,42 +82,35 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
           const playback = video.play();
           playback?.catch(() => undefined);
         } catch {
-          // Autoplay can be unavailable; the next scroll/timeupdate will retry the final loop.
+          // Autoplay can be unavailable; the next animation frame retries the final loop.
         }
       }
+      animationFrame = window.requestAnimationFrame(tick);
     };
 
-    const stopFinalLoop = () => {
+    animationFrame = window.requestAnimationFrame(tick);
+    return () => {
+      window.cancelAnimationFrame(animationFrame);
       if (!video.paused) video.pause();
     };
+  }, [isLooping]);
 
-    const syncVideo = () => {
+  useEffect(() => {
+    const video = primaryVideo.current;
+    if (!video || isLooping) return;
+
+    const syncScrub = () => {
       if (!Number.isFinite(video.duration) || video.duration <= 0) return;
-      if (isLooping) {
-        playFinalLoop();
-        return;
-      }
-      stopFinalLoop();
       const targetTime = Math.min(Math.max(0, video.duration - 0.05), scrubProgress * video.duration);
       if (!video.seeking && Math.abs(video.currentTime - targetTime) > 0.01) video.currentTime = targetTime;
     };
 
-    const handleTimeUpdate = () => {
-      if (!isLooping || !Number.isFinite(video.duration) || video.duration <= 0) return;
-      const loopStart = Math.max(0, video.duration - 1.4);
-      const loopEnd = Math.max(loopStart + 0.3, video.duration - 0.05);
-      if (video.currentTime >= loopEnd) video.currentTime = loopStart;
-    };
-
-    syncVideo();
-    video.addEventListener("loadedmetadata", syncVideo);
-    video.addEventListener("durationchange", syncVideo);
-    video.addEventListener("timeupdate", handleTimeUpdate);
+    syncScrub();
+    video.addEventListener("loadedmetadata", syncScrub);
+    video.addEventListener("durationchange", syncScrub);
     return () => {
-      video.removeEventListener("loadedmetadata", syncVideo);
-      video.removeEventListener("durationchange", syncVideo);
-      video.removeEventListener("timeupdate", handleTimeUpdate);
-      stopFinalLoop();
+      video.removeEventListener("loadedmetadata", syncScrub);
+      video.removeEventListener("durationchange", syncScrub);
     };
   }, [isLooping, scrubProgress]);
 

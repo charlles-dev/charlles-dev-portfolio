@@ -35,6 +35,7 @@ describe("reference-inspired localized home", () => {
     expect(document.querySelector(".reference-video-scrub")).toHaveAttribute("poster", "/reference/charlles-hero-poster.webp");
     expect(document.querySelector(".reference-video-loop")).not.toBeInTheDocument();
     expect(document.querySelectorAll(".language-flag-icon")).toHaveLength(3);
+    expect(document.querySelector(".reference-after-scene")).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Alternar tema" })).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: /English/i })).toHaveAttribute("href", "/en");
   });
