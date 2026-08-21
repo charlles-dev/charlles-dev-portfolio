@@ -33,6 +33,9 @@ describe("reference-inspired localized home", () => {
     expect(screen.getByRole("link", { name: "WhatsApp" })).toHaveAttribute("href", "https://wa.me/5583991141561");
     expect(screen.getByRole("link", { name: "Email" })).toHaveAttribute("href", "mailto:charllesgst@gmail.com");
     expect(document.querySelector(".reference-video-scrub")).toHaveAttribute("poster", "/reference/charlles-hero-two-state-poster.webp");
+    expect(document.querySelector(".reference-video-idle")).toHaveAttribute("src", "/reference/charlles-hero-idle-loop.webm");
+    expect(document.querySelector(".reference-video-awake")).not.toHaveAttribute("src");
+    expect(document.querySelector(".reference-video-awake")).toHaveAttribute("preload", "none");
     expect(document.querySelector(".reference-video-loop")).not.toBeInTheDocument();
     expect(document.querySelectorAll(".language-flag-icon")).toHaveLength(3);
     expect(document.querySelector(".reference-after-scene")).not.toBeInTheDocument();
@@ -70,11 +73,26 @@ describe("reference-inspired localized home", () => {
     expect(setProgress(0.9)?.getAttribute("data-loop-state")).toBe("awake");
   });
 
+  it("lazy-loads and activates the awake loop at the end of the scene", async () => {
+    renderHome();
+    const story = document.querySelector(".reference-scroll-story") as HTMLElement;
+    const awake = document.querySelector(".reference-video-awake") as HTMLVideoElement;
+    const idle = document.querySelector(".reference-video-idle") as HTMLVideoElement;
+    Object.defineProperty(story, "offsetHeight", { configurable: true, value: 3000 });
+    Object.defineProperty(story, "getBoundingClientRect", { configurable: true, value: () => ({ top: -0.9 * (3000 - window.innerHeight) }) });
+    fireEvent.scroll(window);
+
+    await waitFor(() => expect(awake).toHaveAttribute("src", "/reference/charlles-hero-awake-loop.webm"));
+    expect(awake.style.opacity).toBe("1");
+    expect(idle.style.opacity).toBe("0");
+  });
+
   it("pauses and resumes the hero loop when tab visibility changes", () => {
     renderHome();
     const video = document.querySelector(".reference-video-scrub") as HTMLVideoElement;
+    const idleVideo = document.querySelector(".reference-video-idle") as HTMLVideoElement;
     Object.defineProperty(video, "duration", { configurable: true, value: 4 });
-    const pauseSpy = vi.spyOn(video, "pause").mockImplementation(() => undefined);
+    const pauseSpy = vi.spyOn(idleVideo, "pause").mockImplementation(() => undefined);
     const originalVisibility = document.visibilityState;
 
     Object.defineProperty(document, "visibilityState", { configurable: true, value: "hidden" });

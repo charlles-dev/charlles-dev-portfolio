@@ -27,3 +27,18 @@ The scroll range is mapped as follows: 0–16% scroll uses the idle ping-pong lo
 ## Visibility correction
 
 The observed Alt+Tab behavior was caused by a loop driver continuing to schedule work while the browser throttled or paused visual delivery for a background tab. The controller now listens to `visibilitychange`, clears the endpoint timer when the document is hidden, cancels pending central seeks, and starts a fresh timer/seek from the current scroll position when the document becomes visible again. This prevents elapsed background time from being applied to the visible frame after returning to the tab.
+
+
+## Reference bundle architecture
+
+The public reference bundle exposes a `ScrollVideo` component with three video elements:
+
+| Layer | Source | Visibility rule | Playback rule |
+|---|---|---|---|
+| Main scrub layer | `src` | Always present | Scroll progress maps from 12% to 85% of the scene into `currentTime`; it seeks only when `!video.seeking` and the delta exceeds 0.008 s |
+| Idle layer | `idleSrc` | Active when progress is `<= 0.12` or `>= 0.85` | `loop=true`; it is reset to `currentTime=0`, faded in/out, and played by the browser |
+| Final loop layer | `loopSrc` | Active only when progress is `>= 0.85` | `preload=none` until needed; `loop=true`; it fades in and plays independently |
+
+The component uses a GSAP ticker to run one controller per render tick. It maps `p` with `t = clamp((p - 0.12) / 0.73, 0, 1) * main.duration`, rather than trying to reverse a single video at both endpoints. It pauses and resets the idle layer below the threshold, starts it from zero when entering the endpoint state, and pauses/resets it when leaving. The final loop follows the same pattern at 0.85, using a separate element and source. The section has a scroll-triggered pinned scene with a `screens` multiplier and `scrub` timing; the main video is not used as a continuously playing loop.
+
+The exact reference snippet was extracted from the public bundle `/ _next/static/immutable/chunks/18wcr0x65ebbc.js` and includes the component name `ScrollVideo`. This is a faithful behavioral port target, not a claim that the original private source repository is available.

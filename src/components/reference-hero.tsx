@@ -10,14 +10,9 @@ type SocialKind = "github" | "linkedin" | "email" | "discord" | "whatsapp";
 
 type LoopState = "idle" | "transition" | "awake";
 
-const HERO_TIMELINE = {
-  idleScrollEnd: 0.16,
-  awakeScrollStart: 0.84,
-  idleTimeStart: 0,
-  idleTimeEnd: 0.29,
-  awakeTimeStart: 0.73,
-  awakeTimeEnd: 0.99,
-};
+const SCROLL_VIDEO_START = 0.12;
+const SCROLL_VIDEO_END = 0.85;
+const AWAKE_LOOP_SRC = "/reference/charlles-hero-awake-loop.webm";
 
 function SocialGlyph({ kind }: { kind: SocialKind }) {
   if (kind === "linkedin") return <svg aria-hidden="true" viewBox="0 0 24 24" className="reference-social-glyph"><path d="M4.7 3.2A2.3 2.3 0 1 1 4.7 7.8a2.3 2.3 0 0 1 0-4.6ZM2.7 9.2h4v11.6h-4V9.2Zm6.4 0h3.8v1.6h.05c.53-1 1.84-2.05 3.78-2.05 4.04 0 4.79 2.66 4.79 6.12v5.92h-4v-5.25c0-1.25-.02-2.86-1.75-2.86-1.75 0-2.02 1.37-2.02 2.77v5.34h-4V9.2Z" fill="currentColor" /></svg>;
@@ -30,9 +25,9 @@ function SocialGlyph({ kind }: { kind: SocialKind }) {
 export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: PortfolioDictionary; onOpenWork: () => void }) {
   const storyRef = useRef<HTMLElement>(null);
   const primaryVideo = useRef<HTMLVideoElement>(null);
+  const idleVideo = useRef<HTMLVideoElement>(null);
+  const awakeVideo = useRef<HTMLVideoElement>(null);
   const scrollProgressRef = useRef(0);
-  const seekFrameRef = useRef<number | null>(null);
-  const pendingSeekRef = useRef<number | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const github = socialLinks.find((link) => link.kind === "github");
   const linkedIn = socialLinks.find((link) => link.kind === "linkedin");
@@ -41,9 +36,9 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
   const email = socialLinks.find((link) => link.kind === "email");
   const heroLines = dictionary.hero.headline.replace(". ", ".\n");
   const isScrolled = scrollProgress > 0.08;
-  const loopState: LoopState = scrollProgress <= HERO_TIMELINE.idleScrollEnd ? "idle" : scrollProgress >= HERO_TIMELINE.awakeScrollStart ? "awake" : "transition";
+  const loopState: LoopState = scrollProgress <= SCROLL_VIDEO_START ? "idle" : scrollProgress >= SCROLL_VIDEO_END ? "awake" : "transition";
   const isLooping = loopState !== "transition";
-  const transitionProgress = Math.min(1, Math.max(0, (scrollProgress - HERO_TIMELINE.idleScrollEnd) / (HERO_TIMELINE.awakeScrollStart - HERO_TIMELINE.idleScrollEnd)));
+  const transitionProgress = Math.min(1, Math.max(0, (scrollProgress - SCROLL_VIDEO_START) / (SCROLL_VIDEO_END - SCROLL_VIDEO_START)));
   const contrast = transitionProgress;
   const tone = Math.round(255 - contrast * 245);
 
@@ -80,135 +75,86 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
   }, [tone]);
 
   useEffect(() => {
-    const video = primaryVideo.current;
-    if (!video || !isLooping) return;
+    const main = primaryVideo.current;
+    if (!main) return;
 
-    let loopTimer: number | null = null;
-    let direction = 1;
-    let previousTimestamp = 0;
-    const bounds = loopState === "idle"
-      ? { start: HERO_TIMELINE.idleTimeStart, end: HERO_TIMELINE.idleTimeEnd }
-      : { start: HERO_TIMELINE.awakeTimeStart, end: HERO_TIMELINE.awakeTimeEnd };
-
-    const clearLoopTimer = () => {
-      if (loopTimer !== null) window.clearInterval(loopTimer);
-      loopTimer = null;
-    };
-
-    const tick = () => {
-      if (document.visibilityState !== "visible" || !Number.isFinite(video.duration) || video.duration <= 0) return;
-      const timestamp = performance.now();
-      const loopStart = bounds.start * video.duration;
-      const loopEnd = Math.min(bounds.end * video.duration, video.duration - 0.04);
-      if (previousTimestamp === 0) {
-        video.pause();
-        if (loopState === "idle") {
-          if (video.currentTime > loopEnd) {
-            video.currentTime = loopEnd;
-            direction = -1;
-          } else if (video.currentTime < loopStart) {
-            video.currentTime = loopStart;
-            direction = 1;
-          }
-        } else if (video.currentTime < loopStart) {
-          video.currentTime = loopStart;
-          direction = 1;
-        } else if (video.currentTime > loopEnd) {
-          video.currentTime = loopEnd;
-          direction = -1;
-        }
-        previousTimestamp = timestamp;
-        return;
+    let animationFrame = 0;
+    const syncMain = () => {
+      if (document.visibilityState === "visible" && !main.seeking && Number.isFinite(main.duration) && main.duration > 0) {
+        const targetTime = Math.min(Math.max((scrollProgressRef.current - SCROLL_VIDEO_START) / (SCROLL_VIDEO_END - SCROLL_VIDEO_START), 0), 1) * main.duration;
+        if (Math.abs(main.currentTime - targetTime) > 0.008) main.currentTime = targetTime;
       }
-
-      const elapsed = Math.min(0.05, Math.max(0, (timestamp - previousTimestamp) / 1000));
-      previousTimestamp = timestamp;
-      const nextTime = video.currentTime + elapsed * direction;
-      if (direction > 0 && nextTime >= loopEnd) {
-        video.currentTime = loopEnd;
-        direction = -1;
-      } else if (direction < 0 && nextTime <= loopStart) {
-        video.currentTime = loopStart;
-        direction = 1;
-      } else {
-        video.currentTime = nextTime;
-      }
-    };
-
-    const startLoopTimer = () => {
-      clearLoopTimer();
-      if (document.visibilityState !== "visible") return;
-      previousTimestamp = 0;
-      tick();
-      loopTimer = window.setInterval(tick, 16);
+      animationFrame = window.requestAnimationFrame(syncMain);
     };
 
     const handleVisibility = () => {
-      if (document.visibilityState === "visible") startLoopTimer();
-      else {
-        clearLoopTimer();
-        previousTimestamp = 0;
-      }
+      if (document.visibilityState === "visible") syncMain();
     };
 
-    video.addEventListener("loadedmetadata", startLoopTimer);
+    main.addEventListener("loadedmetadata", syncMain);
     document.addEventListener("visibilitychange", handleVisibility);
-    startLoopTimer();
+    animationFrame = window.requestAnimationFrame(syncMain);
     return () => {
-      clearLoopTimer();
-      previousTimestamp = 0;
-      video.removeEventListener("loadedmetadata", startLoopTimer);
+      window.cancelAnimationFrame(animationFrame);
+      main.removeEventListener("loadedmetadata", syncMain);
       document.removeEventListener("visibilitychange", handleVisibility);
-      if (!video.paused) video.pause();
     };
-  }, [isLooping, loopState]);
+  }, []);
 
   useEffect(() => {
-    const video = primaryVideo.current;
-    if (!video || isLooping) return;
+    const idle = idleVideo.current;
+    const awake = awakeVideo.current;
+    if (!idle || !awake) return;
 
-    const queueSeek = (targetTime: number) => {
-      pendingSeekRef.current = targetTime;
-      if (seekFrameRef.current !== null) return;
-      seekFrameRef.current = window.requestAnimationFrame(() => {
-        seekFrameRef.current = null;
-        const pendingTime = pendingSeekRef.current;
-        if (pendingTime === null || !Number.isFinite(video.duration) || video.duration <= 0) return;
+    const playVideo = (video: HTMLVideoElement) => {
+      const attempt = () => {
+        const playResult = video.play();
+        if (playResult && typeof playResult.catch === "function") playResult.catch(() => undefined);
+      };
+      if (video.readyState >= 2) attempt();
+      else video.addEventListener("canplay", attempt, { once: true });
+    };
+
+    const setActive = (video: HTMLVideoElement, active: boolean) => {
+      video.style.opacity = active ? "1" : "0";
+      if (active) {
+        if (video === awake && !video.getAttribute("src")) {
+          video.src = AWAKE_LOOP_SRC;
+          video.load();
+        }
+        playVideo(video);
+      }
+      else {
         video.pause();
-        if (Math.abs(video.currentTime - pendingTime) > 0.008) video.currentTime = pendingTime;
-      });
-    };
-
-    const syncScrub = () => {
-      if (document.visibilityState !== "visible" || !Number.isFinite(video.duration) || video.duration <= 0) return;
-      const currentProgress = scrollProgressRef.current;
-      const currentTransition = Math.min(1, Math.max(0, (currentProgress - HERO_TIMELINE.idleScrollEnd) / (HERO_TIMELINE.awakeScrollStart - HERO_TIMELINE.idleScrollEnd)));
-      const middleTime = HERO_TIMELINE.idleTimeEnd + currentTransition * (HERO_TIMELINE.awakeTimeStart - HERO_TIMELINE.idleTimeEnd);
-      queueSeek(Math.min(video.duration - 0.04, Math.max(0, middleTime * video.duration)));
-    };
-
-    const handleVisibility = () => {
-      if (document.visibilityState === "visible") syncScrub();
-      else if (seekFrameRef.current !== null) {
-        window.cancelAnimationFrame(seekFrameRef.current);
-        seekFrameRef.current = null;
-        pendingSeekRef.current = null;
+        video.currentTime = 0;
       }
     };
 
-    syncScrub();
-    video.addEventListener("loadedmetadata", syncScrub);
-    video.addEventListener("durationchange", syncScrub);
-    document.addEventListener("visibilitychange", handleVisibility);
-    return () => {
-      video.removeEventListener("loadedmetadata", syncScrub);
-      video.removeEventListener("durationchange", syncScrub);
-      document.removeEventListener("visibilitychange", handleVisibility);
-      if (seekFrameRef.current !== null) window.cancelAnimationFrame(seekFrameRef.current);
-      seekFrameRef.current = null;
-      pendingSeekRef.current = null;
+    if (loopState === "idle") {
+      setActive(idle, true);
+      setActive(awake, false);
+    } else if (loopState === "awake") {
+      setActive(idle, false);
+      setActive(awake, true);
+    } else {
+      setActive(idle, false);
+      setActive(awake, false);
+    }
+
+    const handleVisibility = () => {
+      if (document.visibilityState !== "visible") {
+        idle.pause();
+        awake.pause();
+      } else if (loopState === "idle") {
+        playVideo(idle);
+      } else if (loopState === "awake") {
+        playVideo(awake);
+      }
     };
-  }, [isLooping, transitionProgress]);
+
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => document.removeEventListener("visibilitychange", handleVisibility);
+  }, [loopState]);
 
   return (
     <section ref={storyRef} className="reference-scroll-story" aria-labelledby="reference-hero-title">
@@ -221,6 +167,27 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
           muted
           playsInline
           preload="auto"
+          aria-hidden="true"
+        />
+        <video
+          ref={idleVideo}
+          className="reference-video reference-video-idle"
+          src="/reference/charlles-hero-idle-loop.webm"
+          poster="/reference/charlles-hero-two-state-poster.webp"
+          loop
+          muted
+          playsInline
+          preload="auto"
+          aria-hidden="true"
+        />
+        <video
+          ref={awakeVideo}
+          className="reference-video reference-video-awake"
+          poster="/reference/charlles-hero-two-state-poster.webp"
+          loop
+          muted
+          playsInline
+          preload="none"
           aria-hidden="true"
         />
         <div className="reference-night-layer" aria-hidden="true" style={{ opacity: Math.max(0.14, 1 - contrast * 0.86) }}>
