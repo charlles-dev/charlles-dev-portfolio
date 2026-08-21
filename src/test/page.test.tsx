@@ -1,18 +1,14 @@
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { PortfolioHome } from "@/components/portfolio-home";
 import { getDictionary } from "@/lib/i18n";
-import { fallbackProjectsPayload } from "@/lib/projects/fallback";
-import type { ProjectsPayload } from "@/lib/projects/types";
-
-const dictionary = getDictionary("pt-BR");
 
 function renderHome(locale: "pt-BR" | "en" | "es" = "pt-BR") {
-  return render(<PortfolioHome locale={locale} dictionary={getDictionary(locale)} initialPayload={fallbackProjectsPayload} />);
+  return render(<PortfolioHome locale={locale} dictionary={getDictionary(locale)} />);
 }
 
-describe("localized home page", () => {
+describe("reference-inspired localized home", () => {
   beforeEach(() => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("fetch disabled in tests")));
   });
@@ -22,88 +18,75 @@ describe("localized home page", () => {
     vi.restoreAllMocks();
   });
 
-  it("renders the editorial hero and direct contact paths", () => {
+  it("renders the pinned hero, social rail and transparent navigation", () => {
     renderHome();
 
-    expect(screen.getByRole("heading", { level: 1, name: /Eu transformo problemas reais/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1, name: /Pense grande/i })).toBeInTheDocument();
     expect(screen.getByText(/desenvolvedor web de Campina Grande/i)).toBeInTheDocument();
-    expect(screen.getByAltText(/Retrato de Charlles Augusto/i)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /Conectar no LinkedIn/i })).toHaveAttribute("href", "https://www.linkedin.com/in/charlles-augusto/");
-    expect(screen.getByRole("link", { name: /charlles\.dev/i })).toHaveAttribute("href", "/#top");
+    expect(screen.getByText(/Role para explorar/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Trabalhos" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Sobre" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Contato" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "GitHub" })).toHaveAttribute("href", "https://github.com/charlles-dev");
+    expect(screen.getByRole("link", { name: "LinkedIn" })).toHaveAttribute("href", "https://www.linkedin.com/in/charlles-augusto/");
     expect(screen.getByRole("link", { name: /English/i })).toHaveAttribute("href", "/en");
   });
 
-  it("renders selected projects and the public repository explorer", () => {
+  it("opens the work panel with tabs and project cards", () => {
     renderHome();
+    fireEvent.click(screen.getByRole("button", { name: "Trabalhos" }));
 
-    const projects = screen.getByRole("region", { name: /Trabalho público, contexto real/i });
-    expect(within(projects).getByRole("heading", { name: /Projetos que mostram/i })).toBeInTheDocument();
-    expect(within(projects).getByRole("heading", { name: /Repositórios públicos/i })).toBeInTheDocument();
-    expect(within(projects).getAllByRole("link", { name: /Astrolink/i }).length).toBeGreaterThanOrEqual(1);
-    expect(within(projects).getByPlaceholderText(/Buscar por nome/i)).toBeInTheDocument();
-    expect(within(projects).getByRole("group", { name: /Filtrar repositórios/i })).toBeInTheDocument();
-    expect(within(projects).getAllByText("Problema").length).toBeGreaterThan(0);
-    expect(within(projects).getAllByText("Decisão técnica").length).toBeGreaterThan(0);
-    expect(within(projects).getAllByText("Próximo passo").length).toBeGreaterThan(0);
+    const dialog = screen.getByRole("dialog", { name: "Trabalhos" });
+    expect(within(dialog).getByRole("tab", { name: "Web e produto" })).toHaveAttribute("aria-selected", "true");
+    expect(within(dialog).getByRole("heading", { name: "Astrolink" })).toBeInTheDocument();
+    expect(within(dialog).getByRole("heading", { name: "Laudos Proxxima" })).toBeInTheDocument();
+    expect(within(dialog).getAllByRole("link", { name: /Abrir projeto/i })[0]).toHaveAttribute("href", "https://github.com/charlles-dev/Astrolink");
+
+    fireEvent.click(within(dialog).getByRole("tab", { name: "Visual e interface" }));
+    expect(within(dialog).getByRole("heading", { name: /Tecnologia precisa reduzir atrito/i })).toBeInTheDocument();
+    fireEvent.click(within(dialog).getByRole("button", { name: "Fechar" }));
+    expect(screen.queryByRole("dialog", { name: "Trabalhos" })).not.toBeInTheDocument();
   });
 
-  it("replaces the fallback projects with a successful live response", async () => {
-    const livePayload: ProjectsPayload = {
-      ...fallbackProjectsPayload,
-      cache: "hit",
-      featured: [{ ...fallbackProjectsPayload.featured[0], id: 404, name: "live-repo", displayName: "Live Repo Distinto", fullName: "charlles-dev/live-repo", htmlUrl: "https://github.com/charlles-dev/live-repo", summary: "Projeto carregado pela API ao vivo." }],
-      projects: [{ ...fallbackProjectsPayload.projects[0], id: 404, name: "live-repo", displayName: "Live Repo Distinto", fullName: "charlles-dev/live-repo", htmlUrl: "https://github.com/charlles-dev/live-repo", summary: "Projeto carregado pela API ao vivo." }],
-    };
-    vi.mocked(fetch).mockResolvedValue({ ok: true, json: async () => livePayload } as Response);
-
-    renderHome();
-    const projects = screen.getByRole("region", { name: /Trabalho público/i });
-    expect(await within(projects).findAllByRole("link", { name: /Live Repo Distinto/i })).toHaveLength(2);
-    await waitFor(() => expect(within(projects).queryByRole("link", { name: /Astrolink/i })).not.toBeInTheDocument());
-  });
-
-  it("supports repository search and empty states", () => {
-    renderHome();
-    const projects = screen.getByRole("region", { name: /Trabalho público/i });
-    const explorer = within(projects).getByRole("region", { name: /Repositórios públicos/i });
-    const search = within(explorer).getByPlaceholderText(/Buscar por nome/i);
-
-    fireEvent.change(search, { target: { value: "Laudos" } });
-    expect(within(explorer).getByRole("link", { name: /Laudos Proxxima/i })).toBeInTheDocument();
-    expect(within(explorer).queryByRole("link", { name: /Astrolink/i })).not.toBeInTheDocument();
-
-    fireEvent.change(search, { target: { value: "sem resultado real" } });
-    expect(within(explorer).getByText(/Nenhum repositório encontrado/i)).toBeInTheDocument();
-  });
-
-  it("renders the three controlled Now signals and the contact footer", () => {
+  it("opens About and Contact as modal dialogs and closes with Escape", () => {
     renderHome();
 
-    expect(screen.getByRole("heading", { name: /O que estou desenvolvendo/i })).toBeInTheDocument();
-    expect(screen.getByText("Astrolink em evolução")).toBeInTheDocument();
-    expect(screen.getByText("Portfólio como produto")).toBeInTheDocument();
-    expect(screen.getByText("Segurança aplicada no fluxo")).toBeInTheDocument();
-    expect(screen.getByRole("contentinfo", { name: /Tem um problema para resolver/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /Enviar um e-mail/i })).toHaveAttribute("href", "mailto:charllesgst@gmail.com");
+    fireEvent.click(screen.getByRole("button", { name: "Sobre" }));
+    expect(screen.getByRole("dialog", { name: /Tecnologia precisa/i })).toBeInTheDocument();
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(screen.queryByRole("dialog", { name: /Tecnologia precisa/i })).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Contato" }));
+    const dialog = screen.getByRole("dialog", { name: /Tem um problema/i });
+    expect(within(dialog).getByText(/Falar pelo LinkedIn/i)).toBeInTheDocument();
+    expect(within(dialog).getByRole("link", { name: /charllesgst@gmail.com/i })).toHaveAttribute("href", "mailto:charllesgst@gmail.com");
+    fireEvent.click(within(dialog).getByRole("button", { name: "Contato" }));
+    expect(screen.queryByRole("dialog", { name: /Tem um problema/i })).not.toBeInTheDocument();
   });
 
-  it("translates visible content and links for English", () => {
+  it("renders localized English copy and keeps the same interaction model", () => {
     renderHome("en");
 
-    expect(screen.getByRole("heading", { level: 1, name: /I turn real problems/i })).toBeInTheDocument();
-    expect(screen.getAllByText("Selected case").length).toBeGreaterThan(0);
-    expect(screen.getByText("web, APIs and operational automation")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1, name: /Dream big/i })).toBeInTheDocument();
     expect(document.body.textContent).toContain("Web developer and automation builder");
+    expect(screen.getByRole("button", { name: "Work" })).toBeInTheDocument();
     expect(screen.queryByText("web, APIs e automação operacional")).not.toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /charlles\.dev/i })).toHaveAttribute("href", "/en#top");
+    expect(screen.getByRole("link", { name: /charlles\.dev/i })).toHaveAttribute("href", "/en");
   });
 
-  it("does not expose generic AI-product chrome", () => {
+  it("opens the compact mobile menu without changing the scene", () => {
+    renderHome();
+
+    fireEvent.click(screen.getByRole("button", { name: /Abrir menu/i }));
+    expect(document.getElementById("reference-mobile-menu")).toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: "Trabalhos" }).length).toBeGreaterThan(1);
+  });
+
+  it("does not expose the old generic dashboard language", () => {
     renderHome();
 
     const visibleText = document.body.textContent ?? "";
-    expect(visibleText).not.toMatch(/Delivery signal|Core system|Terminal signature|GROQ_API_KEY|GITHUB_TOKEN|HUD|painel artificial/i);
+    expect(visibleText).not.toMatch(/Delivery signal|Core system|Terminal signature|HUD|painel artificial/i);
     expect(visibleText).not.toMatch(/software, cyber e IA|cibersegurança e IA/i);
-    expect(dictionary.meta.title).toMatch(/Desenvolvedor web/i);
   });
 });

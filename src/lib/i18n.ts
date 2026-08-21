@@ -56,6 +56,9 @@ export type PortfolioDictionary = {
     eyebrow: string;
     title: string;
     description: string;
+    panelTitle: string;
+    panelClose: string;
+    tabs: { product: string; visual: string; motion: string };
     featuredLabel: string;
     openProject: string;
     problem: string;
@@ -125,7 +128,7 @@ const portuguese: PortfolioDictionary = {
   },
   hero: {
     eyebrow: "Desenvolvimento web · automação · segurança aplicada",
-    headline: "Eu transformo problemas reais em software que funciona.",
+    headline: "Pense grande. Eu construo o caminho.",
     description:
       "Sou Charlles Augusto, desenvolvedor web de Campina Grande. Construo interfaces, APIs e automações com foco em clareza, manutenção e utilidade — com fundamentos de segurança guiando as decisões.",
     primaryCta: "Conheça meu trabalho",
@@ -169,6 +172,9 @@ const portuguese: PortfolioDictionary = {
     title: "Projetos que mostram como eu penso e construo.",
     description:
       "Uma seleção de projetos públicos com problema, decisão técnica e próximo passo. Menos vitrine genérica; mais evidência do processo.",
+    panelTitle: "Trabalhos",
+    panelClose: "Fechar",
+    tabs: { product: "Web e produto", visual: "Visual e interface", motion: "Motion e interação" },
     featuredLabel: "Case selecionado",
     openProject: "Abrir projeto",
     problem: "Problema",
@@ -302,7 +308,7 @@ const english: PortfolioDictionary = {
   hero: {
     ...portuguese.hero,
     eyebrow: "Web development · automation · applied security",
-    headline: "I turn real problems into software that works.",
+    headline: "Dream big. I’ll build the way.",
     description:
       "I’m Charlles Augusto, a web developer based in Brazil. I build interfaces, APIs and automations with a focus on clarity, maintainability and usefulness — guided by security fundamentals.",
     primaryCta: "See my work",
@@ -335,6 +341,9 @@ const english: PortfolioDictionary = {
     eyebrow: "Public work, real context",
     title: "Projects that show how I think and build.",
     description: "A selection of public work with the problem, technical decision and next step made visible. Less generic showcase; more evidence of process.",
+    panelTitle: "Work",
+    panelClose: "Close",
+    tabs: { product: "Web & product", visual: "Visual & interface", motion: "Motion & interaction" },
     featuredLabel: "Selected case",
     openProject: "Open project",
     problem: "Problem",
@@ -402,7 +411,7 @@ const spanish: PortfolioDictionary = {
   hero: {
     ...english.hero,
     eyebrow: "Desarrollo web · automatización · seguridad aplicada",
-    headline: "Convierto problemas reales en software que funciona.",
+    headline: "Piensa en grande. Yo construyo el camino.",
     description: "Soy Charlles Augusto, desarrollador web en Brasil. Creo interfaces, APIs y automatizaciones con foco en claridad, mantenimiento y utilidad, guiado por fundamentos de seguridad.",
     primaryCta: "Conoce mi trabajo",
     secondaryCta: "Conectar en LinkedIn",
@@ -429,6 +438,9 @@ const spanish: PortfolioDictionary = {
     eyebrow: "Trabajo público, contexto real",
     title: "Proyectos que muestran cómo pienso y construyo.",
     description: "Una selección de trabajos públicos con problema, decisión técnica y próximo paso visibles. Menos vitrina genérica; más evidencia del proceso.",
+    panelTitle: "Trabajos",
+    panelClose: "Cerrar",
+    tabs: { product: "Web y producto", visual: "Visual e interfaz", motion: "Motion e interacción" },
     featuredLabel: "Caso seleccionado",
     openProject: "Abrir proyecto",
     problem: "Problema",

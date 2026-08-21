@@ -1,37 +1,52 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 
 import { LanguageSwitcher } from "@/components/language-switcher";
-import { IconGlyph } from "@/components/icon-glyph";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { localePath, type Locale, type PortfolioDictionary } from "@/lib/i18n";
+import type { Locale, PortfolioDictionary } from "@/lib/i18n";
 
-export function SiteHeader({ locale, dictionary }: { locale: Locale; dictionary: PortfolioDictionary }) {
+export function SiteHeader({
+  locale,
+  dictionary,
+  onOpenWork,
+  onOpenAbout,
+  onOpenContact,
+}: {
+  locale: Locale;
+  dictionary: PortfolioDictionary;
+  onOpenWork: () => void;
+  onOpenAbout: () => void;
+  onOpenContact: () => void;
+}) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const closeMenu = () => setMenuOpen(false);
+  const open = (action: () => void) => {
+    action();
+    closeMenu();
+  };
+
   return (
-    <header className="site-header">
-      <div className="site-header-inner">
-        <a className="site-brand" href={localePath(locale, "#top")} aria-label="Charlles.dev">
-          <span className="site-brand-mark">
-            <Image src="/assets/charlles-dev.svg" alt="" width={22} height={24} priority />
-          </span>
-          <span>charlles<span className="accent-text">.dev</span></span>
+    <header className="reference-header">
+      <div className="reference-header-inner">
+        <a className="reference-brand" href={`/${locale === "pt-BR" ? "" : locale}`} aria-label="Charlles.dev">
+          <Image src="/assets/charlles-dev.svg" alt="" width={28} height={28} priority />
+          <span>charlles<span>.dev</span></span>
         </a>
-
-        <nav className="desktop-nav" aria-label="Navegação principal">
-          <a href={localePath(locale, "#trabalhos")}>{dictionary.nav.work}</a>
-          <a href={localePath(locale, "#sobre")}>{dictionary.nav.about}</a>
-          <a href={localePath(locale, "#agora")}>{dictionary.nav.now}</a>
-          <a href={localePath(locale, "#contato")}>{dictionary.nav.contact}</a>
-        </nav>
-
-        <div className="header-tools">
+        <nav className="reference-nav" aria-label="Navegação principal">
+          <button type="button" onClick={onOpenWork}>{dictionary.nav.work}</button>
+          <button type="button" onClick={onOpenAbout}>{dictionary.nav.about}</button>
+          <button type="button" onClick={onOpenContact}>{dictionary.nav.contact}</button>
           <LanguageSwitcher currentLocale={locale} />
           <ThemeToggle label={dictionary.nav.theme} />
-          <a className="header-contact" href={localePath(locale, "#contato")}>
-            <span className="status-dot" aria-hidden="true" />
-            <span className="header-contact-label">{dictionary.hero.status}</span>
-            <IconGlyph name="arrow-right" className="size-4" />
-          </a>
-        </div>
+          <button type="button" className="reference-mobile-menu-button" aria-expanded={menuOpen} aria-controls="reference-mobile-menu" onClick={() => setMenuOpen((value) => !value)}>☰<span className="sr-only">{dictionary.nav.menu}</span></button>
+        </nav>
+        {menuOpen && <div className="reference-mobile-menu" id="reference-mobile-menu">
+          <button type="button" onClick={() => open(onOpenWork)}>{dictionary.nav.work}</button>
+          <button type="button" onClick={() => open(onOpenAbout)}>{dictionary.nav.about}</button>
+          <button type="button" onClick={() => open(onOpenContact)}>{dictionary.nav.contact}</button>
+        </div>}
       </div>
     </header>
   );

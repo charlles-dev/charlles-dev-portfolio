@@ -1,5 +1,7 @@
 import { localeLabels, locales, localePath, type Locale } from "@/lib/i18n";
 
+const localeFlags: Record<Locale, string> = { "pt-BR": "🇧🇷", en: "🇺🇸", es: "🇪🇸" };
+
 export function LanguageSwitcher({ currentLocale }: { currentLocale: Locale }) {
   return (
     <div className="language-switcher" aria-label="Idioma">
@@ -15,7 +17,7 @@ export function LanguageSwitcher({ currentLocale }: { currentLocale: Locale }) {
             lang={locale}
             key={locale}
           >
-            <span aria-hidden="true">{localeLabels[locale].short}</span>
+            <span aria-hidden="true" className="language-flag">{localeFlags[locale]}</span>
             <span className="sr-only">{localeLabels[locale].name}</span>
           </a>
         );
