@@ -1,21 +1,16 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
-vi.mock("next/font/google", () => ({
-  JetBrains_Mono: () => ({ variable: "--font-mono" }),
-  Space_Grotesk: () => ({ variable: "--font-sans" })
-}));
+import { dictionaries, locales } from "@/lib/i18n";
 
-import { metadata } from "@/app/layout";
+describe("localized portfolio metadata", () => {
+  it("positions every locale as professional web development work", () => {
+    for (const locale of locales) {
+      const dictionary = dictionaries[locale];
+      const metadataText = `${dictionary.meta.title} ${dictionary.meta.description}`;
 
-describe("page metadata", () => {
-  it("positions the portfolio as professional work, not an ai-student pitch", () => {
-    const title = String(metadata.title);
-    const description = String(metadata.description);
-    const openGraphTitle = String(metadata.openGraph?.title);
-    const openGraphDescription = String(metadata.openGraph?.description);
-    const metadataText = `${title} ${description} ${openGraphTitle} ${openGraphDescription}`;
-
-    expect(title).toMatch(/Desenvolvimento web/i);
-    expect(metadataText).not.toMatch(/Dev, cyber e IA|em formação|aprendizado em público/i);
+      expect(metadataText).toMatch(/web|desarrollador|desenvolvimento/i);
+      expect(metadataText).not.toMatch(/Dev, cyber e IA|em formação|aprendizado em público|IA student/i);
+      expect(dictionary.meta.description.length).toBeGreaterThan(100);
+    }
   });
 });
