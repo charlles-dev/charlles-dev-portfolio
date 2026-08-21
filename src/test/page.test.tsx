@@ -32,6 +32,21 @@ describe("reference-inspired localized home", () => {
     expect(screen.getByRole("link", { name: /English/i })).toHaveAttribute("href", "/en");
   });
 
+  it("scrubs the hero video to the scene progress after metadata loads", () => {
+    renderHome();
+
+    const video = document.querySelector(".reference-video-scrub") as HTMLVideoElement;
+    const story = document.querySelector(".reference-scroll-story") as HTMLElement;
+    Object.defineProperty(video, "duration", { configurable: true, value: 4 });
+    Object.defineProperty(story, "offsetHeight", { configurable: true, value: 3000 });
+    Object.defineProperty(story, "getBoundingClientRect", { configurable: true, value: () => ({ top: -(3000 - window.innerHeight) / 2 }) });
+
+    fireEvent(video, new Event("loadedmetadata"));
+    fireEvent.scroll(window);
+
+    expect(video.currentTime).toBeCloseTo(2, 1);
+  });
+
   it("opens the work panel with tabs and project cards", () => {
     renderHome();
     fireEvent.click(screen.getByRole("button", { name: "Trabalhos" }));

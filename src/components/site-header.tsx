@@ -31,8 +31,7 @@ export function SiteHeader({
     <header className="reference-header">
       <div className="reference-header-inner">
         <a className="reference-brand" href={`/${locale === "pt-BR" ? "" : locale}`} aria-label="Charlles.dev">
-          <Image src="/assets/charlles-dev.svg" alt="" width={28} height={28} priority />
-          <span>charlles<span>.dev</span></span>
+          <Image className="reference-brand-mark" src="/assets/charlles-dev.svg" alt="Charlles.dev" width={34} height={34} priority />
         </a>
         <nav className="reference-nav" aria-label="Navegação principal">
           <button type="button" onClick={onOpenWork}>{dictionary.nav.work}</button>
