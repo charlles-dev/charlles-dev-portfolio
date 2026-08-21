@@ -64,7 +64,7 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
           ref={primaryVideo}
           className="reference-video reference-video-primary reference-video-scrub"
           src="/reference/charlles-hero-biscuit.webm"
-          poster="/reference/charlles-avatar-biscuit.png"
+          poster="/reference/charlles-toy-canonical.png"
           muted
           playsInline
           preload="auto"
