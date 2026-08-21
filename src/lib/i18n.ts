@@ -112,11 +112,11 @@ export type PortfolioDictionary = {
 
 const portuguese: PortfolioDictionary = {
   meta: {
-    title: "Charlles Augusto — Desenvolvedor web e automações",
+    title: "Charlles Augusto — Desenvolvedor de software",
     description:
-      "Portfólio de Charlles Augusto, desenvolvedor web que transforma problemas reais em software claro, automações úteis e experiências confiáveis.",
+      "Portfólio de Charlles Augusto, desenvolvedor de software que cria interfaces, sistemas e automações com clareza e intenção.",
     keywords: ["desenvolvedor web", "Next.js", "TypeScript", "automação", "cibersegurança", "Campina Grande"],
-    ogAlt: "Charlles Augusto — desenvolvedor web, automação e segurança aplicada",
+    ogAlt: "Charlles Augusto — software, interfaces e sistemas",
   },
   nav: {
     work: "Trabalhos",
@@ -295,11 +295,11 @@ const portuguese: PortfolioDictionary = {
 const english: PortfolioDictionary = {
   ...portuguese,
   meta: {
-    title: "Charlles Augusto — Web developer and automation",
+    title: "Charlles Augusto — Software developer",
     description:
-      "Portfolio of Charlles Augusto, a web developer turning real problems into clear software, useful automation and dependable experiences.",
+      "Portfolio of Charlles Augusto, a software developer creating clear interfaces, systems and automation with intention.",
     keywords: ["web developer", "Next.js", "TypeScript", "automation", "cybersecurity", "Brazil"],
-    ogAlt: "Charlles Augusto — web development, automation and applied security",
+    ogAlt: "Charlles Augusto — software, interfaces and systems",
   },
   nav: { work: "Work", about: "About", now: "Now", contact: "Contact", menu: "Open menu", theme: "Toggle theme" },
   hero: {
@@ -399,10 +399,10 @@ const english: PortfolioDictionary = {
 const spanish: PortfolioDictionary = {
   ...english,
   meta: {
-    title: "Charlles Augusto — Desarrollador web y automatización",
-    description: "Portafolio de Charlles Augusto, desarrollador web que convierte problemas reales en software claro, automatizaciones útiles y experiencias confiables.",
+    title: "Charlles Augusto — Desarrollador de software",
+    description: "Portafolio de Charlles Augusto, desarrollador de software que crea interfaces, sistemas y automatizaciones con claridad e intención.",
     keywords: ["desarrollador web", "Next.js", "TypeScript", "automatización", "ciberseguridad", "Brasil"],
-    ogAlt: "Charlles Augusto — desarrollo web, automatización y seguridad aplicada",
+    ogAlt: "Charlles Augusto — software, interfaces y sistemas",
   },
   nav: { work: "Trabajos", about: "Sobre mí", now: "Ahora", contact: "Contacto", menu: "Abrir menú", theme: "Cambiar tema" },
   hero: {

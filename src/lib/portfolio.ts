@@ -98,16 +98,16 @@ export type WorkPrinciple = {
 export const profile: Profile = {
   name: "Charlles Augusto",
   handle: "Charlles.dev",
-  role: "Desenvolvedor web e automações",
-  headline: "Produtos web, automação e segurança aplicada.",
+  role: "Desenvolvedor de software",
+  headline: "Interfaces, sistemas e automação.",
   coverLine:
-    "Construo interfaces, automações e integrações com foco em clareza, operação e utilidade real. Minha base em cibersegurança e automação entra como diferencial técnico, não como rótulo.",
+    "Construo interfaces, sistemas e automações com foco em clareza, ritmo e utilidade real. Gosto de transformar complexidade em experiências que fazem sentido.",
   intro:
-    "Sou Charlles Augusto, desenvolvedor web. Trabalho entre produto, automação e segurança aplicada para transformar problemas práticos em software bem apresentado e fácil de evoluir.",
+    "Sou Charlles Augusto, desenvolvedor de software. Trabalho entre interfaces, lógica e automação para transformar problemas práticos em experiências bem apresentadas e fáceis de evoluir.",
   manifestoTitle: "Construo software com clareza, contexto e utilidade.",
   manifestoBody:
     "Meu foco é entregar produtos digitais simples de entender, bem documentados e úteis para fluxos reais. A página mostra projetos, decisões técnicas, ferramentas e credenciais que sustentam meu trabalho como desenvolvedor.",
-  tagline: "web, APIs e automação operacional",
+  tagline: "interface / código / automação",
   location: "Campina Grande-PB, Brazil",
   email: "charllesgst@gmail.com"
 };
