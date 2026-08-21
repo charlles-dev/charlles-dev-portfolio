@@ -68,22 +68,39 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
     if (!video || !isLooping) return;
 
     let animationFrame = 0;
-    const tick = () => {
+    let direction = 1;
+    let previousTimestamp = 0;
+    const loopStartOffset = 3.6;
+    const loopEndOffset = 1.15;
+
+    const tick = (timestamp: number) => {
       if (!Number.isFinite(video.duration) || video.duration <= 0) {
         animationFrame = window.requestAnimationFrame(tick);
         return;
       }
 
-      const loopStart = Math.max(0, video.duration - 1.4);
-      const loopEnd = Math.max(loopStart + 0.3, video.duration - 0.05);
-      if (video.currentTime < loopStart || video.currentTime >= loopEnd) video.currentTime = loopStart;
-      if (video.paused) {
-        try {
-          const playback = video.play();
-          playback?.catch(() => undefined);
-        } catch {
-          // Autoplay can be unavailable; the next animation frame retries the final loop.
-        }
+      const loopStart = Math.max(0, video.duration - loopStartOffset);
+      const loopEnd = Math.max(loopStart + 1.8, video.duration - loopEndOffset);
+      if (previousTimestamp === 0 || video.currentTime < loopStart || video.currentTime > loopEnd) {
+        video.pause();
+        video.currentTime = loopStart;
+        direction = 1;
+        previousTimestamp = timestamp;
+        animationFrame = window.requestAnimationFrame(tick);
+        return;
+      }
+
+      const elapsed = Math.min(0.05, Math.max(0, (timestamp - previousTimestamp) / 1000));
+      previousTimestamp = timestamp;
+      const nextTime = video.currentTime + elapsed * direction;
+      if (direction > 0 && nextTime >= loopEnd) {
+        video.currentTime = loopEnd;
+        direction = -1;
+      } else if (direction < 0 && nextTime <= loopStart) {
+        video.currentTime = loopStart;
+        direction = 1;
+      } else {
+        video.currentTime = nextTime;
       }
       animationFrame = window.requestAnimationFrame(tick);
     };
@@ -91,6 +108,7 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
     animationFrame = window.requestAnimationFrame(tick);
     return () => {
       window.cancelAnimationFrame(animationFrame);
+      previousTimestamp = 0;
       if (!video.paused) video.pause();
     };
   }, [isLooping]);
