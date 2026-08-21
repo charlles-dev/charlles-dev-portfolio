@@ -4,7 +4,6 @@ import { useState } from "react";
 import Image from "next/image";
 
 import { LanguageSwitcher } from "@/components/language-switcher";
-import { ThemeToggle } from "@/components/theme-toggle";
 import type { Locale, PortfolioDictionary } from "@/lib/i18n";
 
 export function SiteHeader({
@@ -38,7 +37,6 @@ export function SiteHeader({
           <button type="button" onClick={onOpenAbout}>{dictionary.nav.about}</button>
           <button type="button" onClick={onOpenContact}>{dictionary.nav.contact}</button>
           <LanguageSwitcher currentLocale={locale} />
-          <ThemeToggle label={dictionary.nav.theme} />
           <button type="button" className="reference-mobile-menu-button" aria-expanded={menuOpen} aria-controls="reference-mobile-menu" onClick={() => setMenuOpen((value) => !value)}>☰<span className="sr-only">{dictionary.nav.menu}</span></button>
         </nav>
         {menuOpen && <div className="reference-mobile-menu" id="reference-mobile-menu">

@@ -19,7 +19,6 @@ function SocialGlyph({ kind }: { kind: SocialKind }) {
 export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: PortfolioDictionary; onOpenWork: () => void }) {
   const storyRef = useRef<HTMLElement>(null);
   const primaryVideo = useRef<HTMLVideoElement>(null);
-  const loopVideo = useRef<HTMLVideoElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const github = socialLinks.find((link) => link.kind === "github");
   const linkedIn = socialLinks.find((link) => link.kind === "linkedin");
@@ -49,42 +48,54 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
 
   useEffect(() => {
     const video = primaryVideo.current;
-    const loop = loopVideo.current;
-    if (!video || !loop) return;
+    if (!video) return;
+
+    const playFinalLoop = () => {
+      if (!Number.isFinite(video.duration) || video.duration <= 0) return;
+      const loopStart = Math.max(0, video.duration - 1.4);
+      const loopEnd = Math.max(loopStart + 0.3, video.duration - 0.05);
+      if (video.currentTime < loopStart || video.currentTime >= loopEnd) video.currentTime = loopStart;
+      if (video.paused) {
+        try {
+          const playback = video.play();
+          playback?.catch(() => undefined);
+        } catch {
+          // Autoplay can be unavailable; the next scroll/timeupdate will retry the final loop.
+        }
+      }
+    };
+
+    const stopFinalLoop = () => {
+      if (!video.paused) video.pause();
+    };
 
     const syncVideo = () => {
       if (!Number.isFinite(video.duration) || video.duration <= 0) return;
+      if (isLooping) {
+        playFinalLoop();
+        return;
+      }
+      stopFinalLoop();
       const targetTime = Math.min(Math.max(0, video.duration - 0.05), scrubProgress * video.duration);
       if (!video.seeking && Math.abs(video.currentTime - targetTime) > 0.01) video.currentTime = targetTime;
     };
 
-    const syncLoop = () => {
-      if (isLooping) {
-        if (loop.paused) {
-          try {
-            const playback = loop.play();
-            playback?.catch(() => undefined);
-          } catch {
-            // Autoplay can be unavailable in some browsers; the loop remains ready for the next scroll event.
-          }
-        }
-      } else {
-        if (!loop.paused) loop.pause();
-        if (loop.currentTime !== 0) loop.currentTime = 0;
-      }
+    const handleTimeUpdate = () => {
+      if (!isLooping || !Number.isFinite(video.duration) || video.duration <= 0) return;
+      const loopStart = Math.max(0, video.duration - 1.4);
+      const loopEnd = Math.max(loopStart + 0.3, video.duration - 0.05);
+      if (video.currentTime >= loopEnd) video.currentTime = loopStart;
     };
 
     syncVideo();
-    syncLoop();
     video.addEventListener("loadedmetadata", syncVideo);
     video.addEventListener("durationchange", syncVideo);
-    loop.addEventListener("loadedmetadata", syncLoop);
-    loop.addEventListener("canplay", syncLoop);
+    video.addEventListener("timeupdate", handleTimeUpdate);
     return () => {
       video.removeEventListener("loadedmetadata", syncVideo);
       video.removeEventListener("durationchange", syncVideo);
-      loop.removeEventListener("loadedmetadata", syncLoop);
-      loop.removeEventListener("canplay", syncLoop);
+      video.removeEventListener("timeupdate", handleTimeUpdate);
+      stopFinalLoop();
     };
   }, [isLooping, scrubProgress]);
 
@@ -95,18 +106,8 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
           ref={primaryVideo}
           className="reference-video reference-video-primary reference-video-scrub"
           src="/reference/charlles-hero-biscuit.webm"
-          poster="/reference/charlles-toy-canonical.png"
+          poster="/reference/charlles-hero-poster.webp"
           muted
-          playsInline
-          preload="auto"
-          aria-hidden="true"
-        />
-        <video
-          ref={loopVideo}
-          className="reference-video reference-video-loop"
-          src="/reference/charlles-hero-biscuit-loop.webm"
-          muted
-          loop
           playsInline
           preload="auto"
           aria-hidden="true"

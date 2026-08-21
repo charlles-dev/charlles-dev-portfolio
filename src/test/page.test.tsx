@@ -32,7 +32,10 @@ describe("reference-inspired localized home", () => {
     expect(screen.getByRole("link", { name: "Discord" })).toHaveAttribute("href", "https://discord.com/users/472347892728987658");
     expect(screen.getByRole("link", { name: "WhatsApp" })).toHaveAttribute("href", "https://wa.me/5583991141561");
     expect(screen.getByRole("link", { name: "Email" })).toHaveAttribute("href", "mailto:charllesgst@gmail.com");
-    expect(document.querySelector(".reference-video-loop")).toHaveAttribute("src", "/reference/charlles-hero-biscuit-loop.webm");
+    expect(document.querySelector(".reference-video-scrub")).toHaveAttribute("poster", "/reference/charlles-hero-poster.webp");
+    expect(document.querySelector(".reference-video-loop")).not.toBeInTheDocument();
+    expect(document.querySelectorAll(".language-flag-icon")).toHaveLength(3);
+    expect(screen.queryByRole("button", { name: "Alternar tema" })).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: /English/i })).toHaveAttribute("href", "/en");
   });
 

@@ -27,11 +27,6 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
       <body>
         <a className="skip-link" href="#conteudo">{rawLocale === "pt-BR" ? "Pular para o conteúdo" : rawLocale === "en" ? "Skip to content" : "Saltar al contenido"}</a>
         {children}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `document.documentElement.dataset.theme=localStorage.getItem("charlles-theme")||"dark";`,
-          }}
-        />
       </body>
     </html>
   );

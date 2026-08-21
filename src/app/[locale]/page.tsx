@@ -36,13 +36,13 @@ export async function generateMetadata({ params }: PageProps<"/[locale]">): Prom
       siteName: "Charlles.dev",
       locale: rawLocale === "pt-BR" ? "pt_BR" : rawLocale,
       type: "profile",
-      images: [{ url: "/assets/charlles-portrait.png", width: 1200, height: 1200, alt: dictionary.meta.ogAlt }],
+      images: [{ url: "/reference/charlles-hero-poster.webp", width: 1280, height: 720, alt: dictionary.meta.ogAlt }],
     },
     twitter: {
       card: "summary_large_image",
       title: dictionary.meta.title,
       description: dictionary.meta.description,
-      images: ["/assets/charlles-portrait.png"],
+      images: ["/reference/charlles-hero-poster.webp"],
     },
   };
 }
@@ -63,7 +63,7 @@ export default async function LocalePage({ params }: PageProps<"/[locale]">) {
       "@type": "Person",
       name: profile.name,
       url: "https://charlles.dev",
-      image: "https://charlles.dev/assets/charlles-portrait.png",
+      image: "https://charlles.dev/reference/charlles-hero-poster.webp",
       jobTitle: dictionary.hero.role,
       description: dictionary.meta.description,
       address: { "@type": "PostalAddress", addressLocality: "Campina Grande", addressCountry: "BR" },
