@@ -21,8 +21,8 @@ describe("reference-inspired localized home", () => {
   it("renders the pinned hero, social rail and transparent navigation", () => {
     renderHome();
 
-    expect(screen.getByRole("heading", { level: 1, name: /Pense grande/i })).toBeInTheDocument();
-    expect(screen.getByText(/desenvolvedor web de Campina Grande/i)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1, name: /Construo experiências digitais/i })).toBeInTheDocument();
+    expect(screen.getByText(/desenvolvedor de software de Campina Grande/i)).toBeInTheDocument();
     expect(screen.getByText(/Role para explorar/i)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Trabalhos" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Sobre" })).toBeInTheDocument();
@@ -65,7 +65,7 @@ describe("reference-inspired localized home", () => {
     expect(within(dialog).getAllByRole("link", { name: /Abrir projeto/i })[0]).toHaveAttribute("href", "https://github.com/charlles-dev/Astrolink");
 
     fireEvent.click(within(dialog).getByRole("tab", { name: "Visual e interface" }));
-    expect(within(dialog).getByRole("heading", { name: /Tecnologia precisa reduzir atrito/i })).toBeInTheDocument();
+    expect(within(dialog).getByRole("heading", { name: /Eu gosto de transformar complexidade/i })).toBeInTheDocument();
     fireEvent.click(within(dialog).getByRole("button", { name: "Fechar" }));
     expect(screen.queryByRole("dialog", { name: "Trabalhos" })).not.toBeInTheDocument();
   });
@@ -74,25 +74,25 @@ describe("reference-inspired localized home", () => {
     renderHome();
 
     fireEvent.click(screen.getByRole("button", { name: "Sobre" }));
-    expect(screen.getByRole("dialog", { name: /Tecnologia precisa/i })).toBeInTheDocument();
+    expect(screen.getByRole("dialog", { name: /Eu gosto de transformar complexidade/i })).toBeInTheDocument();
     fireEvent.keyDown(document, { key: "Escape" });
-    expect(screen.queryByRole("dialog", { name: /Tecnologia precisa/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("dialog", { name: /Eu gosto de transformar complexidade/i })).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Contato" }));
-    const dialog = screen.getByRole("dialog", { name: /Tem um problema/i });
+    const dialog = screen.getByRole("dialog", { name: /Se existe algo interessante/i });
     expect(within(dialog).getByText(/Falar pelo LinkedIn/i)).toBeInTheDocument();
     expect(within(dialog).getByRole("link", { name: /charllesgst@gmail.com/i })).toHaveAttribute("href", "mailto:charllesgst@gmail.com");
     fireEvent.click(within(dialog).getByRole("button", { name: "Contato" }));
-    expect(screen.queryByRole("dialog", { name: /Tem um problema/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("dialog", { name: /Se existe algo interessante/i })).not.toBeInTheDocument();
   });
 
   it("renders localized English copy and keeps the same interaction model", () => {
     renderHome("en");
 
-    expect(screen.getByRole("heading", { level: 1, name: /Dream big/i })).toBeInTheDocument();
-    expect(document.body.textContent).toContain("Web developer and automation builder");
+    expect(screen.getByRole("heading", { level: 1, name: /I build digital experiences/i })).toBeInTheDocument();
+    expect(document.body.textContent).toContain("Software developer");
     expect(screen.getByRole("button", { name: "Work" })).toBeInTheDocument();
-    expect(screen.queryByText("web, APIs e automação operacional")).not.toBeInTheDocument();
+    expect(screen.queryByText("interface / código / automação")).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: /charlles\.dev/i })).toHaveAttribute("href", "/en");
   });
 

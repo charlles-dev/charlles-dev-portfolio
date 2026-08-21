@@ -9,7 +9,7 @@ import { profile, socialLinks } from "@/lib/portfolio";
 type SocialKind = "github" | "linkedin" | "email" | "discord" | "whatsapp";
 
 function SocialGlyph({ kind }: { kind: SocialKind }) {
-  if (kind === "linkedin") return <svg aria-hidden="true" viewBox="0 0 24 24" className="reference-social-glyph"><path d="M6.5 8.8v9.7M6.5 5.8v.1M11 18.5v-5.2a2.8 2.8 0 0 1 5.6 0v5.2M11 10.8v7.7" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="1.8" /><path d="M3.8 4.2h16.4A1.6 1.6 0 0 1 21.8 5.8v12.4a1.6 1.6 0 0 1-1.6 1.6H3.8a1.6 1.6 0 0 1-1.6-1.6V5.8A1.6 1.6 0 0 1 3.8 4.2Z" fill="none" stroke="currentColor" strokeWidth="1.3" /></svg>;
+  if (kind === "linkedin") return <svg aria-hidden="true" viewBox="0 0 24 24" className="reference-social-glyph"><path d="M4.7 3.2A2.3 2.3 0 1 1 4.7 7.8a2.3 2.3 0 0 1 0-4.6ZM2.7 9.2h4v11.6h-4V9.2Zm6.4 0h3.8v1.6h.05c.53-1 1.84-2.05 3.78-2.05 4.04 0 4.79 2.66 4.79 6.12v5.92h-4v-5.25c0-1.25-.02-2.86-1.75-2.86-1.75 0-2.02 1.37-2.02 2.77v5.34h-4V9.2Z" fill="currentColor" /></svg>;
   if (kind === "email") return <svg aria-hidden="true" viewBox="0 0 32 32" className="reference-social-glyph"><path d="M13.948 15.685a3 3 0 0 0 4.114.006l10.075-9.464A3 3 0 0 0 27 6H5a3 3 0 0 0-1.08.209z" fill="currentColor" /><path d="M19.431 17.149a5.007 5.007 0 0 1-6.857-.01L2.4 7.527A3 3 0 0 0 2 9v14a3 3 0 0 0 3 3h22a3 3 0 0 0 3-3V9a2.96 2.96 0 0 0-.377-1.425z" fill="currentColor" /></svg>;
   if (kind === "discord") return <svg aria-hidden="true" viewBox="0 0 256 199" className="reference-social-glyph"><path d="M216.856 16.597A208.502 208.502 0 0 0 164.042 0c-2.275 4.113-4.933 9.645-6.766 14.046-19.692-2.961-39.203-2.961-58.533 0C96.911 9.645 94.193 4.113 91.897 0a207.9 207.9 0 0 0-52.855 16.638C5.618 67.147-3.443 116.4 1.087 164.956c22.169 16.555 43.653 26.612 64.775 33.193A161.094 161.094 0 0 0 79.735 175.3a136.413 136.413 0 0 1-21.846-10.633 108.636 108.636 0 0 0 5.356-4.236c42.122 19.702 87.89 19.702 129.51 0a131.66 131.66 0 0 0 5.355 4.236 136.07 136.07 0 0 1-21.887 10.653 160.469 160.469 0 0 0 13.873 22.848c21.142-6.581 42.646-16.637 64.815-33.213 5.316-56.288-9.08-105.09-38.055-148.36ZM85.474 135.095c-12.645 0-23.015-11.805-23.015-26.18s10.148-26.2 23.015-26.2c12.867 0 23.236 11.804 23.015 26.2 0 14.375-10.168 26.18-23.015 26.18Zm85.051 0c-12.645 0-23.015-11.805-23.015-26.18s10.148-26.2 23.015-26.2c12.866 0 23.236 11.804 23.015 26.2 0 14.375-10.149 26.18-23.015 26.18Z" fill="currentColor" /></svg>;
   if (kind === "whatsapp") return <svg aria-hidden="true" viewBox="0 0 512 512" className="reference-social-glyph"><path d="M256.064 0h-.128C114.784 0 0 114.816 0 256c0 56 18.048 107.904 48.736 150.048l-31.904 95.104 98.4-31.456C155.712 496.512 204 512 256.064 512 397.216 512 512 397.152 512 256S397.216 0 256.064 0m148.96 361.504c-6.176 17.44-30.688 31.904-50.24 36.128-13.376 2.848-30.848 5.12-89.664-19.264-75.232-31.168-123.68-107.616-127.456-112.576-3.616-4.96-30.4-40.48-30.4-77.216s18.656-54.624 26.176-62.304c6.176-6.304 16.384-9.184 26.176-9.184 3.168 0 6.016.16 8.576.288 7.52.32 11.296.768 16.256 12.64 6.176 14.88 21.216 51.616 23.008 55.392 1.824 3.776 3.648 8.896 1.088 13.856-2.4 5.12-4.512 7.392-8.288 11.744s-7.36 7.68-11.136 12.352c-3.456 4.064-7.36 8.416-3.008 15.936 4.352 7.36 19.392 31.904 41.536 51.616 28.576 25.44 51.744 33.568 60.032 37.024 6.176 2.56 13.536 1.952 18.048-2.848 5.728-6.176 12.8-16.416 20-26.496 5.12-7.232 11.584-8.128 18.368-5.568 6.912 2.4 43.488 20.48 51.008 24.224 7.52 3.776 12.48 5.568 14.304 8.736 1.792 3.168 1.792 18.048-4.384 35.52Z" fill="currentColor" /></svg>;
@@ -29,6 +29,8 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
   const isScrolled = scrollProgress > 0.08;
   const isLooping = scrollProgress >= 0.85;
   const scrubProgress = Math.min(1, Math.max(0, (scrollProgress - 0.08) / 0.77));
+  const contrast = Math.min(1, Math.max(0, (scrollProgress - 0.28) / 0.5));
+  const tone = Math.round(255 - contrast * 245);
 
   useEffect(() => {
     const story = storyRef.current;
@@ -45,6 +47,21 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const mutedTone = Math.max(24, tone - 18);
+    root.style.setProperty("--reference-ink", `rgb(${tone} ${tone} ${tone})`);
+    root.style.setProperty("--reference-muted", `rgba(${mutedTone} ${mutedTone} ${mutedTone} / .68)`);
+    root.style.setProperty("--reference-subtle", `rgba(${mutedTone} ${mutedTone} ${mutedTone} / .46)`);
+    root.style.setProperty("--reference-faint", `rgba(${mutedTone} ${mutedTone} ${mutedTone} / .35)`);
+    return () => {
+      root.style.removeProperty("--reference-ink");
+      root.style.removeProperty("--reference-muted");
+      root.style.removeProperty("--reference-subtle");
+      root.style.removeProperty("--reference-faint");
+    };
+  }, [tone]);
 
   useEffect(() => {
     const video = primaryVideo.current;
@@ -112,11 +129,11 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
           preload="auto"
           aria-hidden="true"
         />
-        <div className="reference-night-layer" aria-hidden="true">
+        <div className="reference-night-layer" aria-hidden="true" style={{ opacity: Math.max(0.14, 1 - contrast * 0.86) }}>
           <span className="reference-star star-a" /><span className="reference-star star-b" /><span className="reference-star star-c" /><span className="reference-star star-d" />
           <span className="reference-star star-e" /><span className="reference-star star-f" /><span className="reference-star star-g" />
         </div>
-        <div className="reference-scrim" aria-hidden="true" style={{ opacity: Math.max(0.16, 0.76 - scrollProgress * 0.58) }} />
+        <div className="reference-scrim" aria-hidden="true" style={{ opacity: Math.max(0.12, 0.76 - scrollProgress * 0.66) }} />
         <div className="reference-top-scrim" aria-hidden="true" />
 
         <div className="reference-stage-header">

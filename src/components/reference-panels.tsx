@@ -34,7 +34,10 @@ function WorkPanel({ dictionary, onClose }: { dictionary: PortfolioDictionary; o
       <div className="reference-overlay" aria-hidden="true" onClick={onClose} />
       <section className="reference-work-panel" role="dialog" aria-modal="true" aria-labelledby="reference-work-title">
         <header className="reference-panel-header">
-          <h2 id="reference-work-title">{dictionary.work.panelTitle}</h2>
+          <div className="reference-panel-heading">
+            <p className="reference-eyebrow">{dictionary.work.eyebrow}</p>
+            <h2 id="reference-work-title">{dictionary.work.panelTitle}</h2>
+          </div>
           <div className="reference-work-tabs" role="tablist" aria-label={dictionary.work.panelTitle}>
             {(Object.keys(tabLabels) as WorkTab[]).map((value) => (
               <button type="button" role="tab" aria-selected={tab === value} className={tab === value ? "is-active" : ""} key={value} onClick={() => setTab(value)}>{tabLabels[value]}</button>
@@ -86,7 +89,16 @@ function InfoDialog({ panel, dictionary, onClose }: { panel: "about" | "contact"
     <>
       <div className="reference-overlay reference-overlay-soft" aria-hidden="true" onClick={onClose} />
       <section className="reference-info-dialog" role="dialog" aria-modal="true" aria-labelledby="reference-info-title">
-        <div className="reference-dialog-avatar"><span>{profile.name.split(" ").map((part) => part[0]).join("")}</span></div>
+        <header className="reference-dialog-header">
+          <div className="reference-dialog-identity">
+            <div className="reference-dialog-avatar"><span>{profile.name.split(" ").map((part) => part[0]).join("")}</span></div>
+            <div>
+              <p className="reference-eyebrow">{about ? dictionary.about.eyebrow : dictionary.contact.eyebrow}</p>
+              <strong className="reference-dialog-name">{profile.name}</strong>
+            </div>
+          </div>
+          <PanelClose label={about ? dictionary.nav.about : dictionary.nav.contact} onClose={onClose} />
+        </header>
         <div className="reference-dialog-topline"><span>{dictionary.hero.role}</span><span className="reference-status-pill"><span className="status-dot" aria-hidden="true" />{dictionary.hero.status}</span></div>
         <h2 id="reference-info-title">{title}</h2>
         {about ? (
@@ -101,10 +113,14 @@ function InfoDialog({ panel, dictionary, onClose }: { panel: "about" | "contact"
             <div className="reference-facts"><div><strong>3</strong><span>{dictionary.work.featuredLabel}</span></div><div><strong>24h</strong><span>{dictionary.hero.facts[1].label}</span></div><div><strong>BR</strong><span>{dictionary.hero.facts[0].value}</span></div></div>
             <p>{dictionary.contact.description}</p>
             <ContactActions dictionary={dictionary} />
-            <div className="reference-dialog-links">{linkedin && <a href={linkedin.href} target="_blank" rel="noreferrer">LinkedIn</a>}{email && <a href={email.href}>{profile.email}</a>}</div>
+            <div className="reference-dialog-links">
+              {linkedin && <a href={linkedin.href} target="_blank" rel="noreferrer">LinkedIn</a>}
+              {email && <a href={email.href}>{profile.email}</a>}
+              {socialLinks.find((link) => link.kind === "discord") && <a href={socialLinks.find((link) => link.kind === "discord")?.href} target="_blank" rel="noreferrer">Discord</a>}
+              {socialLinks.find((link) => link.kind === "whatsapp") && <a href={socialLinks.find((link) => link.kind === "whatsapp")?.href} target="_blank" rel="noreferrer">WhatsApp</a>}
+            </div>
           </>
         )}
-        <PanelClose label={about ? dictionary.nav.about : dictionary.nav.contact} onClose={onClose} />
       </section>
     </>
   );
