@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { PortfolioHome } from "@/components/portfolio-home";
@@ -40,7 +40,7 @@ describe("reference-inspired localized home", () => {
     expect(screen.getByRole("link", { name: /English/i })).toHaveAttribute("href", "/en");
   });
 
-  it("scrubs the hero video to the scene progress after metadata loads", () => {
+  it("scrubs the hero video to the scene progress after metadata loads", async () => {
     renderHome();
 
     const video = document.querySelector(".reference-video-scrub") as HTMLVideoElement;
@@ -52,7 +52,7 @@ describe("reference-inspired localized home", () => {
     fireEvent(video, new Event("loadedmetadata"));
     fireEvent.scroll(window);
 
-    expect(video.currentTime).toBeCloseTo(0.28 * 4 + ((0.5 - 0.28) / 0.5) * 0.5 * 4, 1);
+    await waitFor(() => expect(video.currentTime).toBeCloseTo((0.29 + 0.5 * (0.73 - 0.29)) * 4, 1));
   });
 
   it("switches between idle, transition and awake loop states", () => {

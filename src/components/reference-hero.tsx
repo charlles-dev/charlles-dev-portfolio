@@ -8,6 +8,17 @@ import { profile, socialLinks } from "@/lib/portfolio";
 
 type SocialKind = "github" | "linkedin" | "email" | "discord" | "whatsapp";
 
+type LoopState = "idle" | "transition" | "awake";
+
+const HERO_TIMELINE = {
+  idleScrollEnd: 0.16,
+  awakeScrollStart: 0.84,
+  idleTimeStart: 0,
+  idleTimeEnd: 0.29,
+  awakeTimeStart: 0.73,
+  awakeTimeEnd: 0.99,
+};
+
 function SocialGlyph({ kind }: { kind: SocialKind }) {
   if (kind === "linkedin") return <svg aria-hidden="true" viewBox="0 0 24 24" className="reference-social-glyph"><path d="M4.7 3.2A2.3 2.3 0 1 1 4.7 7.8a2.3 2.3 0 0 1 0-4.6ZM2.7 9.2h4v11.6h-4V9.2Zm6.4 0h3.8v1.6h.05c.53-1 1.84-2.05 3.78-2.05 4.04 0 4.79 2.66 4.79 6.12v5.92h-4v-5.25c0-1.25-.02-2.86-1.75-2.86-1.75 0-2.02 1.37-2.02 2.77v5.34h-4V9.2Z" fill="currentColor" /></svg>;
   if (kind === "email") return <svg aria-hidden="true" viewBox="0 0 32 32" className="reference-social-glyph"><path d="M13.948 15.685a3 3 0 0 0 4.114.006l10.075-9.464A3 3 0 0 0 27 6H5a3 3 0 0 0-1.08.209z" fill="currentColor" /><path d="M19.431 17.149a5.007 5.007 0 0 1-6.857-.01L2.4 7.527A3 3 0 0 0 2 9v14a3 3 0 0 0 3 3h22a3 3 0 0 0 3-3V9a2.96 2.96 0 0 0-.377-1.425z" fill="currentColor" /></svg>;
@@ -19,6 +30,9 @@ function SocialGlyph({ kind }: { kind: SocialKind }) {
 export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: PortfolioDictionary; onOpenWork: () => void }) {
   const storyRef = useRef<HTMLElement>(null);
   const primaryVideo = useRef<HTMLVideoElement>(null);
+  const scrollProgressRef = useRef(0);
+  const seekFrameRef = useRef<number | null>(null);
+  const pendingSeekRef = useRef<number | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const github = socialLinks.find((link) => link.kind === "github");
   const linkedIn = socialLinks.find((link) => link.kind === "linkedin");
@@ -27,10 +41,10 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
   const email = socialLinks.find((link) => link.kind === "email");
   const heroLines = dictionary.hero.headline.replace(". ", ".\n");
   const isScrolled = scrollProgress > 0.08;
-  const loopState = scrollProgress < 0.28 ? "idle" : scrollProgress >= 0.78 ? "awake" : "transition";
+  const loopState: LoopState = scrollProgress <= HERO_TIMELINE.idleScrollEnd ? "idle" : scrollProgress >= HERO_TIMELINE.awakeScrollStart ? "awake" : "transition";
   const isLooping = loopState !== "transition";
-  const transitionProgress = Math.min(1, Math.max(0, (scrollProgress - 0.28) / 0.5));
-  const contrast = Math.min(1, Math.max(0, (scrollProgress - 0.28) / 0.5));
+  const transitionProgress = Math.min(1, Math.max(0, (scrollProgress - HERO_TIMELINE.idleScrollEnd) / (HERO_TIMELINE.awakeScrollStart - HERO_TIMELINE.idleScrollEnd)));
+  const contrast = transitionProgress;
   const tone = Math.round(255 - contrast * 245);
 
   useEffect(() => {
@@ -41,6 +55,7 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
       const rect = story.getBoundingClientRect();
       const travel = Math.max(1, story.offsetHeight - window.innerHeight);
       const progress = Math.min(1, Math.max(0, -rect.top / travel));
+      scrollProgressRef.current = progress;
       setScrollProgress(progress);
     };
 
@@ -71,7 +86,9 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
     let animationFrame = 0;
     let direction = 1;
     let previousTimestamp = 0;
-    const loopBounds = loopState === "idle" ? { start: 0.2, end: 2.1 } : { start: 6.95, end: 9.25 };
+    const bounds = loopState === "idle"
+      ? { start: HERO_TIMELINE.idleTimeStart, end: HERO_TIMELINE.idleTimeEnd }
+      : { start: HERO_TIMELINE.awakeTimeStart, end: HERO_TIMELINE.awakeTimeEnd };
 
     const tick = (timestamp: number) => {
       if (!Number.isFinite(video.duration) || video.duration <= 0) {
@@ -79,12 +96,25 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
         return;
       }
 
-      const loopStart = Math.min(loopBounds.start, Math.max(0, video.duration - 0.05));
-      const loopEnd = Math.min(loopBounds.end, Math.max(loopStart + 0.4, video.duration - 0.05));
-      if (previousTimestamp === 0 || video.currentTime < loopStart || video.currentTime > loopEnd) {
+      const loopStart = bounds.start * video.duration;
+      const loopEnd = Math.min(bounds.end * video.duration, video.duration - 0.04);
+      if (previousTimestamp === 0) {
         video.pause();
-        video.currentTime = loopStart;
-        direction = 1;
+        if (loopState === "idle") {
+          if (video.currentTime > loopEnd) {
+            video.currentTime = loopEnd;
+            direction = -1;
+          } else if (video.currentTime < loopStart) {
+            video.currentTime = loopStart;
+            direction = 1;
+          }
+        } else if (video.currentTime < loopStart) {
+          video.currentTime = loopStart;
+          direction = 1;
+        } else if (video.currentTime > loopEnd) {
+          video.currentTime = loopEnd;
+          direction = -1;
+        }
         previousTimestamp = timestamp;
         animationFrame = window.requestAnimationFrame(tick);
         return;
@@ -117,10 +147,22 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
     const video = primaryVideo.current;
     if (!video || isLooping) return;
 
+    const queueSeek = (targetTime: number) => {
+      pendingSeekRef.current = targetTime;
+      if (seekFrameRef.current !== null) return;
+      seekFrameRef.current = window.requestAnimationFrame(() => {
+        seekFrameRef.current = null;
+        const pendingTime = pendingSeekRef.current;
+        if (pendingTime === null || !Number.isFinite(video.duration) || video.duration <= 0) return;
+        video.pause();
+        if (Math.abs(video.currentTime - pendingTime) > 0.008) video.currentTime = pendingTime;
+      });
+    };
+
     const syncScrub = () => {
       if (!Number.isFinite(video.duration) || video.duration <= 0) return;
-      const targetTime = Math.min(Math.max(0, video.duration - 0.05), 0.28 * video.duration + transitionProgress * 0.5 * video.duration);
-      if (!video.seeking && Math.abs(video.currentTime - targetTime) > 0.01) video.currentTime = targetTime;
+      const middleTime = HERO_TIMELINE.idleTimeEnd + transitionProgress * (HERO_TIMELINE.awakeTimeStart - HERO_TIMELINE.idleTimeEnd);
+      queueSeek(Math.min(video.duration - 0.04, Math.max(0, middleTime * video.duration)));
     };
 
     syncScrub();
@@ -129,6 +171,9 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
     return () => {
       video.removeEventListener("loadedmetadata", syncScrub);
       video.removeEventListener("durationchange", syncScrub);
+      if (seekFrameRef.current !== null) window.cancelAnimationFrame(seekFrameRef.current);
+      seekFrameRef.current = null;
+      pendingSeekRef.current = null;
     };
   }, [isLooping, transitionProgress]);
 
