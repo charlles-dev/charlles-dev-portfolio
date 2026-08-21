@@ -60,6 +60,8 @@ describe("portfolio content", () => {
     expect(socialLinks.map((link) => link.label)).toEqual([
       "LinkedIn",
       "GitHub",
+      "Discord",
+      "WhatsApp",
       "Email"
     ]);
   });

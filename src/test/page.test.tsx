@@ -29,6 +29,10 @@ describe("reference-inspired localized home", () => {
     expect(screen.getByRole("button", { name: "Contato" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "GitHub" })).toHaveAttribute("href", "https://github.com/charlles-dev");
     expect(screen.getByRole("link", { name: "LinkedIn" })).toHaveAttribute("href", "https://www.linkedin.com/in/charlles-augusto/");
+    expect(screen.getByRole("link", { name: "Discord" })).toHaveAttribute("href", "https://discord.com/users/472347892728987658");
+    expect(screen.getByRole("link", { name: "WhatsApp" })).toHaveAttribute("href", "https://wa.me/5583991141561");
+    expect(screen.getByRole("link", { name: "Email" })).toHaveAttribute("href", "mailto:charllesgst@gmail.com");
+    expect(document.querySelector(".reference-video-loop")).toHaveAttribute("src", "/reference/charlles-hero-biscuit-loop.webm");
     expect(screen.getByRole("link", { name: /English/i })).toHaveAttribute("href", "/en");
   });
 
@@ -44,7 +48,7 @@ describe("reference-inspired localized home", () => {
     fireEvent(video, new Event("loadedmetadata"));
     fireEvent.scroll(window);
 
-    expect(video.currentTime).toBeCloseTo(2, 1);
+    expect(video.currentTime).toBeCloseTo(((0.5 - 0.08) / 0.77) * 4, 1);
   });
 
   it("opens the work panel with tabs and project cards", () => {

@@ -22,7 +22,7 @@ export type NavItem = {
 export type SocialLink = {
   label: string;
   href: string;
-  kind: "linkedin" | "github" | "email";
+  kind: "linkedin" | "github" | "email" | "discord" | "whatsapp";
   primary?: boolean;
 };
 
@@ -130,6 +130,16 @@ export const socialLinks: SocialLink[] = [
     label: "GitHub",
     href: "https://github.com/charlles-dev",
     kind: "github"
+  },
+  {
+    label: "Discord",
+    href: "https://discord.com/users/472347892728987658",
+    kind: "discord"
+  },
+  {
+    label: "WhatsApp",
+    href: "https://wa.me/5583991141561",
+    kind: "whatsapp"
   },
   {
     label: "Email",

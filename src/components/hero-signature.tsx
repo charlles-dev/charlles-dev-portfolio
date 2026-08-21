@@ -79,7 +79,7 @@ export function HeroSignature({ locale, dictionary }: { locale: Locale; dictiona
             target={link.kind === "email" ? undefined : "_blank"}
             rel={link.kind === "email" ? undefined : "noreferrer"}
           >
-            <IconGlyph name={socialIconMap[link.kind]} className="size-5" />
+            <IconGlyph name={socialIconMap[link.kind as keyof typeof socialIconMap]} className="size-5" />
             <span>{link.label}</span>
           </a>
         ))}
