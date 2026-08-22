@@ -8,6 +8,7 @@ import { TransformNode } from "@babylonjs/core/Meshes/transformNode";
 import { GameStateStore } from "./game-state";
 import { SaveSystem } from "./save-system";
 import { PuzzleSystem, type PuzzleSignal } from "../systems/puzzle-system";
+import { ThreatSystem } from "../systems/threat-system";
 import { InputManager } from "../input/input-manager";
 import { Player } from "../entities/player";
 import type { GameLocale } from "../data/game-copy";
@@ -60,6 +61,7 @@ export class GameWorld {
   private readonly store: GameStateStore;
   private readonly saveSystem: SaveSystem;
   private readonly puzzles = new PuzzleSystem();
+  private readonly threat = new ThreatSystem();
   private readonly nodes: SignalNode[] = [];
   private readonly interactions: InteractionTarget[] = [];
   private readonly sectorRoots = {} as Record<SectorId, TransformNode>;
@@ -352,6 +354,7 @@ export class GameWorld {
     const previous = this.activeSector;
     for (const id of sectorOrder) this.sectorRoots[id].setEnabled(id === sector);
     this.activeSector = sector;
+    this.threat.reset();
     this.player.setBounds(bounds[sector]);
     if (sector === "hub") this.player.placeAt(new Vector3(-4.1, 0.5, 0.95));
     if (sector === "archive") this.player.placeAt(new Vector3(-4.45, 0.5, -1.9));
@@ -545,7 +548,8 @@ export class GameWorld {
     this.droneCone.position.z = this.drone.position.z - 0.35;
 
     const distance = this.player.distanceTo(this.drone.position);
-    const nextThreat = distance < 1.55 ? "alert" : distance < 2.65 ? "suspicious" : "patrol";
+    const evaluation = this.threat.evaluate({ distance, disabled: false });
+    const nextThreat = evaluation.state;
     if (nextThreat !== snapshot.threatState && this.messageCooldown <= 0) {
       this.store.patch({ threatState: nextThreat, message: nextThreat === "alert" ? "NIX encontrou a assinatura. Use o Pulso ou recue." : nextThreat === "suspicious" ? "O cone de varredura procura um padrão conhecido." : "A sentinela voltou a patrulhar." });
       this.messageCooldown = 0.8;
@@ -560,7 +564,7 @@ export class GameWorld {
     lightMaterial.emissiveColor = lightMaterial.diffuseColor;
     coneMaterial.diffuseColor = Color3.FromHexString(isAlert ? palette.red : palette.amber);
     coneMaterial.emissiveColor = coneMaterial.diffuseColor;
-    this.droneCone.visibility = isAlert ? 0.22 : isSuspicious ? 0.14 : 0.08;
+    this.droneCone.visibility = evaluation.coneVisibility;
 
   }
 }
