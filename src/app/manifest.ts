@@ -2,14 +2,21 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Charlles.dev",
+    id: "/pt-BR",
+    name: "Charlles.dev — Portfólio de desenvolvimento web",
     short_name: "Charlles.dev",
-    description: "Portfólio de Charlles Augusto — desenvolvimento web, automação e segurança aplicada.",
-    start_url: "/",
+    description: "Portfólio de Charlles Augusto — desenvolvimento web, sistemas, automação e interfaces digitais.",
+    start_url: "/pt-BR",
+    scope: "/",
     display: "standalone",
-    background_color: "#07100d",
-    theme_color: "#07100d",
+    orientation: "portrait-primary",
+    background_color: "#080c10",
+    theme_color: "#080c10",
     lang: "pt-BR",
-    icons: [{ src: "/assets/favicon.ico", sizes: "48x48", type: "image/x-icon" }],
+    categories: ["portfolio", "productivity", "technology"],
+    icons: [
+      { src: "/assets/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
+      { src: "/assets/icon-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+    ],
   };
 }

@@ -28,6 +28,7 @@ describe("reference-inspired localized home", () => {
     expect(screen.getByRole("button", { name: "Trabalhos" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Sobre" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Contato" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /charlles\.dev/i })).toHaveAttribute("href", "/pt-BR");
     expect(screen.getByRole("link", { name: "GitHub" })).toHaveAttribute("href", "https://github.com/charlles-dev");
     expect(screen.getByRole("link", { name: "LinkedIn" })).toHaveAttribute("href", "https://www.linkedin.com/in/charlles-augusto/");
     expect(screen.getByRole("link", { name: "Discord" })).toHaveAttribute("href", "https://discord.com/users/472347892728987658");
@@ -161,12 +162,24 @@ describe("reference-inspired localized home", () => {
     expect(screen.getByRole("link", { name: /charlles\.dev/i })).toHaveAttribute("href", "/en");
   });
 
-  it("opens the compact mobile menu without changing the scene", () => {
+  it("opens and dismisses the compact mobile menu accessibly", () => {
     renderHome();
 
-    fireEvent.click(screen.getByRole("button", { name: /Abrir menu/i }));
-    expect(document.getElementById("reference-mobile-menu")).toBeInTheDocument();
-    expect(screen.getAllByRole("button", { name: "Trabalhos" }).length).toBeGreaterThan(1);
+    const trigger = screen.getByRole("button", { name: /Abrir menu/i });
+    fireEvent.click(trigger);
+    const menu = document.getElementById("reference-mobile-menu");
+    expect(menu).toBeInTheDocument();
+    expect(menu).toHaveAttribute("role", "menu");
+    expect(within(menu as HTMLElement).getAllByRole("menuitem")).toHaveLength(3);
+    expect(within(menu as HTMLElement).getByRole("link", { name: "Português" })).toHaveAttribute("href", "/pt-BR");
+    expect(document.body.dataset.mobileMenuOpen).toBe("true");
+
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(document.getElementById("reference-mobile-menu")).not.toBeInTheDocument();
+
+    fireEvent.click(trigger);
+    fireEvent.pointerDown(document.body);
+    expect(document.getElementById("reference-mobile-menu")).not.toBeInTheDocument();
   });
 
   it("does not expose the old generic dashboard language", () => {

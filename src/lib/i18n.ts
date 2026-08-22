@@ -125,11 +125,11 @@ export type PortfolioDictionary = {
 
 const portuguese: PortfolioDictionary = {
   meta: {
-    title: "Charlles Augusto — Desenvolvedor de software",
+    title: "Charlles Augusto | Desenvolvedor web e software",
     description:
-      "Portfólio de Charlles Augusto, desenvolvedor de software que cria interfaces, sistemas e automações com clareza e intenção.",
-    keywords: ["desenvolvedor web", "Next.js", "TypeScript", "automação", "cibersegurança", "Campina Grande"],
-    ogAlt: "Charlles Augusto — software, interfaces e sistemas",
+      "Portfólio de Charlles Augusto, desenvolvedor web e de software em Campina Grande. Interfaces, sistemas, Next.js, TypeScript e automação.",
+    keywords: ["Charlles Augusto", "desenvolvedor web", "desenvolvedor de software", "Next.js", "TypeScript", "React", "automação de processos", "interfaces digitais", "Campina Grande"],
+    ogAlt: "Charlles Augusto — desenvolvedor web, interfaces e automação",
   },
   nav: {
     work: "Trabalhos",
@@ -314,11 +314,11 @@ const portuguese: PortfolioDictionary = {
 const english: PortfolioDictionary = {
   ...portuguese,
   meta: {
-    title: "Charlles Augusto — Software developer",
+    title: "Charlles Augusto | Web and software developer",
     description:
-      "Portfolio of Charlles Augusto, a software developer creating clear interfaces, systems and automation with intention.",
-    keywords: ["web developer", "Next.js", "TypeScript", "automation", "cybersecurity", "Brazil"],
-    ogAlt: "Charlles Augusto — software, interfaces and systems",
+      "Portfolio of Charlles Augusto, a web and software developer in Brazil building interfaces, systems, Next.js, TypeScript and automation.",
+    keywords: ["Charlles Augusto", "web developer", "software developer", "Next.js", "TypeScript", "React", "process automation", "digital interfaces", "Brazil"],
+    ogAlt: "Charlles Augusto — web development, interfaces and automation",
   },
   nav: { work: "Work", about: "About", now: "Now", contact: "Contact", menu: "Open menu", theme: "Toggle theme" },
   hero: {
@@ -424,10 +424,10 @@ const english: PortfolioDictionary = {
 const spanish: PortfolioDictionary = {
   ...english,
   meta: {
-    title: "Charlles Augusto — Desarrollador de software",
-    description: "Portafolio de Charlles Augusto, desarrollador de software que crea interfaces, sistemas y automatizaciones con claridad e intención.",
-    keywords: ["desarrollador web", "Next.js", "TypeScript", "automatización", "ciberseguridad", "Brasil"],
-    ogAlt: "Charlles Augusto — software, interfaces y sistemas",
+    title: "Charlles Augusto | Desarrollador web y de software",
+    description: "Portafolio de Charlles Augusto, desarrollador web y de software en Brasil: interfaces, sistemas, Next.js, TypeScript y automatización.",
+    keywords: ["Charlles Augusto", "desarrollador web", "desarrollador de software", "Next.js", "TypeScript", "React", "automatización de procesos", "interfaces digitales", "Brasil"],
+    ogAlt: "Charlles Augusto — desarrollo web, interfaces y automatización",
   },
   nav: { work: "Trabajos", about: "Sobre mí", now: "Ahora", contact: "Contacto", menu: "Abrir menú", theme: "Cambiar tema" },
   hero: {
@@ -535,7 +535,7 @@ export function getDictionary(locale: Locale): PortfolioDictionary {
 }
 
 export function localePath(locale: Locale, hash = "") {
-  return locale === "pt-BR" ? `/${hash}` : `/${locale}${hash}`;
+  return `/${locale}${hash}`;
 }
 
 export function projectKey(value: string) {

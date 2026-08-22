@@ -321,3 +321,33 @@ html:not([data-ready]) { overflow: hidden; } html[data-ready] .intro { pointer-e
 .contact-dialog > .contact-dialog-body > .reference-panel-close svg, .profile-dialog-about .profile-dialog-cover .reference-panel-close svg { display: block; width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
 .contact-dialog > .contact-dialog-body > .reference-panel-close { color: #c8c8cf; }
 .profile-dialog-about .profile-dialog-cover .reference-panel-close { color: rgba(16,16,17,.78); }
+
+.reference-mobile-menu-wrap { position: relative; display: none; }
+.reference-mobile-menu-button { display: grid; width: 2.6rem; height: 2.6rem; place-items: center; padding: 0; border: 1px solid rgba(255,255,255,.16); border-radius: 50%; background: rgba(12,13,14,.2); color: var(--reference-ink); cursor: pointer; font-size: 1rem; line-height: 1; transition: background-color .2s ease, border-color .2s ease, transform .16s ease; }
+.reference-mobile-menu-button:hover, .reference-mobile-menu-button[aria-expanded="true"] { border-color: rgba(141,232,190,.56); background: rgba(141,232,190,.12); }
+.reference-mobile-menu-button:active { transform: scale(.96); }
+.reference-mobile-menu { top: calc(100% + .65rem); right: 0; min-width: 12rem; padding: .45rem; border-color: rgba(255,255,255,.16); background: rgba(20,21,23,.96); backdrop-filter: blur(18px); }
+.reference-mobile-menu button { min-height: 2.75rem; padding: .78rem .85rem; border-radius: .7rem; color: var(--ink); font-size: .8rem; }
+.reference-mobile-menu button:focus-visible, .reference-mobile-languages a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.reference-mobile-menu button:hover { background: rgba(141,232,190,.1); }
+.reference-mobile-languages { display: grid; grid-template-columns: repeat(3, 1fr); gap: .3rem; margin-top: .35rem; padding-top: .45rem; border-top: 1px solid rgba(255,255,255,.1); }
+.reference-mobile-languages a { min-height: 2.35rem; padding: .65rem .35rem; border-radius: .6rem; color: var(--muted); font-family: var(--font-mono), monospace; font-size: .6rem; text-align: center; }
+.reference-mobile-languages a:hover, .reference-mobile-languages a[aria-current="page"] { background: rgba(141,232,190,.12); color: #9be8bf; }
+body[data-mobile-menu-open="true"] { overflow: hidden; }
+.reference-social-rail a { min-width: 2.25rem; min-height: 2.25rem; }
+
+@media (max-width: 640px) {
+  .reference-mobile-menu-wrap { display: block; }
+  .reference-mobile-menu { position: absolute; top: calc(100% + .65rem); right: 0; }
+  .reference-social-rail { right: .55rem; gap: .7rem; }
+  .reference-social-rail a { min-width: 2.45rem; min-height: 2.45rem; }
+  .reference-hero-content { padding-right: 3.75rem; }
+  .reference-hero-copy h1 { max-width: 15ch; font-size: clamp(2.45rem, 11.5vw, 4rem); line-height: .98; }
+  .reference-hero-description { max-width: 29rem; font-size: .86rem; line-height: 1.5; }
+  .contact-dialog { width: calc(100vw - 1rem); max-height: calc(100dvh - 1rem); border-radius: 1.1rem; }
+  .contact-dialog-body { max-height: calc(100dvh - 1rem); overflow-y: auto; overscroll-behavior: contain; padding: 1.35rem .85rem .9rem; }
+  .profile-dialog { width: calc(100vw - 1rem); max-height: calc(100dvh - 1rem); overflow-y: auto; overscroll-behavior: contain; }
+  .profile-dialog-body { padding-bottom: 1.2rem; }
+  .contact-dialog-social { min-width: 5.65rem; min-height: 5.65rem; flex-basis: 5.65rem; }
+  .contact-dialog-avatar { width: 5.65rem; height: 5.65rem; flex-basis: 5.65rem; }
+}

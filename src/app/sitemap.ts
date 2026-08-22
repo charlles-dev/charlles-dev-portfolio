@@ -1,29 +1,17 @@
 import type { MetadataRoute } from "next";
 
-const baseUrl = "https://charlles.dev";
+const baseUrl = "https://www.charlles.dev";
+const lastModified = "2026-08-22";
+const languageAlternates = {
+  "pt-BR": `${baseUrl}/pt-BR`,
+  en: `${baseUrl}/en`,
+  es: `${baseUrl}/es`,
+};
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
-    {
-      url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 1,
-      alternates: { languages: { "pt-BR": baseUrl, en: `${baseUrl}/en`, es: `${baseUrl}/es` } },
-    },
-    {
-      url: `${baseUrl}/en`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.9,
-      alternates: { languages: { "pt-BR": baseUrl, en: `${baseUrl}/en`, es: `${baseUrl}/es` } },
-    },
-    {
-      url: `${baseUrl}/es`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.9,
-      alternates: { languages: { "pt-BR": baseUrl, en: `${baseUrl}/en`, es: `${baseUrl}/es` } },
-    },
+    { url: languageAlternates["pt-BR"], lastModified, changeFrequency: "monthly", priority: 1, alternates: { languages: languageAlternates } },
+    { url: languageAlternates.en, lastModified, changeFrequency: "monthly", priority: 0.9, alternates: { languages: languageAlternates } },
+    { url: languageAlternates.es, lastModified, changeFrequency: "monthly", priority: 0.9, alternates: { languages: languageAlternates } },
   ];
 }
