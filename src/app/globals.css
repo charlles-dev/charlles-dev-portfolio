@@ -351,3 +351,5 @@ body[data-mobile-menu-open="true"] { overflow: hidden; }
   .contact-dialog-social { min-width: 5.65rem; min-height: 5.65rem; flex-basis: 5.65rem; }
   .contact-dialog-avatar { width: 5.65rem; height: 5.65rem; flex-basis: 5.65rem; }
 }
+
+.works-project-bullets strong { color: var(--ink); font-weight: 700; }

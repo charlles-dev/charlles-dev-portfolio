@@ -15,6 +15,7 @@ export type LocalizedProjectCopy = {
   decision: string;
   next: string;
   category: string;
+  metric: string;
   reason: string;
 };
 
@@ -296,6 +297,7 @@ const portuguese: PortfolioDictionary = {
       decision: "Separar backend em Go, portal cativo em SvelteKit e integrações de pagamento, vouchers e OpenWrt.",
       next: "Validar a operação em hardware real e ampliar a documentação de implantação.",
       category: "Infraestrutura",
+      metric: "Go · conectividade",
       reason: "Conectividade em áreas remotas",
     },
     "laudos-proxxima": {
@@ -304,6 +306,7 @@ const portuguese: PortfolioDictionary = {
       decision: "Combinar dashboard, autenticação, geração assistida, histórico e exportação em um fluxo único.",
       next: "Aprofundar métricas de uso e continuar refinando o fluxo de revisão e compartilhamento.",
       category: "Automação",
+      metric: "TypeScript · interface",
       reason: "Operação interna com menos fricção",
     },
     "3035-teach": {
@@ -312,6 +315,7 @@ const portuguese: PortfolioDictionary = {
       decision: "Organizar módulos, exercícios, documentação e exemplos em torno de fundamentos fullstack.",
       next: "Concluir os módulos avançados e transformar a documentação em uma referência ainda mais navegável.",
       category: "Base técnica",
+      metric: "Java · trilha",
       reason: "Formação prática em fullstack",
     },
   },
@@ -423,9 +427,9 @@ const english: PortfolioDictionary = {
   },
   footer: { availability: "In touch with the community", rights: "© 2026 Charlles Augusto", built: "Built with Next.js and attention to detail." },
   projects: {
-    astrolink: { summary: "Infrastructure and software to sell and manage Wi-Fi access on local networks with Starlink.", problem: "How to bring a low-cost connectivity operation to remote areas and communities.", decision: "Separate a Go backend, a SvelteKit captive portal and integrations for payments, vouchers and OpenWrt.", next: "Validate the operation on real hardware and expand deployment documentation.", category: "Infrastructure", reason: "Connectivity in remote areas" },
-    "laudos-proxxima": { summary: "A corporate web system to standardize, manage and speed up technical maintenance reports.", problem: "Turn field notes into consistent reports without slowing down the operation.", decision: "Combine dashboard, authentication, assisted generation, history and export in one flow.", next: "Deepen usage metrics and keep refining review and sharing workflows.", category: "Automation", reason: "Less friction in internal operations" },
-    "3035-teach": { summary: "A fullstack portfolio organizing practical training in Java, Spring Boot, React and TypeScript.", problem: "Document an extensive technical journey in a way that stays searchable, practical and reusable.", decision: "Organize modules, exercises, documentation and examples around fullstack fundamentals.", next: "Complete the advanced modules and make the documentation an even more navigable reference.", category: "Technical base", reason: "Practical fullstack training" },
+    astrolink: { summary: "Infrastructure and software to sell and manage Wi-Fi access on local networks with Starlink.", problem: "How to bring a low-cost connectivity operation to remote areas and communities.", decision: "Separate a Go backend, a SvelteKit captive portal and integrations for payments, vouchers and OpenWrt.", next: "Validate the operation on real hardware and expand deployment documentation.", category: "Infrastructure", metric: "Go · connectivity", reason: "Connectivity in remote areas" },
+    "laudos-proxxima": { summary: "A corporate web system to standardize, manage and speed up technical maintenance reports.", problem: "Turn field notes into consistent reports without slowing down the operation.", decision: "Combine dashboard, authentication, assisted generation, history and export in one flow.", next: "Deepen usage metrics and keep refining review and sharing workflows.", category: "Automation", metric: "TypeScript · interface", reason: "Less friction in internal operations" },
+    "3035-teach": { summary: "A fullstack portfolio organizing practical training in Java, Spring Boot, React and TypeScript.", problem: "Document an extensive technical journey in a way that stays searchable, practical and reusable.", decision: "Organize modules, exercises, documentation and examples around fullstack fundamentals.", next: "Complete the advanced modules and make the documentation an even more navigable reference.", category: "Technical base", metric: "Java · learning path", reason: "Practical fullstack training" },
   },
 };
 
@@ -528,9 +532,9 @@ const spanish: PortfolioDictionary = {
   },
   footer: { availability: "En contacto con la comunidad", rights: "© 2026 Charlles Augusto", built: "Hecho con Next.js y atención al detalle." },
   projects: {
-    astrolink: { summary: "Infraestructura y software para vender y gestionar acceso Wi-Fi en redes locales con Starlink.", problem: "Cómo llevar una operación de conectividad de bajo costo a comunidades y áreas remotas.", decision: "Separar un backend en Go, un portal cautivo en SvelteKit e integraciones para pagos, vouchers y OpenWrt.", next: "Validar la operación en hardware real y ampliar la documentación de despliegue.", category: "Infraestructura", reason: "Conectividad en áreas remotas" },
-    "laudos-proxxima": { summary: "Sistema web corporativo para estandarizar, gestionar y agilizar informes técnicos de mantenimiento.", problem: "Convertir notas de campo en informes consistentes sin perder velocidad operativa.", decision: "Combinar dashboard, autenticación, generación asistida, historial y exportación en un solo flujo.", next: "Profundizar las métricas de uso y seguir refinando la revisión y el uso compartido.", category: "Automatización", reason: "Menos fricción en la operación interna" },
-    "3035-teach": { summary: "Portafolio fullstack que organiza una formación práctica en Java, Spring Boot, React y TypeScript.", problem: "Documentar una evolución técnica extensa de forma consultable, práctica y reutilizable.", decision: "Organizar módulos, ejercicios, documentación y ejemplos alrededor de fundamentos fullstack.", next: "Completar los módulos avanzados y hacer de la documentación una referencia más navegable.", category: "Base técnica", reason: "Formación práctica fullstack" },
+    astrolink: { summary: "Infraestructura y software para vender y gestionar acceso Wi-Fi en redes locales con Starlink.", problem: "Cómo llevar una operación de conectividad de bajo costo a comunidades y áreas remotas.", decision: "Separar un backend en Go, un portal cautivo en SvelteKit e integraciones para pagos, vouchers y OpenWrt.", next: "Validar la operación en hardware real y ampliar la documentación de despliegue.", category: "Infraestructura", metric: "Go · conectividad", reason: "Conectividad en áreas remotas" },
+    "laudos-proxxima": { summary: "Sistema web corporativo para estandarizar, gestionar y agilizar informes técnicos de mantenimiento.", problem: "Convertir notas de campo en informes consistentes sin perder velocidad operativa.", decision: "Combinar dashboard, autenticación, generación asistida, historial y exportación en un solo flujo.", next: "Profundizar las métricas de uso y seguir refinando la revisión y el uso compartido.", category: "Automatización", metric: "TypeScript · interfaz", reason: "Menos fricción en la operación interna" },
+    "3035-teach": { summary: "Portafolio fullstack que organiza una formación práctica en Java, Spring Boot, React y TypeScript.", problem: "Documentar una evolución técnica extensa de forma consultable, práctica y reutilizable.", decision: "Organizar módulos, ejercicios, documentación y ejemplos alrededor de fundamentos fullstack.", next: "Completar los módulos avanzados y hacer de la documentación una referencia más navegable.", category: "Base técnica", metric: "Java · ruta técnica", reason: "Formación práctica fullstack" },
   },
 };
 

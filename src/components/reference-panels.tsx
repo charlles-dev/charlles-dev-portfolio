@@ -104,6 +104,7 @@ function ProjectEntry({ dictionary, index }: { dictionary: PortfolioDictionary; 
     decision: project.built,
     next: project.next,
     category: project.categoryLabel,
+    metric: project.metric,
     reason: project.focus,
   };
 
@@ -111,7 +112,7 @@ function ProjectEntry({ dictionary, index }: { dictionary: PortfolioDictionary; 
     <li className="works-rise works-entry">
       <article className="works-project">
         <div className={`works-project-media works-project-media-${index + 1}`}>
-          <span>{project.categoryLabel}</span>
+          <span>{copy.category}</span>
           <strong>{project.scene}</strong>
           <i aria-hidden="true" />
           <span className="works-media-button" aria-hidden="true">{dictionary.work.mediaLabel}</span>
@@ -125,14 +126,14 @@ function ProjectEntry({ dictionary, index }: { dictionary: PortfolioDictionary; 
           <h3>{project.name}</h3>
           <p className="works-project-summary">{copy.summary}</p>
           <ul className="works-project-bullets">
-            <li>{copy.problem}</li>
-            <li>{copy.decision}</li>
-            <li>{copy.next}</li>
+            <li><strong>{dictionary.work.problem}:</strong> {copy.problem}</li>
+            <li><strong>{dictionary.work.decision}:</strong> {copy.decision}</li>
+            <li><strong>{dictionary.work.next}:</strong> {copy.next}</li>
           </ul>
           <div className="works-tech-row">
             <span>{project.language}</span>
-            <span>{project.categoryLabel}</span>
-            <span>{project.metric}</span>
+            <span>{copy.category}</span>
+            <span>{copy.metric}</span>
           </div>
           <div className="works-project-actions">
             <a className="link-underline" href={project.href} target="_blank" rel="noreferrer">
