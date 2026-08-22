@@ -78,6 +78,8 @@ export type PortfolioDictionary = {
     updated: string;
     noResults: string;
     noResultsDescription: string;
+    copyWorkLink: string;
+    workLinkCopied: string;
   };
   expertise: {
     eyebrow: string;
@@ -219,6 +221,8 @@ const portuguese: PortfolioDictionary = {
     updated: "Atualizado em",
     noResults: "Nenhum repositório encontrado",
     noResultsDescription: "Ajuste a busca ou escolha outra categoria para continuar explorando.",
+    copyWorkLink: "Copiar link dos trabalhos",
+    workLinkCopied: "Link copiado",
   },
   expertise: {
     eyebrow: "Áreas de atuação",
@@ -391,6 +395,8 @@ const english: PortfolioDictionary = {
     updated: "Updated",
     noResults: "No repository found",
     noResultsDescription: "Adjust your search or choose another category to keep exploring.",
+    copyWorkLink: "Copy work link",
+    workLinkCopied: "Link copied",
   },
   expertise: {
     ...portuguese.expertise,
@@ -498,6 +504,8 @@ const spanish: PortfolioDictionary = {
     updated: "Actualizado el",
     noResults: "No se encontró ningún repositorio",
     noResultsDescription: "Ajusta la búsqueda o elige otra categoría para seguir explorando.",
+    copyWorkLink: "Copiar enlace de trabajos",
+    workLinkCopied: "Enlace copiado",
   },
   expertise: {
     ...english.expertise,

@@ -1,5 +1,7 @@
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+afterEach(() => cleanup());
 
 import { PortfolioHome } from "@/components/portfolio-home";
 import { getDictionary } from "@/lib/i18n";
@@ -371,5 +373,29 @@ describe("landing structural SEO", () => {
   it("keeps one skip-link target in the client composition", () => {
     renderHome("en");
     expect(document.querySelectorAll("#conteudo")).toHaveLength(1);
+  });
+});
+
+
+describe("work sharing", () => {
+  beforeEach(() => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("fetch disabled in tests")));
+    Object.defineProperty(document, "execCommand", { configurable: true, value: vi.fn().mockReturnValue(true) });
+  });
+
+  afterEach(() => {
+    window.history.replaceState({}, "", "/pt-BR");
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it("copies the work panel deep link and confirms it", async () => {
+    window.history.replaceState({}, "", "/pt-BR");
+    renderHome();
+    fireEvent.click(screen.getByRole("button", { name: "Trabalhos" }));
+    fireEvent.click(screen.getByRole("button", { name: "Copiar link dos trabalhos" }));
+
+    await waitFor(() => expect(screen.getByText("Link copiado")).toBeInTheDocument());
+    expect(document.execCommand).toHaveBeenCalledWith("copy");
   });
 });

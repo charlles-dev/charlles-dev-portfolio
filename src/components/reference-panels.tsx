@@ -7,6 +7,7 @@ import { IconGlyph } from "@/components/icon-glyph";
 import type { PortfolioDictionary } from "@/lib/i18n";
 import type { IconName } from "@/components/icon-glyph";
 import { bookingUrl, profile, projects, socialLinks } from "@/lib/portfolio";
+import { copyText } from "@/lib/clipboard";
 
 type Panel = "work" | "about" | "contact" | null;
 type WorkTab = "product" | "visual" | "motion";
@@ -148,7 +149,7 @@ function ProjectEntry({ dictionary, index }: { dictionary: PortfolioDictionary; 
   );
 }
 
-function WorkTabPanel({ tab, dictionary }: { tab: WorkTab; dictionary: PortfolioDictionary }) {
+function WorkTabPanel({ tab, dictionary, onCopyWorkLink, linkCopied }: { tab: WorkTab; dictionary: PortfolioDictionary; onCopyWorkLink: () => void; linkCopied: boolean }) {
   if (tab === "product") {
     return (
       <>
@@ -160,10 +161,16 @@ function WorkTabPanel({ tab, dictionary }: { tab: WorkTab; dictionary: Portfolio
             <p className="reference-eyebrow">{dictionary.work.eyebrow}</p>
             <h3>{dictionary.work.description}</h3>
           </div>
-          <a className="reference-primary-button" href={`mailto:${profile.email}`}>
-            {dictionary.contact.secondaryCta}
-            <IconGlyph name="arrow-right" className="size-4" />
-          </a>
+          <div className="works-cta-actions">
+            <button type="button" className="reference-secondary-button" onClick={onCopyWorkLink} aria-live="polite">
+              <IconGlyph name="external-link" className="size-4" />
+              {linkCopied ? dictionary.work.workLinkCopied : dictionary.work.copyWorkLink}
+            </button>
+            <a className="reference-primary-button" href={`mailto:${profile.email}`}>
+              {dictionary.contact.secondaryCta}
+              <IconGlyph name="arrow-right" className="size-4" />
+            </a>
+          </div>
         </div>
       </>
     );
@@ -194,7 +201,14 @@ function WorkTabPanel({ tab, dictionary }: { tab: WorkTab; dictionary: Portfolio
 
 function WorkPanel({ dictionary, onClose }: { dictionary: PortfolioDictionary; onClose: () => void }) {
   const [tab, setTab] = useState<WorkTab>("product");
+  const [linkCopied, setLinkCopied] = useState(false);
   const dialogRef = useDialogFocus(onClose);
+  const handleCopyWorkLink = async () => {
+    const copied = await copyText(`${window.location.origin}${window.location.pathname}${window.location.search}#work`);
+    if (!copied) return;
+    setLinkCopied(true);
+    window.setTimeout(() => setLinkCopied(false), 2200);
+  };
   const tabLabels: Record<WorkTab, string> = {
     product: dictionary.work.tabs.product,
     visual: dictionary.work.tabs.visual,
@@ -221,7 +235,7 @@ function WorkPanel({ dictionary, onClose }: { dictionary: PortfolioDictionary; o
           <PanelClose label={dictionary.work.panelClose} onClose={onClose} />
         </header>
         <div className="works-scroll-area">
-          <WorkTabPanel tab={tab} dictionary={dictionary} />
+          <WorkTabPanel tab={tab} dictionary={dictionary} onCopyWorkLink={handleCopyWorkLink} linkCopied={linkCopied} />
         </div>
       </section>
     </>
