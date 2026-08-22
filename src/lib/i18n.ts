@@ -143,6 +143,16 @@ export type PortfolioDictionary = {
     rights: string;
     built: string;
   };
+  process: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    routeLabel: string;
+    breadcrumbLabel: string;
+    breadcrumbHome: string;
+    breadcrumbCurrent: string;
+    steps: Array<{ title: string; description: string; icon: IconName }>;
+  };
   engineering: {
     eyebrow: string;
     title: string;
@@ -351,6 +361,21 @@ const portuguese: PortfolioDictionary = {
     rights: "© 2026 Charlles Augusto",
     built: "Feito com Next.js e atenção aos detalhes.",
   },
+  process: {
+    eyebrow: "Método de trabalho",
+    title: "Entender primeiro. Construir com contexto.",
+    description: "Um processo simples para transformar problemas práticos em software claro, testável e útil.",
+    routeLabel: "Processo",
+    breadcrumbLabel: "Navegação estrutural",
+    breadcrumbHome: "Início",
+    breadcrumbCurrent: "Processo",
+    steps: [
+      { title: "Entender", description: "Mapear o problema, as pessoas envolvidas e o que precisa ser verdade no final.", icon: "brain" },
+      { title: "Estruturar", description: "Organizar escopo, fluxos e decisões antes de adicionar complexidade ao produto.", icon: "route" },
+      { title: "Construir", description: "Implementar interfaces, lógica e automações com uma base que possa evoluir.", icon: "code" },
+      { title: "Validar", description: "Revisar acessibilidade, estados de erro, documentação e qualidade antes de publicar.", icon: "solar-check" },
+    ],
+  },
   engineering: {
     eyebrow: "Notas de engenharia",
     title: "Como esta landing foi construída.",
@@ -550,6 +575,21 @@ const english: PortfolioDictionary = {
     briefingBody: "Share the problem context, what needs to be built or improved, and the next important milestone.",
   },
   footer: { availability: "In touch with the community", rights: "© 2026 Charlles Augusto", built: "Built with Next.js and attention to detail." },
+  process: {
+    eyebrow: "Working method",
+    title: "Understand first. Build with context.",
+    description: "A simple process for turning practical problems into clear, testable and useful software.",
+    routeLabel: "Process",
+    breadcrumbLabel: "Breadcrumb",
+    breadcrumbHome: "Home",
+    breadcrumbCurrent: "Process",
+    steps: [
+      { title: "Understand", description: "Map the problem, the people involved and what needs to be true at the end.", icon: "brain" },
+      { title: "Structure", description: "Organize scope, flows and decisions before adding complexity to the product.", icon: "route" },
+      { title: "Build", description: "Implement interfaces, logic and automation on a foundation that can evolve.", icon: "code" },
+      { title: "Validate", description: "Review accessibility, error states, documentation and quality before shipping.", icon: "solar-check" },
+    ],
+  },
   engineering: {
     eyebrow: "Engineering notes",
     title: "How this landing is built.",
@@ -718,6 +758,21 @@ const spanish: PortfolioDictionary = {
     briefingBody: "Comparte el contexto del problema, qué necesita construirse o mejorarse y el próximo hito importante.",
   },
   footer: { availability: "En contacto con la comunidad", rights: "© 2026 Charlles Augusto", built: "Hecho con Next.js y atención al detalle." },
+  process: {
+    eyebrow: "Método de trabajo",
+    title: "Entender primero. Construir con contexto.",
+    description: "Un proceso sencillo para transformar problemas prácticos en software claro, comprobable y útil.",
+    routeLabel: "Proceso",
+    breadcrumbLabel: "Navegación estructural",
+    breadcrumbHome: "Inicio",
+    breadcrumbCurrent: "Proceso",
+    steps: [
+      { title: "Entender", description: "Mapear el problema, las personas involucradas y lo que debe ser verdad al final.", icon: "brain" },
+      { title: "Estructurar", description: "Organizar alcance, flujos y decisiones antes de añadir complejidad al producto.", icon: "route" },
+      { title: "Construir", description: "Implementar interfaces, lógica y automatizaciones sobre una base que pueda evolucionar.", icon: "code" },
+      { title: "Validar", description: "Revisar accesibilidad, estados de error, documentación y calidad antes de publicar.", icon: "solar-check" },
+    ],
+  },
   engineering: {
     eyebrow: "Notas de ingeniería",
     title: "Cómo se construye esta landing.",

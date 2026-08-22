@@ -13,6 +13,7 @@
     "start": "next start",
     "lint": "eslint .",
     "quality": "node scripts/quality-gate.mjs",
+    "links:check": "node scripts/verify-external-links.mjs",
     "test": "vitest run",
     "test:watch": "vitest"
   },

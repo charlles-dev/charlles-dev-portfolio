@@ -1,7 +1,8 @@
 export type TelemetryEvent =
   | { name: "panel_open"; panel: "work" | "about" | "contact" }
   | { name: "contact_cta_click"; channel: "whatsapp" | "email" | "calendar" }
-  | { name: "video_fallback"; media: "hero-scrub" | "hero-idle" | "hero-awake" };
+  | { name: "video_fallback"; media: "hero-scrub" | "hero-idle" | "hero-awake" }
+  | { name: "projects_refresh_error"; source: "api" };
 
 export type TelemetrySink = (event: TelemetryEvent) => void;
 

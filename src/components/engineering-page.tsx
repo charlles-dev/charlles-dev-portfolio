@@ -29,6 +29,7 @@ export function EngineeringPage({ locale, dictionary }: { locale: Locale; dictio
           <a href={homePath}>{copy.backHome}</a>
           <a href={`${homePath}#work`}>{copy.openWork}</a>
           <a href={`${homePath}/now`}>{dictionary.now.routeLabel}</a>
+          <a href={`${homePath}/process`}>{dictionary.process.routeLabel}</a>
           <LanguageSwitcher currentLocale={locale} label={dictionary.nav.language} />
         </nav>
       </header>

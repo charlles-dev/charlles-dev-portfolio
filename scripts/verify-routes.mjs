@@ -13,6 +13,9 @@ const expectedRoutes = [
   "/pt-BR/now",
   "/en/now",
   "/es/now",
+  "/pt-BR/process",
+  "/en/process",
+  "/es/process",
 ];
 
 const manifest = JSON.parse(await readFile(manifestPath, "utf8"));

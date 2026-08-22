@@ -4,6 +4,7 @@ import manifest from "@/app/manifest";
 import { generateMetadata } from "@/app/[locale]/page";
 import { generateMetadata as generateEngineeringMetadata } from "@/app/[locale]/engineering/page";
 import { generateMetadata as generateNowMetadata } from "@/app/[locale]/now/page";
+import { generateMetadata as generateProcessMetadata } from "@/app/[locale]/process/page";
 import robots from "@/app/robots";
 import sitemap from "@/app/sitemap";
 import { localePath, locales } from "@/lib/i18n";
@@ -41,6 +42,15 @@ describe("SEO and discovery metadata", () => {
     }
   });
 
+  it("keeps the process page localized and discoverable", async () => {
+    for (const locale of locales) {
+      const metadata = await generateProcessMetadata({ params: Promise.resolve({ locale }) });
+      expect(metadata.alternates?.canonical).toBe(`https://www.charlles.dev/${locale}/process`);
+      expect(metadata.openGraph).toMatchObject({ type: "article", url: `https://www.charlles.dev/${locale}/process` });
+      expect(metadata.description).toContain(locale === "pt-BR" ? "processo" : locale === "en" ? "process" : "proceso");
+    }
+  });
+
   it("exposes the dedicated preview image and crawl files", () => {
     expect(manifest().start_url).toBe("/pt-BR");
     expect(manifest().icons).toEqual(expect.arrayContaining([
@@ -58,6 +68,9 @@ describe("SEO and discovery metadata", () => {
       "https://www.charlles.dev/pt-BR/now",
       "https://www.charlles.dev/en/now",
       "https://www.charlles.dev/es/now",
+      "https://www.charlles.dev/pt-BR/process",
+      "https://www.charlles.dev/en/process",
+      "https://www.charlles.dev/es/process",
     ]);
   });
 });

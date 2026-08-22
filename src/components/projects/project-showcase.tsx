@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { IconGlyph } from "@/components/icon-glyph";
 import { localizeProjects } from "@/lib/projects/localize";
+import { trackTelemetry } from "@/lib/telemetry";
 import type { PortfolioProject, PortfolioProjectCategory, ProjectsPayload } from "@/lib/projects/types";
 import type { Locale, PortfolioDictionary } from "@/lib/i18n";
 
@@ -94,6 +95,7 @@ export function ProjectShowcase({ initialPayload, locale, dictionary }: { initia
         const nextPayload = (await response.json()) as ProjectsPayload;
         if (!cancelled && nextPayload.projects.length > 0) setPayload(nextPayload);
       } catch {
+        trackTelemetry({ name: "projects_refresh_error", source: "api" });
         // The curated server fallback remains visible when GitHub is unavailable.
       }
     }

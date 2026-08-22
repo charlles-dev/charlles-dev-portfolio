@@ -15,6 +15,7 @@ A abstração não cria requisições HTTP. A responsabilidade por escolher, con
 | `panel_open` | `work`, `about` ou `contact` | URL completa, hash arbitrário, referrer, identificador ou conteúdo do painel |
 | `contact_cta_click` | `whatsapp`, `email` ou `calendar` | endereço de e-mail, número, nome, query string ou conteúdo da conversa |
 | `video_fallback` | `hero-scrub`, `hero-idle` ou `hero-awake` | codec detalhado, IP, user agent, resolução ou identificador do visitante |
+| `projects_refresh_error` | falha genérica da atualização da API pública | URL, resposta, projeto, usuário, IP ou identificador do visitante |
 
 Não há cookies próprios, fingerprinting, gravação de sessão, mapa de calor ou coleta de campos de formulário. A telemetria também não usa timestamps ou IDs gerados no cliente; o sink pode adicionar contexto operacional somente se isso for revisado e permitido pela política do ambiente de hospedagem.
 

@@ -4,34 +4,30 @@ import { IconGlyph } from "@/components/icon-glyph";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { localePath, type Locale, type PortfolioDictionary } from "@/lib/i18n";
 
-export function NowPage({ locale, dictionary }: { locale: Locale; dictionary: PortfolioDictionary }) {
-  const copy = dictionary.now;
+export function ProcessPage({ locale, dictionary }: { locale: Locale; dictionary: PortfolioDictionary }) {
+  const copy = dictionary.process;
   const homePath = localePath(locale);
-  const nowPath = `${homePath}/now`;
-  const nowSchema = {
+  const processPath = `${homePath}/process`;
+  const processSchema = {
     "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    name: copy.routeLabel,
+    "@type": "HowTo",
+    name: copy.title,
     description: copy.description,
-    url: `https://www.charlles.dev${nowPath}`,
-    isPartOf: { "@type": "WebSite", name: "Charlles.dev", url: "https://www.charlles.dev" },
-    mainEntity: {
-      "@type": "ItemList",
-      itemListElement: copy.items.map((item, index) => ({ "@type": "ListItem", position: index + 1, name: item.title, description: item.description })),
-    },
+    url: `https://www.charlles.dev${processPath}`,
+    step: copy.steps.map((step, index) => ({ "@type": "HowToStep", position: index + 1, name: step.title, text: step.description })),
   };
 
   return (
-    <main id="conteudo" className="now-page">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(nowSchema) }} />
+    <main id="conteudo" className="process-page now-page">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(processSchema) }} />
       <header className="engineering-header">
         <a className="engineering-brand" href={homePath} aria-label="Charlles.dev">
           <Image src="/assets/charlles-dev.svg" alt="Charlles.dev" width={34} height={34} priority />
         </a>
         <nav className="engineering-nav" aria-label={dictionary.nav.main}>
           <a href={homePath}>{copy.breadcrumbHome}</a>
+          <a href={`${homePath}/now`}>{dictionary.now.routeLabel}</a>
           <a href={`${homePath}/engineering`}>{dictionary.engineering.linkLabel}</a>
-          <a href={`${homePath}/process`}>{dictionary.process.routeLabel}</a>
           <LanguageSwitcher currentLocale={locale} label={dictionary.nav.language} />
         </nav>
       </header>
@@ -42,26 +38,25 @@ export function NowPage({ locale, dictionary }: { locale: Locale; dictionary: Po
           <span aria-hidden="true">/</span>
           <span aria-current="page">{copy.breadcrumbCurrent}</span>
         </nav>
-        <section className="now-intro" aria-labelledby="now-title">
+        <section className="now-intro" aria-labelledby="process-title">
           <p className="reference-eyebrow">{copy.eyebrow}</p>
-          <h1 id="now-title">{copy.title}</h1>
+          <h1 id="process-title">{copy.title}</h1>
           <p className="engineering-description">{copy.description}</p>
           <div className="engineering-intro-line" aria-hidden="true"><span /><span /><span /></div>
         </section>
 
-        <section className="now-grid" aria-labelledby="now-grid-title">
-          <h2 id="now-grid-title" className="sr-only">{copy.routeLabel}</h2>
-          {copy.items.map((item, index) => (
-            <article className="now-card" key={item.title}>
-              <div className="now-card-topline"><span>0{index + 1}</span><span>{item.label}</span></div>
-              <IconGlyph name={item.icon} className="now-card-icon" />
-              <h2>{item.title}</h2>
-              <p>{item.description}</p>
-              <div className="now-card-proof">{item.proof}</div>
-              {item.href && <a href={item.href} target="_blank" rel="noreferrer">{copy.openProject}<IconGlyph name="external-link" className="size-4" /></a>}
-            </article>
+        <ol className="process-steps" aria-label={copy.title}>
+          {copy.steps.map((step, index) => (
+            <li className="process-step" key={step.title}>
+              <div className="process-step-index" aria-hidden="true">0{index + 1}</div>
+              <IconGlyph name={step.icon} className="process-step-icon" />
+              <div>
+                <h2>{step.title}</h2>
+                <p>{step.description}</p>
+              </div>
+            </li>
           ))}
-        </section>
+        </ol>
       </div>
 
       <footer className="engineering-footer">
