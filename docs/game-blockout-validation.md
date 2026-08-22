@@ -68,3 +68,22 @@ Foi identificado um ponto de polish: o painel de objetivo fica alto e largo dema
 A captura v2 foi descartada porque atingiu um processo de produção antigo e exibiu a página em estado de loading/HTML sem a hidratação atual. Após reiniciar o servidor contra a build recém-compilada, a captura v3 em 390×844 confirmou a composição correta.
 
 Na captura v3, o painel de objetivo está abaixo do cabeçalho, com altura reduzida e subtítulo limitado; mapa, memória, ameaça, energia e controles touch permanecem visíveis. O diorama ocupa a maior parte da área central e não há tela vazia nem sobreposição crítica. O player permanece o proxy geométrico esperado.
+
+
+## QA fresh build — lógica e HUD com proxies
+
+Em 22/08/2026, a build foi reiniciada em uma instância limpa de `next start` na porta 3101 e capturada com Chromium headless. A rota `/pt-BR/game` foi verificada em 1440×900 e `/en/game` em 390×844. O shell, canvas Babylon, objetivo, status de ameaça, Lumen, ferramentas, footer e mensagem de sistema renderizaram sem tela vazia ou erro de hidratação.
+
+No desktop, o diorama 3/4 ocupa a área central sem sobrepor o topbar ou o HUD de energia. No mobile, o painel de objetivo permanece abaixo do cabeçalho, com altura reduzida; mapa, memória, ameaça, energia, d-pad e ações touch continuam visíveis e separados. O subtítulo do setor quebra em linhas, mas permanece legível. A captura inicial não contém puzzle ativo, portanto a dica progressiva deve ser conferida novamente durante um playthrough no Arquivo/Jardim.
+
+Os avisos observados no Chromium foram de ambiente — software WebGL, GPU stall durante `ReadPixels` e DBus/UPower ausente — sem impedir a geração íntegra das imagens. O player, ambientes, NPCs, drone e props continuam proxies deliberados; nenhuma arte final ou asset candidato/rejeitado foi importado.
+
+| Verificação | Resultado atualizado |
+|---|---|
+| `./node_modules/.bin/vitest run` | 96 testes passando em 23 arquivos |
+| `./node_modules/.bin/tsc --noEmit` | Passou após HintSystem e ToolSystem |
+| `./node_modules/.bin/next build` | Passou antes deste registro; deve ser repetido no próximo release candidate |
+| Build limpa desktop | PNG 1440×900 íntegro; HUD e canvas renderizados |
+| Build limpa mobile | PNG 390×844 íntegro; controles touch sem colisão crítica |
+| Localização usada na captura | PT-BR desktop e EN mobile |
+| Assets finais | Bloqueados por decisão de produção |
