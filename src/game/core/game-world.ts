@@ -7,6 +7,7 @@ import { Scene } from "@babylonjs/core/scene";
 import { TransformNode } from "@babylonjs/core/Meshes/transformNode";
 import { GameStateStore } from "./game-state";
 import { SaveSystem } from "./save-system";
+import { PuzzleSystem, type PuzzleSignal } from "../systems/puzzle-system";
 import { InputManager } from "../input/input-manager";
 import { Player } from "../entities/player";
 import type { GameLocale } from "../data/game-copy";
@@ -58,6 +59,7 @@ export class GameWorld {
   private readonly input: InputManager;
   private readonly store: GameStateStore;
   private readonly saveSystem: SaveSystem;
+  private readonly puzzles = new PuzzleSystem();
   private readonly nodes: SignalNode[] = [];
   private readonly interactions: InteractionTarget[] = [];
   private readonly sectorRoots = {} as Record<SectorId, TransformNode>;
@@ -193,6 +195,8 @@ export class GameWorld {
       node.ring.material = this.material(`restored-ring-${node.ring.name}`, palette.mint, palette.mint);
     }
     this.store.restoreProgress(progress);
+    this.puzzles.restore(progress.puzzles["archive-frequency"]);
+    this.puzzles.restore(progress.puzzles["garden-route"]);
     this.setActiveSector(progress.sector, false);
   }
 
@@ -252,7 +256,9 @@ export class GameWorld {
       const window = this.addMesh(MeshBuilder.CreateDisc(`archive-memory-window-${index}`, { radius: 0.2, tessellation: 16 }, this.scene), root, this.material(`archive-window-${index}`, index === 0 ? palette.mint : palette.violet, index === 0 ? palette.mint : palette.violet));
       window.position.set(position.x, 0.66, position.z - 0.01);
       window.rotation.x = Math.PI / 2;
-      if (index === 0) this.addInteraction(module, "archive", 1.1, "Três módulos repetem uma frequência incompleta.", () => this.solveArchive());
+      const archiveSignals: PuzzleSignal[] = ["violet", "mint", "amber"];
+      const signal = archiveSignals[index];
+      this.addInteraction(module, "archive", 1.1, `Módulo ${index + 1}: escolha a frequência.`, () => this.handlePuzzleSignal("archive-frequency", signal));
     });
     const returnBeacon = this.addMesh(MeshBuilder.CreateCylinder("archive-return-beacon", { diameter: 0.32, height: 0.5, tessellation: 8 }, this.scene), root, this.material("archive-return-beacon-material", palette.mint, palette.mint));
     returnBeacon.position.set(-4.65, 0.35, -2.1);
@@ -290,9 +296,17 @@ export class GameWorld {
     const nixLight = this.addMesh(MeshBuilder.CreateSphere("nix-observatory-light", { diameter: 0.2, segments: 12 }, this.scene), root, this.material("nix-light-material", palette.amber, palette.amber));
     nixLight.position.set(-3.7, 0.82, 1.63);
     this.addInteraction(nix, "garden", 1.35, "NIX observa a passagem.", () => this.speak("NIX", this.narrative.gardenDialogue));
+    const routeSignals: PuzzleSignal[] = ["mint", "mint", "violet", "amber"];
+    const routePositions = [new Vector3(-2.7, 0.28, -0.25), new Vector3(-0.9, 0.28, 0.82), new Vector3(0.95, 0.28, -0.25), new Vector3(2.55, 0.28, 0.82)];
+    routePositions.forEach((position, index) => {
+      const marker = this.addMesh(MeshBuilder.CreateTorus(`garden-route-marker-${index}`, { diameter: 0.46, thickness: 0.065, tessellation: 12 }, this.scene), root, this.material(`garden-route-marker-${index}`, index < 2 ? palette.mintDark : palette.amber));
+      marker.position.copyFrom(position);
+      marker.rotation.x = Math.PI / 2;
+      this.addInteraction(marker, "garden", 0.9, `Sinal de irrigação ${index + 1}.`, () => this.handlePuzzleSignal("garden-route", routeSignals[index]));
+    });
     const exitBeacon = this.addMesh(MeshBuilder.CreateCylinder("garden-core-beacon", { diameter: 0.4, height: 0.64, tessellation: 8 }, this.scene), root, this.material("garden-core-beacon-material", palette.violet, palette.violet));
     exitBeacon.position.set(4.25, 0.42, 1.75);
-    this.addInteraction(exitBeacon, "garden", 1.1, "O caminho para o Núcleo exige uma testemunha.", () => this.handleGardenExit());
+    this.addInteraction(exitBeacon, "garden", 1.1, "O caminho para o Núcleo exige uma testemunha e uma rota estável.", () => this.handleGardenExit());
 
     const body = this.addMesh(MeshBuilder.CreateBox("sentinel-drone", { width: 0.68, depth: 0.68, height: 0.34 }, this.scene), root, this.material("drone-material", "#373746"));
     body.position.set(1.8, 1.18, -1.65);
@@ -429,22 +443,27 @@ export class GameWorld {
     this.setActiveSector("archive");
   }
 
-  private solveArchive(): void {
-    if (this.archiveSolved) {
-      this.store.patch({ message: "PONTO já associou os módulos. O Jardim aguarda do outro lado." });
-      return;
-    }
-    this.archiveSolved = true;
+  private handlePuzzleSignal(id: "archive-frequency" | "garden-route", signal: PuzzleSignal): void {
+    const result = this.puzzles.submit(id, signal);
     const snapshot = this.store.getSnapshot();
-    const fragmentsFound = snapshot.fragmentsFound.includes("unowned") ? snapshot.fragmentsFound : [...snapshot.fragmentsFound, "unowned"];
-    this.store.patch({
-      fragmentsFound,
-      toolsUnlocked: ["Lente", "Pulso"],
-      objective: "Leve a frequência recuperada ao Jardim Orbital.",
-      message: "Os módulos não formavam uma ordem. Formavam uma relação.",
-      lastInteraction: "Fragmento associado: a caixa sem origem",
-      relationship: { ...snapshot.relationship, ponto: "association" },
-    });
+    const puzzles = { ...snapshot.puzzles, [id]: result.progress };
+    const stepMessage = result.solvedNow ? "Sequência confirmada. O setor aprendeu uma nova relação." : result.accepted ? `Sinal aceito. Etapa ${result.progress.step} registrada.` : "A frequência não fecha. A sequência voltou ao início.";
+    this.store.patch({ puzzles, message: stepMessage, lastInteraction: `Sinal ${signal} registrado` });
+    if (result.solvedNow && id === "archive-frequency") {
+      this.archiveSolved = true;
+      const fragmentsFound = snapshot.fragmentsFound.includes("unowned") ? snapshot.fragmentsFound : [...snapshot.fragmentsFound, "unowned"];
+      this.store.patch({
+        fragmentsFound,
+        toolsUnlocked: ["Lente", "Pulso"],
+        objective: "Leve a frequência recuperada ao Jardim Orbital.",
+        message: "Os módulos não formavam uma ordem. Formavam uma relação.",
+        lastInteraction: "Fragmento associado: a caixa sem origem",
+        relationship: { ...snapshot.relationship, ponto: "association" },
+      });
+    }
+    if (result.solvedNow && id === "garden-route") {
+      this.store.patch({ message: "A irrigação encontrou o caminho. O Jardim pode sustentar a passagem ao Núcleo.", lastInteraction: "Rota de irrigação estabilizada" });
+    }
     this.saveSystem.save(this.store.getSnapshot());
   }
 
@@ -454,7 +473,11 @@ export class GameWorld {
       return;
     }
     if (!this.gardenWitnessed) {
-      this.store.patch({ message: "NIX ainda observa. Converse com a sentinela ou atravesse o cone sem forçar passagem." });
+      this.store.patch({ message: "NIX ainda observa. Converse com a sentinela antes de forçar passagem." });
+      return;
+    }
+    if (!this.puzzles.get("garden-route").solved) {
+      this.store.patch({ message: "A rota de irrigação ainda não sustenta a passagem. Siga a sequência de sinais." });
       return;
     }
     this.setActiveSector("core");

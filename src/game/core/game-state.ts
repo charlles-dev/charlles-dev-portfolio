@@ -1,4 +1,5 @@
 import type { EndingId, RelationshipState, SectorId } from "../data/narrative-content";
+import { createPuzzleProgress, type PuzzleId, type PuzzleProgress } from "../systems/puzzle-system";
 
 export type ThreatState = "patrol" | "suspicious" | "alert" | "disabled";
 
@@ -33,6 +34,7 @@ export interface GameSnapshot {
   checkpoint: string;
   ending: EndingId | null;
   lastInteraction: string | null;
+  puzzles: Record<PuzzleId, PuzzleProgress>;
 }
 
 export type GameListener = (snapshot: GameSnapshot) => void;
@@ -57,6 +59,10 @@ const initialSnapshot: GameSnapshot = {
   checkpoint: "dock",
   ending: null,
   lastInteraction: null,
+  puzzles: {
+    "archive-frequency": { id: "archive-frequency", step: 0, attempts: 0, solved: false, lastChoice: null, feedback: "idle" },
+    "garden-route": { id: "garden-route", step: 0, attempts: 0, solved: false, lastChoice: null, feedback: "idle" },
+  },
 };
 
 export class GameStateStore {
@@ -78,13 +84,21 @@ export class GameStateStore {
     for (const listener of this.listeners) listener(this.snapshot);
   }
 
-  restoreProgress(progress: Pick<GameSnapshot, "energy" | "nodesRestored" | "fragmentsFound" | "relationship" | "toolsUnlocked" | "checkpoint" | "sector" | "ending" | "completed">): void {
+  restoreProgress(progress: Pick<GameSnapshot, "energy" | "nodesRestored" | "fragmentsFound" | "relationship" | "toolsUnlocked" | "checkpoint" | "sector" | "ending" | "completed" | "puzzles">): void {
+    const puzzles = progress.puzzles ?? {
+      "archive-frequency": createPuzzleProgress("archive-frequency"),
+      "garden-route": createPuzzleProgress("garden-route"),
+    };
     this.snapshot = {
       ...this.snapshot,
       ...progress,
       fragmentsFound: [...progress.fragmentsFound],
       relationship: { ...progress.relationship },
       toolsUnlocked: [...progress.toolsUnlocked],
+      puzzles: {
+        "archive-frequency": { ...puzzles["archive-frequency"] },
+        "garden-route": { ...puzzles["garden-route"] },
+      },
       paused: false,
       dialogue: null,
       threatState: "patrol",

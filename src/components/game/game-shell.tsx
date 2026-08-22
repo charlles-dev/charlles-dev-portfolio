@@ -33,6 +33,10 @@ function createInitialSnapshot(locale: GameLocale): GameSnapshot {
     checkpoint: "dock",
     ending: null,
     lastInteraction: copy.lumen,
+    puzzles: {
+      "archive-frequency": { id: "archive-frequency", step: 0, attempts: 0, solved: false, lastChoice: null, feedback: "idle" },
+      "garden-route": { id: "garden-route", step: 0, attempts: 0, solved: false, lastChoice: null, feedback: "idle" },
+    },
   };
 }
 

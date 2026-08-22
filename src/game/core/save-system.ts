@@ -1,11 +1,12 @@
 import type { GameSnapshot } from "./game-state";
+import { createPuzzleProgress, type PuzzleId, type PuzzleProgress } from "../systems/puzzle-system";
 
 const SAVE_KEY = "charlles-orbe9-save-v1";
 
 export interface SavePayload {
   version: 1;
   savedAt: string;
-  snapshot: Pick<GameSnapshot, "energy" | "nodesRestored" | "fragmentsFound" | "relationship" | "toolsUnlocked" | "checkpoint" | "sector" | "ending" | "completed">;
+  snapshot: Pick<GameSnapshot, "energy" | "nodesRestored" | "fragmentsFound" | "relationship" | "toolsUnlocked" | "checkpoint" | "sector" | "ending" | "completed" | "puzzles">;
 }
 
 export interface SaveStorage {
@@ -29,6 +30,10 @@ export class SaveSystem {
 
   save(snapshot: GameSnapshot): SavePayload | null {
     if (!this.storage) return null;
+    const puzzles = snapshot.puzzles ?? {
+      "archive-frequency": createPuzzleProgress("archive-frequency"),
+      "garden-route": createPuzzleProgress("garden-route"),
+    };
     const payload: SavePayload = {
       version: 1,
       savedAt: new Date().toISOString(),
@@ -42,6 +47,10 @@ export class SaveSystem {
         sector: snapshot.sector,
         ending: snapshot.ending,
         completed: snapshot.completed,
+        puzzles: {
+          "archive-frequency": { ...puzzles["archive-frequency"] },
+          "garden-route": { ...puzzles["garden-route"] },
+        },
       },
     };
     try {
