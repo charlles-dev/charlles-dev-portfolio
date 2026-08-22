@@ -18,6 +18,7 @@ import { InputManager } from "../input/input-manager";
 import { Player } from "../entities/player";
 import type { GameLocale } from "../data/game-copy";
 import { getNarrative, sectorOrder, type EndingId, type SectorId } from "../data/narrative-content";
+import { getWorldCopy, type WorldCopy } from "../data/world-copy";
 
 interface SignalNode {
   mesh: Mesh;
@@ -85,6 +86,7 @@ export class GameWorld {
   private gardenWitnessed = false;
   private readonly locale: GameLocale;
   private readonly narrative: ReturnType<typeof getNarrative>;
+  private readonly copy: WorldCopy;
   private checkpointAnchor!: CheckpointAnchor;
   private dialogueLineIsFinal = false;
   private activeDialogueId: "MIRA" | "PONTO" | "NIX" | "NÚCLEO" | null = null;
@@ -92,6 +94,7 @@ export class GameWorld {
   constructor(private readonly scene: Scene, store: GameStateStore, input: InputManager, locale: GameLocale = "pt-BR") {
     this.locale = locale;
     this.narrative = getNarrative(locale);
+    this.copy = getWorldCopy(locale);
     this.store = store;
     this.saveSystem = new SaveSystem();
     this.input = input;
@@ -108,7 +111,7 @@ export class GameWorld {
     this.player = new Player(scene, input);
     this.player.setBounds(bounds.hub);
     this.portal = this.createPortal(this.sectorRoots.hub, new Vector3(3.9, 0.9, 1.55), "hub-memory-portal");
-    this.addInteraction(this.portal, "hub", 1.45, "O portal aguarda os três sinais.", () => this.handleHubPortal());
+    this.addInteraction(this.portal, "hub", 1.45, this.copy.portal, () => this.handleHubPortal());
     this.setActiveSector("hub", false);
     this.restoreSavedProgress();
   }
@@ -121,7 +124,7 @@ export class GameWorld {
   update(delta: number): void {
     if (this.input.consume("pause")) {
       const paused = !this.store.getSnapshot().paused;
-      this.store.patch({ paused, message: paused ? "O sinal aguarda. Pressione ESC para retomar." : "A exploração continua." });
+      this.store.patch({ paused, message: paused ? this.copy.pausePaused : this.copy.pauseResumed });
     }
     if (this.store.getSnapshot().paused || this.store.getSnapshot().completed) return;
 
@@ -141,10 +144,10 @@ export class GameWorld {
         if (nextEnergy <= 0) {
           const restored = restoreCheckpoint(snapshot, this.checkpointAnchor);
           this.setActiveSector(restored.sector, false);
-          this.store.patch({ ...restored, message: "A assinatura foi perdida. A Âncora devolveu você ao último estado seguro." });
+          this.store.patch({ ...restored, message: this.copy.checkpointRestore });
           this.saveSystem.save(this.store.getSnapshot());
         } else {
-          this.store.patch({ energy: nextEnergy, message: "O cone de varredura encontrou a assinatura Lumen." });
+          this.store.patch({ energy: nextEnergy, message: this.copy.threatDamage });
         }
       }
     } else {
@@ -239,7 +242,7 @@ export class GameWorld {
     const badge = this.addMesh(MeshBuilder.CreateTorus("mira-badge", { diameter: 0.38, thickness: 0.045, tessellation: 16 }, this.scene), root, this.material("mira-badge-material", palette.amber, palette.amber));
     badge.position.set(-3.02, 0.74, 1.68);
     badge.rotation.x = Math.PI / 2;
-    this.addInteraction(terminal, "hub", 1.35, "MIRA aguarda no terminal.", () => this.speak("MIRA", this.narrative.openingDialogue));
+    this.addInteraction(terminal, "hub", 1.35, this.copy.mira, () => this.speak("MIRA", this.narrative.openingDialogue));
 
     const nodePositions = [new Vector3(-1.45, 0.22, 0.15), new Vector3(0, 0.22, -0.95), new Vector3(1.45, 0.22, 0.15)];
     nodePositions.forEach((position, index) => {
@@ -250,7 +253,7 @@ export class GameWorld {
       ring.rotation.x = Math.PI / 2;
       const node: SignalNode = { mesh, ring, restored: false };
       this.nodes.push(node);
-      this.addInteraction(mesh, "hub", 1.05, "Um nó de sinal aguarda uma intervenção.", () => this.restoreNode(node));
+      this.addInteraction(mesh, "hub", 1.05, this.copy.node, () => this.restoreNode(node));
     });
   }
 
@@ -269,7 +272,7 @@ export class GameWorld {
     const pontoSignal = this.addMesh(MeshBuilder.CreateTorus("ponto-archive-signal", { diameter: 0.82, thickness: 0.055, tessellation: 20 }, this.scene), root, this.material("ponto-signal-material", palette.violet, palette.violet));
     pontoSignal.position.set(-3.65, 0.8, 0.2);
     pontoSignal.rotation.x = Math.PI / 2;
-    this.addInteraction(ponto, "archive", 1.25, "PONTO segura uma caixa sem origem.", () => this.speak("PONTO", this.narrative.archiveDialogue));
+    this.addInteraction(ponto, "archive", 1.25, this.copy.ponto, () => this.speak("PONTO", this.narrative.archiveDialogue));
 
     const modulePositions = [new Vector3(-1.2, 0.38, -0.35), new Vector3(0, 0.38, -0.35), new Vector3(1.2, 0.38, -0.35)];
     modulePositions.forEach((position, index) => {
@@ -280,16 +283,16 @@ export class GameWorld {
       window.rotation.x = Math.PI / 2;
       const archiveSignals: PuzzleSignal[] = ["violet", "mint", "amber"];
       const signal = archiveSignals[index];
-      this.addInteraction(module, "archive", 1.1, `Módulo ${index + 1}: escolha a frequência.`, () => this.handlePuzzleSignal("archive-frequency", signal));
+      this.addInteraction(module, "archive", 1.1, this.copy.archiveModule(index), () => this.handlePuzzleSignal("archive-frequency", signal));
     });
     const returnBeacon = this.addMesh(MeshBuilder.CreateCylinder("archive-return-beacon", { diameter: 0.32, height: 0.5, tessellation: 8 }, this.scene), root, this.material("archive-return-beacon-material", palette.mint, palette.mint));
     returnBeacon.position.set(-4.65, 0.35, -2.1);
-    this.addInteraction(returnBeacon, "archive", 1.0, "Uma linha mint aponta de volta ao Hub.", () => this.setActiveSector("hub"));
+    this.addInteraction(returnBeacon, "archive", 1.0, this.copy.returnBeacon, () => this.setActiveSector("hub"));
     const gardenBeacon = this.addMesh(MeshBuilder.CreateCylinder("archive-garden-beacon", { diameter: 0.42, height: 0.64, tessellation: 8 }, this.scene), root, this.material("archive-garden-beacon-material", palette.violet, palette.violet));
     gardenBeacon.position.set(4.25, 0.42, -1.75);
-    this.addInteraction(gardenBeacon, "archive", 1.1, "A frequência recuperada aponta para o Jardim Orbital.", () => {
+    this.addInteraction(gardenBeacon, "archive", 1.1, this.copy.gardenBeacon, () => {
       if (!this.archiveSolved) {
-        this.store.patch({ message: "A passagem não entende uma frequência que ainda não foi associada." });
+        this.store.patch({ message: this.copy.archiveGate });
         return;
       }
       this.setActiveSector("garden");
@@ -317,18 +320,18 @@ export class GameWorld {
     nix.position.set(-3.7, 0.58, 2.02);
     const nixLight = this.addMesh(MeshBuilder.CreateSphere("nix-observatory-light", { diameter: 0.2, segments: 12 }, this.scene), root, this.material("nix-light-material", palette.amber, palette.amber));
     nixLight.position.set(-3.7, 0.82, 1.63);
-    this.addInteraction(nix, "garden", 1.35, "NIX observa a passagem.", () => this.speak("NIX", this.narrative.gardenDialogue));
+    this.addInteraction(nix, "garden", 1.35, this.copy.nix, () => this.speak("NIX", this.narrative.gardenDialogue));
     const routeSignals: PuzzleSignal[] = ["mint", "mint", "violet", "amber"];
     const routePositions = [new Vector3(-2.7, 0.28, -0.25), new Vector3(-0.9, 0.28, 0.82), new Vector3(0.95, 0.28, -0.25), new Vector3(2.55, 0.28, 0.82)];
     routePositions.forEach((position, index) => {
       const marker = this.addMesh(MeshBuilder.CreateTorus(`garden-route-marker-${index}`, { diameter: 0.46, thickness: 0.065, tessellation: 12 }, this.scene), root, this.material(`garden-route-marker-${index}`, index < 2 ? palette.mintDark : palette.amber));
       marker.position.copyFrom(position);
       marker.rotation.x = Math.PI / 2;
-      this.addInteraction(marker, "garden", 0.9, `Sinal de irrigação ${index + 1}.`, () => this.handlePuzzleSignal("garden-route", routeSignals[index]));
+      this.addInteraction(marker, "garden", 0.9, this.copy.irrigation(index), () => this.handlePuzzleSignal("garden-route", routeSignals[index]));
     });
     const exitBeacon = this.addMesh(MeshBuilder.CreateCylinder("garden-core-beacon", { diameter: 0.4, height: 0.64, tessellation: 8 }, this.scene), root, this.material("garden-core-beacon-material", palette.violet, palette.violet));
     exitBeacon.position.set(4.25, 0.42, 1.75);
-    this.addInteraction(exitBeacon, "garden", 1.1, "O caminho para o Núcleo exige uma testemunha e uma rota estável.", () => this.handleGardenExit());
+    this.addInteraction(exitBeacon, "garden", 1.1, this.copy.coreExit, () => this.handleGardenExit());
 
     const body = this.addMesh(MeshBuilder.CreateBox("sentinel-drone", { width: 0.68, depth: 0.68, height: 0.34 }, this.scene), root, this.material("drone-material", "#373746"));
     body.position.set(1.8, 1.18, -1.65);
@@ -354,7 +357,7 @@ export class GameWorld {
       const module = this.addMesh(MeshBuilder.CreateCylinder(`core-memory-module-${index}`, { diameter: 0.72, height: 0.5, tessellation: 8 }, this.scene), root, this.material(`core-module-material-${index}`, index === 0 ? palette.mint : index === 1 ? palette.violet : palette.amber, index === 0 ? palette.mint : index === 1 ? palette.violet : palette.amber));
       module.position.set(position.x, position.y + 0.38, position.z);
       const ending = endingsForModules[index];
-      this.addInteraction(module, "core", 1.2, `Configuração: ${this.narrative.endings[ending].title}.`, () => this.confirmEnding(ending));
+      this.addInteraction(module, "core", 1.2, this.copy.ending(this.narrative.endings[ending].title), () => this.confirmEnding(ending));
     });
     const frame = this.createPortal(root, new Vector3(0, 1.2, 1.9), "core-memory-frame");
     frame.scaling.setAll(1.22);
@@ -387,7 +390,7 @@ export class GameWorld {
       checkpoint: checkpointFor(sector),
       message: announce ? this.narrative.sectors[sector].arrival : this.store.getSnapshot().message,
       threatState: "patrol",
-      lastInteraction: previous === sector ? null : `Entrada registrada: ${this.narrative.sectors[sector].title}`,
+      lastInteraction: previous === sector ? null : this.copy.checkpointEntered(this.narrative.sectors[sector].title),
     });
     if (sector === "core") this.speak("NÚCLEO", this.narrative.coreDialogue);
     this.checkpointAnchor = createCheckpoint(this.store.getSnapshot());
@@ -401,7 +404,7 @@ export class GameWorld {
       if (this.dialogueLineIsFinal) {
         this.dialogueLineIsFinal = false;
         this.activeDialogueId = null;
-        this.store.patch({ dialogue: null, message: "A estação aguardou a próxima ação." });
+        this.store.patch({ dialogue: null, message: this.copy.dialogueClosed });
       } else {
         this.advanceDialogue();
       }
@@ -412,7 +415,7 @@ export class GameWorld {
       target.onInteract();
       return;
     }
-    this.store.patch({ message: "A Lumen encontra apenas silêncio aqui. Procure um sinal, personagem ou passagem." });
+    this.store.patch({ message: this.copy.silence });
   }
 
   private speak(character: string, lines: Array<{ speaker: "MIRA" | "PONTO" | "NIX" | "CHARLLES" | "NÚCLEO"; text: string }>): void {
@@ -424,8 +427,8 @@ export class GameWorld {
     this.dialogueLineIsFinal = result.done;
     const patch: Parameters<GameStateStore["patch"]>[0] = {
       dialogue: line,
-      message: `${character} deixou um sinal no registro.`,
-      lastInteraction: `Transmissão recebida: ${character}`,
+      message: this.copy.dialogueRecorded(character),
+      lastInteraction: this.copy.transmission(character),
     };
     if (result.done && character === "MIRA") patch.relationship = { ...this.store.getSnapshot().relationship, mira: "doubt" };
     if (result.done && character === "PONTO") patch.relationship = { ...this.store.getSnapshot().relationship, ponto: "listening" };
@@ -434,7 +437,7 @@ export class GameWorld {
       const fragmentsFound = this.store.getSnapshot().fragmentsFound.includes("damage") ? this.store.getSnapshot().fragmentsFound : [...this.store.getSnapshot().fragmentsFound, "damage"];
       patch.relationship = { ...this.store.getSnapshot().relationship, nix: "recognition" };
       patch.fragmentsFound = fragmentsFound;
-      patch.message = "NIX registrou a ação antes de registrar a ameaça.";
+      patch.message = this.copy.nixWitness;
       patch.lastInteraction = "Testemunho de dano recuperado";
     }
     this.store.patch(patch);
@@ -450,7 +453,7 @@ export class GameWorld {
 
   private restoreNode(node: SignalNode): void {
     if (node.restored) {
-      this.store.patch({ message: "Este sinal já foi respondido. A estação espera os outros dois." });
+      this.store.patch({ message: this.copy.nodeAlready });
       return;
     }
     node.restored = true;
@@ -461,9 +464,9 @@ export class GameWorld {
     this.store.patch({
       nodesRestored: restored,
       fragmentsFound,
-      objective: restored === 1 ? "Entre no Arquivo e descubra o que foi escondido." : restored === 3 ? "O portal de memória reconhece uma passagem." : "Reative os sinais restantes no Hub.",
-      message: restored === 3 ? "Os três sinais responderam. O portal de memória está aberto." : `Sinal ${String(restored).padStart(2, "0")} restaurado. A rota mudou.`,
-      lastInteraction: `Nó de sinal ${String(restored).padStart(2, "0")} restaurado`,
+      objective: restored === 1 ? this.copy.nodeObjectiveFirst : restored === 3 ? this.copy.nodeObjectiveAll : this.copy.nodeObjectiveMore,
+      message: restored === 3 ? this.copy.nodeObjectiveAll : this.copy.nodeRestored(restored),
+      lastInteraction: this.copy.nodeLast(restored),
     });
     this.saveSystem.save(this.store.getSnapshot());
   }
@@ -471,7 +474,7 @@ export class GameWorld {
   private handleHubPortal(): void {
     const gate = routeGate(this.store.getSnapshot(), "archive", this.locale);
     if (!gate.allowed) {
-      this.store.patch({ message: "O portal mostra uma memória sem entrada. Primeiro, responda a um nó." });
+      this.store.patch({ message: this.copy.archiveGate });
       return;
     }
     this.setActiveSector("archive");
@@ -481,22 +484,22 @@ export class GameWorld {
     const result = this.puzzles.submit(id, signal);
     const snapshot = this.store.getSnapshot();
     const puzzles = { ...snapshot.puzzles, [id]: result.progress };
-    const stepMessage = result.solvedNow ? "Sequência confirmada. O setor aprendeu uma nova relação." : result.accepted ? `Sinal aceito. Etapa ${result.progress.step} registrada.` : "A frequência não fecha. A sequência voltou ao início.";
-    this.store.patch({ puzzles, message: stepMessage, lastInteraction: `Sinal ${signal} registrado` });
+    const stepMessage = result.solvedNow ? this.copy.archiveSolved : result.accepted ? this.copy.puzzleAccepted(result.progress.step) : this.copy.puzzleWrong;
+    this.store.patch({ puzzles, message: stepMessage, lastInteraction: this.copy.signalRegistered(signal) });
     if (result.solvedNow && id === "archive-frequency") {
       this.archiveSolved = true;
       const fragmentsFound = snapshot.fragmentsFound.includes("unowned") ? snapshot.fragmentsFound : [...snapshot.fragmentsFound, "unowned"];
       this.store.patch({
         fragmentsFound,
         toolsUnlocked: ["Lente", "Pulso"],
-        objective: "Leve a frequência recuperada ao Jardim Orbital.",
-        message: "Os módulos não formavam uma ordem. Formavam uma relação.",
-        lastInteraction: "Fragmento associado: a caixa sem origem",
+        objective: this.copy.archiveToGarden,
+        message: this.copy.archiveSolved,
+        lastInteraction: this.copy.associatedFragment,
         relationship: { ...snapshot.relationship, ponto: "association" },
       });
     }
     if (result.solvedNow && id === "garden-route") {
-      this.store.patch({ message: "A irrigação encontrou o caminho. O Jardim pode sustentar a passagem ao Núcleo.", lastInteraction: "Rota de irrigação estabilizada" });
+      this.store.patch({ message: this.copy.gardenSolved, lastInteraction: this.copy.gardenSolved });
     }
     this.saveSystem.save(this.store.getSnapshot());
   }
@@ -521,7 +524,7 @@ export class GameWorld {
       ending: result.ending,
       objective: result.objective,
       message: result.message,
-      lastInteraction: `Configuração confirmada: ${result.title}`,
+      lastInteraction: this.copy.endingConfirmed(result.title),
       fragmentsFound: result.fragmentsFound,
     });
     this.saveSystem.save(this.store.getSnapshot());
@@ -539,22 +542,22 @@ export class GameWorld {
       targetInRange,
     });
     if (!result.success) {
-      this.store.patch({ message: result.kind === "locked" ? "A Lente encontrou o caminho. O Pulso ainda precisa de uma frequência associada." : "A Lumen precisa de energia para emitir outra ação." });
+      this.store.patch({ message: result.kind === "locked" ? this.copy.toolLocked : this.copy.toolDepleted });
       return;
     }
     if (result.kind === "pulse") {
-      this.store.patch({ energy: result.energy, threatState: "disabled", message: "Pulso Lumen emitido. A sentinela abriu uma janela de passagem.", lastInteraction: "Drone estabilizado por 3,2 s" });
+      this.store.patch({ energy: result.energy, threatState: "disabled", message: this.copy.pulse, lastInteraction: this.copy.pulseLastInteraction });
       this.saveSystem.save(this.store.getSnapshot());
       this.messageCooldown = 2.2;
       const timeout = window.setTimeout(() => {
         this.scheduledTimeouts.delete(timeout);
         if (this.store.getSnapshot().completed) return;
-        this.store.patch({ threatState: "patrol", message: "O sentinela voltou ao modo de patrulha." });
+        this.store.patch({ threatState: "patrol", message: this.copy.dronePatrol });
       }, 3200);
       this.scheduledTimeouts.add(timeout);
       return;
     }
-    this.store.patch({ energy: result.energy, message: `A Lente percorreu o setor ${this.narrative.sectors[this.activeSector].title}. Um sinal responde ao longe.` });
+    this.store.patch({ energy: result.energy, message: this.copy.lensScan(this.narrative.sectors[this.activeSector].title) });
   }
 
   private updateDrone(delta: number): void {
@@ -579,7 +582,7 @@ export class GameWorld {
     const evaluation = this.threat.evaluate({ distance, disabled: false });
     const nextThreat = evaluation.state;
     if (nextThreat !== snapshot.threatState && this.messageCooldown <= 0) {
-      this.store.patch({ threatState: nextThreat, message: nextThreat === "alert" ? "NIX encontrou a assinatura. Use o Pulso ou recue." : nextThreat === "suspicious" ? "O cone de varredura procura um padrão conhecido." : "A sentinela voltou a patrulhar." });
+      this.store.patch({ threatState: nextThreat, message: nextThreat === "alert" ? this.copy.threatAlert : nextThreat === "suspicious" ? this.copy.threatSuspicious : this.copy.threatPatrol });
       this.messageCooldown = 0.8;
     }
     const droneMaterial = this.drone.material as StandardMaterial;
