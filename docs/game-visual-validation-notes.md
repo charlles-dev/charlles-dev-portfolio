@@ -13,3 +13,9 @@ Não tentar mascarar o player geométrico com arte gerada sem aprovação. A pr�
 ## Pendências visuais
 
 A captura ainda não representa a qualidade final de arte do jogo porque os kits de ambiente, NPCs, drone, props e VFX são procedurais/provisórios. A composição e a gramática visual estão aprovadas como estrutura; os assets de produção devem entrar por setor, começando pelo player e pelo Hub.
+
+## Inspeção da master v2
+
+A master v2 mantém uma forma de cabelo escuro contínua, com grandes volumes conectados e sem cachos individuais em forma de bolinha. Os óculos redondos marrom-escuros permanecem legíveis em todas as poses, a pele e o moletom escuro estão consistentes e as poses cobrem idle, deslocamento, interação com terminal, uso da Lumen e dash.
+
+Ela ainda é uma folha de referência em fundo creme sólido, não um atlas transparente. Portanto, permanece como candidata visual e não como asset final. Antes da integração, será necessário gerar ou recortar estados individuais, remover o fundo com alpha real, padronizar pivô/base, conferir escala e validar cada estado contra o avatar canônico.
