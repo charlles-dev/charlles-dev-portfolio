@@ -7,6 +7,7 @@ const checks = [
   ["production build", "pnpm exec next build"],
   ["asset references", "pnpm exec node scripts/verify-assets.mjs"],
   ["generated routes", "pnpm exec node scripts/verify-routes.mjs"],
+  ["HTML integrity", "pnpm exec node scripts/verify-html.mjs"],
 ];
 
 for (const [name, command] of checks) {
