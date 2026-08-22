@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } f
 import type { GameSnapshot } from "@/game/core/game-state";
 import type { GameAction, InputManager } from "@/game/input/input-manager";
 import { gameUiCopy, type GameLocale } from "@/game/data/game-copy";
-import { endings, fragments, relationshipLabels, sectors, sectorOrder } from "@/game/data/narrative-content";
+import { getNarrative, sectorOrder } from "@/game/data/narrative-content";
 
 interface GameUiProps {
   locale: GameLocale;
@@ -59,11 +59,12 @@ function closeWithInput(input: InputManager | null) {
 
 export function GameUi({ locale, snapshot, input }: GameUiProps) {
   const copy = gameUiCopy[locale];
+  const narrative = getNarrative(locale);
   const [panel, setPanel] = useState<"map" | "memory" | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const energyRatio = `${Math.max(0, Math.min(100, snapshot.energy))}%`;
-  const sector = sectors[snapshot.sector];
-  const finalEnding = snapshot.ending ? endings[snapshot.ending] : null;
+  const sector = narrative.sectors[snapshot.sector];
+  const finalEnding = snapshot.ending ? narrative.endings[snapshot.ending] : null;
 
   useEffect(() => {
     if (!panel) return;
@@ -129,7 +130,7 @@ export function GameUi({ locale, snapshot, input }: GameUiProps) {
             <div className="game-map" aria-label="Setores da vertical slice">
               <div className="game-map-line" aria-hidden="true" />
               {sectorOrder.map((id, index) => {
-                const destination = sectors[id];
+                const destination = narrative.sectors[id];
                 const isCurrent = snapshot.sector === id;
                 const isUnlocked = id === "hub" || (id === "archive" && snapshot.nodesRestored > 0) || (id === "garden" && snapshot.fragmentsFound.includes("unowned")) || (id === "core" && snapshot.nodesRestored >= 3);
                 return (
@@ -146,7 +147,7 @@ export function GameUi({ locale, snapshot, input }: GameUiProps) {
             <div className="game-memory-copy">
               <p className="game-memory-intro">{copy.fragmentIntro}</p>
               <div className="game-memory-grid">
-                {fragments.map((fragment, index) => {
+                {narrative.fragments.map((fragment, index) => {
                   const found = snapshot.fragmentsFound.includes(fragment.id);
                   return (
                     <article key={fragment.id} className={`game-memory-entry ${found ? "is-found" : "is-hidden"}`}>
@@ -158,9 +159,9 @@ export function GameUi({ locale, snapshot, input }: GameUiProps) {
                 })}
               </div>
               <div className="game-relationship-grid" aria-label="Estado das relações">
-                <span>{relationshipLabels[snapshot.relationship.mira]}</span>
+                <span>{narrative.relationshipLabels[snapshot.relationship.mira]}</span>
                 <span>PONTO: {snapshot.relationship.ponto}</span>
-                <span>NIX: {relationshipLabels[snapshot.relationship.nix]}</span>
+                <span>NIX: {narrative.relationshipLabels[snapshot.relationship.nix]}</span>
               </div>
             </div>
           )}

@@ -9,17 +9,7 @@ import { GameStateStore } from "./game-state";
 import { InputManager } from "../input/input-manager";
 import { Player } from "../entities/player";
 import type { GameLocale } from "../data/game-copy";
-import {
-  archiveDialogue,
-  coreDialogue,
-  endings,
-  gardenDialogue,
-  openingDialogue,
-  sectorOrder,
-  sectors,
-  type EndingId,
-  type SectorId,
-} from "../data/narrative-content";
+import { getNarrative, sectorOrder, type EndingId, type SectorId } from "../data/narrative-content";
 
 interface SignalNode {
   mesh: Mesh;
@@ -83,9 +73,11 @@ export class GameWorld {
   private archiveSolved = false;
   private gardenWitnessed = false;
   private readonly locale: GameLocale;
+  private readonly narrative: ReturnType<typeof getNarrative>;
 
   constructor(private readonly scene: Scene, store: GameStateStore, input: InputManager, locale: GameLocale = "pt-BR") {
     this.locale = locale;
+    this.narrative = getNarrative(locale);
     this.store = store;
     this.input = input;
     for (const sector of sectorOrder) this.sectorRoots[sector] = new TransformNode(`sector-root-${sector}`, scene);
@@ -201,7 +193,7 @@ export class GameWorld {
     const badge = this.addMesh(MeshBuilder.CreateTorus("mira-badge", { diameter: 0.38, thickness: 0.045, tessellation: 16 }, this.scene), root, this.material("mira-badge-material", palette.amber, palette.amber));
     badge.position.set(-3.02, 0.74, 1.68);
     badge.rotation.x = Math.PI / 2;
-    this.addInteraction(terminal, "hub", 1.35, "MIRA aguarda no terminal.", () => this.speak("MIRA", openingDialogue));
+    this.addInteraction(terminal, "hub", 1.35, "MIRA aguarda no terminal.", () => this.speak("MIRA", this.narrative.openingDialogue));
 
     const nodePositions = [new Vector3(-1.45, 0.22, 0.15), new Vector3(0, 0.22, -0.95), new Vector3(1.45, 0.22, 0.15)];
     nodePositions.forEach((position, index) => {
@@ -231,7 +223,7 @@ export class GameWorld {
     const pontoSignal = this.addMesh(MeshBuilder.CreateTorus("ponto-archive-signal", { diameter: 0.82, thickness: 0.055, tessellation: 20 }, this.scene), root, this.material("ponto-signal-material", palette.violet, palette.violet));
     pontoSignal.position.set(-3.65, 0.8, 0.2);
     pontoSignal.rotation.x = Math.PI / 2;
-    this.addInteraction(ponto, "archive", 1.25, "PONTO segura uma caixa sem origem.", () => this.speak("PONTO", archiveDialogue));
+    this.addInteraction(ponto, "archive", 1.25, "PONTO segura uma caixa sem origem.", () => this.speak("PONTO", this.narrative.archiveDialogue));
 
     const modulePositions = [new Vector3(-1.2, 0.38, -0.35), new Vector3(0, 0.38, -0.35), new Vector3(1.2, 0.38, -0.35)];
     modulePositions.forEach((position, index) => {
@@ -277,7 +269,7 @@ export class GameWorld {
     nix.position.set(-3.7, 0.58, 2.02);
     const nixLight = this.addMesh(MeshBuilder.CreateSphere("nix-observatory-light", { diameter: 0.2, segments: 12 }, this.scene), root, this.material("nix-light-material", palette.amber, palette.amber));
     nixLight.position.set(-3.7, 0.82, 1.63);
-    this.addInteraction(nix, "garden", 1.35, "NIX observa a passagem.", () => this.speak("NIX", gardenDialogue));
+    this.addInteraction(nix, "garden", 1.35, "NIX observa a passagem.", () => this.speak("NIX", this.narrative.gardenDialogue));
     const exitBeacon = this.addMesh(MeshBuilder.CreateCylinder("garden-core-beacon", { diameter: 0.4, height: 0.64, tessellation: 8 }, this.scene), root, this.material("garden-core-beacon-material", palette.violet, palette.violet));
     exitBeacon.position.set(4.25, 0.42, 1.75);
     this.addInteraction(exitBeacon, "garden", 1.1, "O caminho para o Núcleo exige uma testemunha.", () => this.handleGardenExit());
@@ -306,7 +298,7 @@ export class GameWorld {
       const module = this.addMesh(MeshBuilder.CreateCylinder(`core-memory-module-${index}`, { diameter: 0.72, height: 0.5, tessellation: 8 }, this.scene), root, this.material(`core-module-material-${index}`, index === 0 ? palette.mint : index === 1 ? palette.violet : palette.amber, index === 0 ? palette.mint : index === 1 ? palette.violet : palette.amber));
       module.position.set(position.x, position.y + 0.38, position.z);
       const ending = endingsForModules[index];
-      this.addInteraction(module, "core", 1.2, `Configuração: ${endings[ending].title}.`, () => this.confirmEnding(ending));
+      this.addInteraction(module, "core", 1.2, `Configuração: ${this.narrative.endings[ending].title}.`, () => this.confirmEnding(ending));
     });
     const frame = this.createPortal(root, new Vector3(0, 1.2, 1.9), "core-memory-frame");
     frame.scaling.setAll(1.22);
@@ -333,13 +325,13 @@ export class GameWorld {
     if (sector === "core") this.player.placeAt(new Vector3(0, 0.5, -2.05));
     this.store.patch({
       sector,
-      sectorTitle: sectors[sector].title,
+      sectorTitle: this.narrative.sectors[sector].title,
       objective: this.objectiveForSector(sector),
-      message: announce ? sectors[sector].arrival : this.store.getSnapshot().message,
+      message: announce ? this.narrative.sectors[sector].arrival : this.store.getSnapshot().message,
       threatState: "patrol",
-      lastInteraction: previous === sector ? null : `Entrada registrada: ${sectors[sector].title}`,
+      lastInteraction: previous === sector ? null : `Entrada registrada: ${this.narrative.sectors[sector].title}`,
     });
-    if (sector === "core") this.speak("NÚCLEO", coreDialogue);
+    if (sector === "core") this.speak("NÚCLEO", this.narrative.coreDialogue);
   }
 
   private objectiveForSector(sector: SectorId): string {
@@ -450,7 +442,7 @@ export class GameWorld {
       this.store.patch({ message: "O Núcleo não aceita uma configuração sem as três testemunhas." });
       return;
     }
-    const definition = endings[ending];
+    const definition = this.narrative.endings[ending];
     this.store.patch({
       completed: true,
       ending,
@@ -483,7 +475,7 @@ export class GameWorld {
       this.scheduledTimeouts.add(timeout);
       return;
     }
-    this.store.patch({ energy: Math.max(0, snapshot.energy - 4), message: `A Lente percorreu o setor ${sectors[this.activeSector].title}. Um sinal responde ao longe.` });
+    this.store.patch({ energy: Math.max(0, snapshot.energy - 4), message: `A Lente percorreu o setor ${this.narrative.sectors[this.activeSector].title}. Um sinal responde ao longe.` });
   }
 
   private updateDrone(delta: number): void {
