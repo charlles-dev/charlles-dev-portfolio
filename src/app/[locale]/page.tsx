@@ -57,29 +57,42 @@ export default async function LocalePage({ params }: PageProps<"/[locale]">) {
   const sameAs = socialLinks.filter((link) => link.kind !== "email").map((link) => link.href);
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "ProfilePage",
-    name: dictionary.meta.title,
-    "@id": `${canonicalUrl}#profile`,
-    url: canonicalUrl,
-    inLanguage: locale,
-    isPartOf: { "@type": "WebSite", "@id": `${siteUrl}/#website`, name: "Charlles.dev", url: siteUrl, inLanguage: locale },
-    mainEntity: {
-      "@id": `${siteUrl}/#person`,
-      "@type": "Person",
-      name: profile.name,
-      alternateName: profile.handle,
-      url: siteUrl,
-      image: [`${siteUrl}/reference/charlles-contact-avatar.webp`, `${siteUrl}/reference/charlles-hero-poster.webp`],
-      jobTitle: dictionary.hero.role,
-      description: dictionary.meta.description,
-      address: { "@type": "PostalAddress", addressLocality: "Campina Grande", addressCountry: "BR" },
-      sameAs,
-      knowsAbout: ["Web development", "Software engineering", "TypeScript", "React", "Next.js", "Automation", "Applied security"],
-    },
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": `${siteUrl}/#website`,
+        name: "Charlles.dev",
+        url: siteUrl,
+        inLanguage: locale,
+        publisher: { "@id": `${siteUrl}/#person` },
+      },
+      {
+        "@type": "Person",
+        "@id": `${siteUrl}/#person`,
+        name: profile.name,
+        alternateName: profile.handle,
+        url: siteUrl,
+        image: [`${siteUrl}/reference/charlles-contact-avatar.webp`, `${siteUrl}/reference/charlles-hero-poster.webp`],
+        jobTitle: dictionary.hero.role,
+        description: dictionary.meta.description,
+        address: { "@type": "PostalAddress", addressLocality: "Campina Grande", addressCountry: "BR" },
+        sameAs,
+        knowsAbout: ["Web development", "Software engineering", "TypeScript", "React", "Next.js", "Automation", "Applied security"],
+      },
+      {
+        "@type": "ProfilePage",
+        name: dictionary.meta.title,
+        "@id": `${canonicalUrl}#profile`,
+        url: canonicalUrl,
+        inLanguage: locale,
+        isPartOf: { "@id": `${siteUrl}/#website` },
+        mainEntity: { "@id": `${siteUrl}/#person` },
+      },
+    ],
   };
 
   return (
-    <div id="conteudo">
+    <div>
       <PortfolioHome locale={locale} dictionary={dictionary} initialPayload={fallbackProjectsPayload} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
     </div>

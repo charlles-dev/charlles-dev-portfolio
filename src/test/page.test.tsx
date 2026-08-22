@@ -356,3 +356,20 @@ describe("contact conversion", () => {
     expect(document.execCommand).toHaveBeenCalledWith("copy");
   });
 });
+
+
+describe("landing structural SEO", () => {
+  beforeEach(() => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("fetch disabled in tests")));
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it("keeps one skip-link target in the client composition", () => {
+    renderHome("en");
+    expect(document.querySelectorAll("#conteudo")).toHaveLength(1);
+  });
+});
