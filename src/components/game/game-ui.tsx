@@ -83,6 +83,8 @@ export function GameUi({ locale, snapshot, input }: GameUiProps) {
     closeButtonRef.current?.focus();
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") setPanel(null);
+      if (event.key.toLowerCase() === "m") setPanel((current) => current === "map" ? null : "map");
+      if (event.key.toLowerCase() === "j") setPanel((current) => current === "memory" ? null : "memory");
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);

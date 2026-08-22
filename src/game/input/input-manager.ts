@@ -1,4 +1,4 @@
-export type GameAction = "up" | "down" | "left" | "right" | "interact" | "tool" | "dash" | "pause";
+export type GameAction = "up" | "down" | "left" | "right" | "interact" | "tool" | "dash" | "pause" | "map" | "memory";
 
 const keyMap: Record<string, GameAction> = {
   w: "up",
@@ -14,6 +14,10 @@ const keyMap: Record<string, GameAction> = {
   " ": "tool",
   Shift: "dash",
   Escape: "pause",
+  m: "map",
+  M: "map",
+  j: "memory",
+  J: "memory",
 };
 
 export class InputManager {
