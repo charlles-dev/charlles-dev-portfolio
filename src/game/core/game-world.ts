@@ -10,6 +10,7 @@ import { SaveSystem } from "./save-system";
 import { PuzzleSystem, type PuzzleSignal } from "../systems/puzzle-system";
 import { ThreatSystem } from "../systems/threat-system";
 import { objectiveFor, routeGate } from "../systems/progression-system";
+import { DialogueSystem } from "../systems/dialogue-system";
 import { InputManager } from "../input/input-manager";
 import { Player } from "../entities/player";
 import type { GameLocale } from "../data/game-copy";
@@ -63,11 +64,11 @@ export class GameWorld {
   private readonly saveSystem: SaveSystem;
   private readonly puzzles = new PuzzleSystem();
   private readonly threat = new ThreatSystem();
+  private readonly dialogue = new DialogueSystem();
   private readonly nodes: SignalNode[] = [];
   private readonly interactions: InteractionTarget[] = [];
   private readonly sectorRoots = {} as Record<SectorId, TransformNode>;
   private readonly materials = new Map<string, StandardMaterial>();
-  private readonly dialogueCursors = new Map<string, number>();
   private readonly scheduledTimeouts = new Set<number>();
   private readonly drone: Mesh;
   private readonly droneLight: Mesh;
@@ -389,9 +390,11 @@ export class GameWorld {
   }
 
   private speak(character: string, lines: Array<{ speaker: "MIRA" | "PONTO" | "NIX" | "CHARLLES" | "NÚCLEO"; text: string }>): void {
-    const cursor = this.dialogueCursors.get(character) ?? 0;
-    const line = lines[Math.min(cursor, lines.length - 1)];
-    this.dialogueCursors.set(character, cursor >= lines.length - 1 ? 0 : cursor + 1);
+    const session = this.dialogue.start(character, lines);
+    const cursor = session.cursor;
+    const result = this.dialogue.advance(session);
+    const line = result.line;
+    if (!line) return;
     const patch: Parameters<GameStateStore["patch"]>[0] = {
       dialogue: line,
       message: `${character} deixou um sinal no registro.`,
