@@ -86,6 +86,8 @@ export class GameWorld {
   private readonly locale: GameLocale;
   private readonly narrative: ReturnType<typeof getNarrative>;
   private checkpointAnchor!: CheckpointAnchor;
+  private dialogueLineIsFinal = false;
+  private activeDialogueId: "MIRA" | "PONTO" | "NIX" | "NÚCLEO" | null = null;
 
   constructor(private readonly scene: Scene, store: GameStateStore, input: InputManager, locale: GameLocale = "pt-BR") {
     this.locale = locale;
@@ -396,7 +398,13 @@ export class GameWorld {
     if (!this.input.consume("interact")) return;
     const snapshot = this.store.getSnapshot();
     if (snapshot.dialogue) {
-      this.store.patch({ dialogue: null, message: "A estação aguardou a próxima ação." });
+      if (this.dialogueLineIsFinal) {
+        this.dialogueLineIsFinal = false;
+        this.activeDialogueId = null;
+        this.store.patch({ dialogue: null, message: "A estação aguardou a próxima ação." });
+      } else {
+        this.advanceDialogue();
+      }
       return;
     }
     const target = this.interactions.find((candidate) => candidate.sector === this.activeSector && this.player.distanceTo(candidate.mesh.position) < candidate.radius);
@@ -408,19 +416,20 @@ export class GameWorld {
   }
 
   private speak(character: string, lines: Array<{ speaker: "MIRA" | "PONTO" | "NIX" | "CHARLLES" | "NÚCLEO"; text: string }>): void {
+    this.activeDialogueId = character as "MIRA" | "PONTO" | "NIX" | "NÚCLEO";
     const session = this.dialogue.start(character, lines);
-    const cursor = session.cursor;
     const result = this.dialogue.advance(session);
     const line = result.line;
     if (!line) return;
+    this.dialogueLineIsFinal = result.done;
     const patch: Parameters<GameStateStore["patch"]>[0] = {
       dialogue: line,
       message: `${character} deixou um sinal no registro.`,
       lastInteraction: `Transmissão recebida: ${character}`,
     };
-    if (character === "MIRA" && cursor >= 2) patch.relationship = { ...this.store.getSnapshot().relationship, mira: "doubt" };
-    if (character === "PONTO") patch.relationship = { ...this.store.getSnapshot().relationship, ponto: "listening" };
-    if (character === "NIX" && cursor >= 2) {
+    if (result.done && character === "MIRA") patch.relationship = { ...this.store.getSnapshot().relationship, mira: "doubt" };
+    if (result.done && character === "PONTO") patch.relationship = { ...this.store.getSnapshot().relationship, ponto: "listening" };
+    if (result.done && character === "NIX") {
       this.gardenWitnessed = true;
       const fragmentsFound = this.store.getSnapshot().fragmentsFound.includes("damage") ? this.store.getSnapshot().fragmentsFound : [...this.store.getSnapshot().fragmentsFound, "damage"];
       patch.relationship = { ...this.store.getSnapshot().relationship, nix: "recognition" };
@@ -429,6 +438,14 @@ export class GameWorld {
       patch.lastInteraction = "Testemunho de dano recuperado";
     }
     this.store.patch(patch);
+  }
+
+  private advanceDialogue(): void {
+    const current = this.store.getSnapshot().dialogue;
+    if (!current) return;
+    const dialogueId = this.activeDialogueId ?? (current.speaker === "MIRA" || current.speaker === "PONTO" || current.speaker === "NIX" || current.speaker === "NÚCLEO" ? current.speaker : "NÚCLEO");
+    const lines = dialogueId === "MIRA" ? this.narrative.openingDialogue : dialogueId === "PONTO" ? this.narrative.archiveDialogue : dialogueId === "NIX" ? this.narrative.gardenDialogue : this.narrative.coreDialogue;
+    this.speak(dialogueId, lines);
   }
 
   private restoreNode(node: SignalNode): void {
