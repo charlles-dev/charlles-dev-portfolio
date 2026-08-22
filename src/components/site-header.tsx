@@ -25,7 +25,7 @@ export function SiteHeader({
   const menuRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const firstMenuItemRef = useRef<HTMLButtonElement>(null);
-  const menuItemsRef = useRef<Array<HTMLButtonElement | null>>([]);
+  const menuItemsRef = useRef<Array<HTMLElement | null>>([]);
   const closeMenu = () => setMenuOpen(false);
 
   useEffect(() => {
@@ -51,11 +51,12 @@ export function SiteHeader({
       menuButton?.focus();
     };
   }, [menuOpen]);
-  const handleMenuKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
+  const handleMenuKeyDown = (event: React.KeyboardEvent<HTMLElement>, index: number) => {
     const key = event.key;
     if (!["ArrowDown", "ArrowRight", "ArrowUp", "ArrowLeft", "Home", "End"].includes(key)) return;
     event.preventDefault();
-    const nextIndex = key === "Home" ? 0 : key === "End" ? 2 : key === "ArrowUp" || key === "ArrowLeft" ? (index + 2) % 3 : (index + 1) % 3;
+    const menuItemCount = 4;
+    const nextIndex = key === "Home" ? 0 : key === "End" ? menuItemCount - 1 : key === "ArrowUp" || key === "ArrowLeft" ? (index + menuItemCount - 1) % menuItemCount : (index + 1) % menuItemCount;
     menuItemsRef.current[nextIndex]?.focus();
   };
   const open = (action: () => void) => {
@@ -74,6 +75,7 @@ export function SiteHeader({
           <button type="button" className={activePanel === "work" ? "is-active" : undefined} aria-haspopup="dialog" aria-expanded={activePanel === "work"} aria-controls={activePanel === "work" ? "reference-work-panel" : undefined} onClick={onOpenWork}>{dictionary.nav.work}</button>
           <button type="button" className={activePanel === "about" ? "is-active" : undefined} aria-haspopup="dialog" aria-expanded={activePanel === "about"} aria-controls={activePanel === "about" ? "reference-about-panel" : undefined} onClick={onOpenAbout}>{dictionary.nav.about}</button>
           <button type="button" className={activePanel === "contact" ? "is-active" : undefined} aria-haspopup="dialog" aria-expanded={activePanel === "contact"} aria-controls={activePanel === "contact" ? "reference-contact-panel" : undefined} onClick={onOpenContact}>{dictionary.nav.contact}</button>
+          <a className="reference-nav-now" href={`${localePath(locale)}/now`}>{dictionary.nav.now}</a>
           <LanguageSwitcher currentLocale={locale} label={dictionary.nav.language} contextHash={activePanel ?? undefined} />
           <div className="reference-mobile-menu-wrap" ref={menuRef}>
             <button ref={menuButtonRef} type="button" className="reference-mobile-menu-button" aria-label={dictionary.nav.menu} aria-expanded={menuOpen} aria-controls="reference-mobile-menu" onClick={() => setMenuOpen((value) => !value)}><span aria-hidden="true">☰</span></button>
@@ -81,6 +83,7 @@ export function SiteHeader({
               <button ref={(node) => { firstMenuItemRef.current = node; menuItemsRef.current[0] = node; }} type="button" role="menuitem" className={activePanel === "work" ? "is-active" : undefined} aria-current={activePanel === "work" ? "true" : undefined} onKeyDown={(event) => handleMenuKeyDown(event, 0)} onClick={() => open(onOpenWork)}>{dictionary.nav.work}</button>
               <button ref={(node) => { menuItemsRef.current[1] = node; }} type="button" role="menuitem" className={activePanel === "about" ? "is-active" : undefined} aria-current={activePanel === "about" ? "true" : undefined} onKeyDown={(event) => handleMenuKeyDown(event, 1)} onClick={() => open(onOpenAbout)}>{dictionary.nav.about}</button>
               <button ref={(node) => { menuItemsRef.current[2] = node; }} type="button" role="menuitem" className={activePanel === "contact" ? "is-active" : undefined} aria-current={activePanel === "contact" ? "true" : undefined} onKeyDown={(event) => handleMenuKeyDown(event, 2)} onClick={() => open(onOpenContact)}>{dictionary.nav.contact}</button>
+              <a ref={(node) => { menuItemsRef.current[3] = node; }} href={`${localePath(locale)}/now`} role="menuitem" onKeyDown={(event) => handleMenuKeyDown(event, 3)}>{dictionary.nav.now}</a>
               <div className="reference-mobile-languages" role="group" aria-label={dictionary.nav.language}>
                 {(Object.keys(localeLabels) as Locale[]).map((option) => <a key={option} href={`${localePath(option)}${activePanel ? `#${activePanel}` : ""}`} hrefLang={option} lang={option} aria-current={option === locale ? "page" : undefined}>{localeLabels[option].name}</a>)}
               </div>

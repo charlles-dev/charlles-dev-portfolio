@@ -12,6 +12,11 @@ const engineeringAlternates = {
   en: `${baseUrl}/en/engineering`,
   es: `${baseUrl}/es/engineering`,
 };
+const nowAlternates = {
+  "pt-BR": `${baseUrl}/pt-BR/now`,
+  en: `${baseUrl}/en/now`,
+  es: `${baseUrl}/es/now`,
+};
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
@@ -21,5 +26,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: engineeringAlternates["pt-BR"], lastModified, changeFrequency: "yearly", priority: 0.6, alternates: { languages: engineeringAlternates } },
     { url: engineeringAlternates.en, lastModified, changeFrequency: "yearly", priority: 0.6, alternates: { languages: engineeringAlternates } },
     { url: engineeringAlternates.es, lastModified, changeFrequency: "yearly", priority: 0.6, alternates: { languages: engineeringAlternates } },
+    { url: nowAlternates["pt-BR"], lastModified, changeFrequency: "monthly", priority: 0.7, alternates: { languages: nowAlternates } },
+    { url: nowAlternates.en, lastModified, changeFrequency: "monthly", priority: 0.7, alternates: { languages: nowAlternates } },
+    { url: nowAlternates.es, lastModified, changeFrequency: "monthly", priority: 0.7, alternates: { languages: nowAlternates } },
   ];
 }

@@ -10,6 +10,9 @@ const pages = [
   { locale: "pt-BR", route: "/pt-BR/engineering", file: ".next/server/app/pt-BR/engineering.html", type: "article" },
   { locale: "en", route: "/en/engineering", file: ".next/server/app/en/engineering.html", type: "article" },
   { locale: "es", route: "/es/engineering", file: ".next/server/app/es/engineering.html", type: "article" },
+  { locale: "pt-BR", route: "/pt-BR/now", file: ".next/server/app/pt-BR/now.html", type: "website" },
+  { locale: "en", route: "/en/now", file: ".next/server/app/en/now.html", type: "website" },
+  { locale: "es", route: "/es/now", file: ".next/server/app/es/now.html", type: "website" },
 ];
 const expectedPaths = new Set([...pages.map((page) => page.route), "/api/projects", "/manifest.webmanifest", "/robots.txt", "/sitemap.xml"]);
 const failures = [];
@@ -29,6 +32,12 @@ for (const page of pages) {
   if (ogType !== page.type) failures.push(`${page.route}: expected og:type=${page.type}, got ${ogType ?? "missing"}`);
   if (twitterCard !== "summary_large_image") failures.push(`${page.route}: missing Twitter card`);
   if (skipTargetCount !== 1) failures.push(`${page.route}: expected exactly one #conteudo target, got ${skipTargetCount}`);
+  if (page.route.endsWith("/engineering") && !html.includes('"@type":"BreadcrumbList"')) failures.push(`${page.route}: missing BreadcrumbList schema`);
+  if (page.route.endsWith("/now") && !html.includes('"@type":"ItemList"')) failures.push(`${page.route}: missing ItemList schema`);
+  if (page.route === "/pt-BR" || page.route === "/en" || page.route === "/es") {
+    if (!html.includes('"@type":"ItemList"')) failures.push(`${page.route}: missing project ItemList schema`);
+    if (!html.includes('"@type":"CreativeWork"')) failures.push(`${page.route}: missing project CreativeWork schema`);
+  }
 
   for (const match of html.matchAll(/<a\b[^>]*\bhref="([^"]+)"/g)) {
     const href = match[1];

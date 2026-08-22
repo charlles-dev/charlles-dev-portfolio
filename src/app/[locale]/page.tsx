@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { PortfolioHome } from "@/components/portfolio-home";
 import { fallbackProjectsPayload } from "@/lib/projects/fallback";
 import { getDictionary, isLocale, localePath, locales, type Locale } from "@/lib/i18n";
-import { profile, socialLinks } from "@/lib/portfolio";
+import { profile, projects, socialLinks } from "@/lib/portfolio";
 
 const siteUrl = "https://www.charlles.dev";
 const ogImagePath = "/reference/charlles-og-image.png";
@@ -55,6 +55,18 @@ export default async function LocalePage({ params }: PageProps<"/[locale]">) {
   const dictionary = getDictionary(locale);
   const canonicalUrl = `${siteUrl}${localePath(locale)}`;
   const sameAs = socialLinks.filter((link) => link.kind !== "email").map((link) => link.href);
+  const projectItems = projects.map((project) => {
+    const copy = dictionary.projects[project.name];
+    return {
+      "@type": "CreativeWork",
+      name: project.name,
+      url: project.href,
+      description: copy?.summary ?? project.description,
+      inLanguage: locale,
+      creator: { "@id": `${siteUrl}/#person` },
+      keywords: [project.language, copy?.category ?? project.categoryLabel].filter(Boolean),
+    };
+  });
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -87,6 +99,13 @@ export default async function LocalePage({ params }: PageProps<"/[locale]">) {
         inLanguage: locale,
         isPartOf: { "@id": `${siteUrl}/#website` },
         mainEntity: { "@id": `${siteUrl}/#person` },
+      },
+      {
+        "@type": "ItemList",
+        "@id": `${canonicalUrl}#projects`,
+        name: dictionary.work.title,
+        url: `${canonicalUrl}#work`,
+        itemListElement: projectItems.map((item, index) => ({ "@type": "ListItem", position: index + 1, item })),
       },
     ],
   };

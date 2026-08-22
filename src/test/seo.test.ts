@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import manifest from "@/app/manifest";
 import { generateMetadata } from "@/app/[locale]/page";
 import { generateMetadata as generateEngineeringMetadata } from "@/app/[locale]/engineering/page";
+import { generateMetadata as generateNowMetadata } from "@/app/[locale]/now/page";
 import robots from "@/app/robots";
 import sitemap from "@/app/sitemap";
 import { localePath, locales } from "@/lib/i18n";
@@ -31,6 +32,15 @@ describe("SEO and discovery metadata", () => {
     }
   });
 
+  it("keeps the now page localized and discoverable", async () => {
+    for (const locale of locales) {
+      const metadata = await generateNowMetadata({ params: Promise.resolve({ locale }) });
+      expect(metadata.alternates?.canonical).toBe(`https://www.charlles.dev/${locale}/now`);
+      expect(metadata.openGraph).toMatchObject({ type: "website", url: `https://www.charlles.dev/${locale}/now` });
+      expect(metadata.description).toContain(locale === "pt-BR" ? "focos" : locale === "en" ? "focuses" : "focos");
+    }
+  });
+
   it("exposes the dedicated preview image and crawl files", () => {
     expect(manifest().start_url).toBe("/pt-BR");
     expect(manifest().icons).toEqual(expect.arrayContaining([
@@ -45,6 +55,9 @@ describe("SEO and discovery metadata", () => {
       "https://www.charlles.dev/pt-BR/engineering",
       "https://www.charlles.dev/en/engineering",
       "https://www.charlles.dev/es/engineering",
+      "https://www.charlles.dev/pt-BR/now",
+      "https://www.charlles.dev/en/now",
+      "https://www.charlles.dev/es/now",
     ]);
   });
 });

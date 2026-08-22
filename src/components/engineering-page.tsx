@@ -8,9 +8,19 @@ import { localePath } from "@/lib/i18n";
 export function EngineeringPage({ locale, dictionary }: { locale: Locale; dictionary: PortfolioDictionary }) {
   const copy = dictionary.engineering;
   const homePath = localePath(locale);
+  const engineeringPath = `${homePath}/engineering`;
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: copy.breadcrumbHome, item: `https://www.charlles.dev${homePath}` },
+      { "@type": "ListItem", position: 2, name: copy.breadcrumbCurrent, item: `https://www.charlles.dev${engineeringPath}` },
+    ],
+  };
 
   return (
     <main id="conteudo" className="engineering-page">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <header className="engineering-header">
         <a className="engineering-brand" href={homePath} aria-label="Charlles.dev">
           <Image src="/assets/charlles-dev.svg" alt="Charlles.dev" width={34} height={34} priority />
@@ -18,11 +28,17 @@ export function EngineeringPage({ locale, dictionary }: { locale: Locale; dictio
         <nav className="engineering-nav" aria-label={dictionary.nav.main}>
           <a href={homePath}>{copy.backHome}</a>
           <a href={`${homePath}#work`}>{copy.openWork}</a>
+          <a href={`${homePath}/now`}>{dictionary.now.routeLabel}</a>
           <LanguageSwitcher currentLocale={locale} label={dictionary.nav.language} />
         </nav>
       </header>
 
       <div className="engineering-shell">
+        <nav className="engineering-breadcrumbs" aria-label={copy.breadcrumbLabel}>
+          <a href={homePath}>{copy.breadcrumbHome}</a>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">{copy.breadcrumbCurrent}</span>
+        </nav>
         <section className="engineering-intro" aria-labelledby="engineering-title">
           <p className="reference-eyebrow">{copy.eyebrow}</p>
           <h1 id="engineering-title">{copy.title}</h1>

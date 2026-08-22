@@ -80,6 +80,8 @@ export type PortfolioDictionary = {
     noResultsDescription: string;
     copyWorkLink: string;
     workLinkCopied: string;
+    copyCaseLink: string;
+    caseLinkCopied: string;
     quickLabel: string;
   };
   expertise: {
@@ -92,6 +94,11 @@ export type PortfolioDictionary = {
     eyebrow: string;
     title: string;
     description: string;
+    routeLabel: string;
+    breadcrumbLabel: string;
+    breadcrumbHome: string;
+    breadcrumbCurrent: string;
+    openProject: string;
     items: Array<{
       label: string;
       title: string;
@@ -143,6 +150,9 @@ export type PortfolioDictionary = {
     linkLabel: string;
     backHome: string;
     openWork: string;
+    breadcrumbLabel: string;
+    breadcrumbHome: string;
+    breadcrumbCurrent: string;
     sections: Array<{
       title: string;
       description: string;
@@ -251,6 +261,8 @@ const portuguese: PortfolioDictionary = {
     noResultsDescription: "Ajuste a busca ou escolha outra categoria para continuar explorando.",
     copyWorkLink: "Copiar link dos trabalhos",
     workLinkCopied: "Link copiado",
+    copyCaseLink: "Copiar link do case",
+    caseLinkCopied: "Link do case copiado",
     quickLabel: "Em 30 segundos",
   },
   expertise: {
@@ -280,6 +292,11 @@ const portuguese: PortfolioDictionary = {
     eyebrow: "Agora",
     title: "O que estou desenvolvendo e aprofundando.",
     description: "Três focos atuais, mantidos como sinais de direção — não como um feed de atualizações.",
+    routeLabel: "Agora em foco",
+    breadcrumbLabel: "Navegação estrutural",
+    breadcrumbHome: "Início",
+    breadcrumbCurrent: "Agora",
+    openProject: "Abrir projeto",
     items: [
       {
         label: "Projeto em foco",
@@ -341,6 +358,9 @@ const portuguese: PortfolioDictionary = {
     linkLabel: "Notas de engenharia",
     backHome: "Voltar ao início",
     openWork: "Ver trabalhos",
+    breadcrumbLabel: "Navegação estrutural",
+    breadcrumbHome: "Início",
+    breadcrumbCurrent: "Engenharia",
     sections: [
       {
         title: "Progressive enhancement no hero",
@@ -474,6 +494,8 @@ const english: PortfolioDictionary = {
     noResultsDescription: "Adjust your search or choose another category to keep exploring.",
     copyWorkLink: "Copy work link",
     workLinkCopied: "Link copied",
+    copyCaseLink: "Copy case link",
+    caseLinkCopied: "Case link copied",
     quickLabel: "In 30 seconds",
   },
   expertise: {
@@ -492,6 +514,11 @@ const english: PortfolioDictionary = {
     eyebrow: "Now",
     title: "What I’m building and deepening.",
     description: "Three current focuses, maintained as signals of direction — not as an update feed.",
+    routeLabel: "Now in focus",
+    breadcrumbLabel: "Breadcrumb",
+    breadcrumbHome: "Home",
+    breadcrumbCurrent: "Now",
+    openProject: "Open project",
     items: [
       { label: "Project in focus", title: "Astrolink in progress", description: "Structuring a low-cost solution to sell and manage Wi-Fi access on local networks using Starlink, OpenWrt, PIX and vouchers.", proof: "Go · SvelteKit · OpenWrt", icon: "network", href: "https://github.com/charlles-dev/Astrolink" },
       { label: "Recent improvement", title: "Portfolio as a product", description: "Refining the narrative, performance and presentation so the portfolio communicates real work across languages.", proof: "Next.js · TypeScript · i18n", icon: "sparkles" },
@@ -530,6 +557,9 @@ const english: PortfolioDictionary = {
     linkLabel: "Engineering notes",
     backHome: "Back to home",
     openWork: "See the work",
+    breadcrumbLabel: "Breadcrumb",
+    breadcrumbHome: "Home",
+    breadcrumbCurrent: "Engineering",
     sections: [
       {
         title: "Progressive enhancement in the hero",
@@ -632,6 +662,8 @@ const spanish: PortfolioDictionary = {
     noResultsDescription: "Ajusta la búsqueda o elige otra categoría para seguir explorando.",
     copyWorkLink: "Copiar enlace de trabajos",
     workLinkCopied: "Enlace copiado",
+    copyCaseLink: "Copiar enlace del caso",
+    caseLinkCopied: "Enlace del caso copiado",
     quickLabel: "En 30 segundos",
   },
   expertise: {
@@ -650,6 +682,11 @@ const spanish: PortfolioDictionary = {
     eyebrow: "Ahora",
     title: "Lo que estoy construyendo y profundizando.",
     description: "Tres focos actuales, mantenidos como señales de dirección y no como un feed de actualizaciones.",
+    routeLabel: "Ahora en foco",
+    breadcrumbLabel: "Navegación estructural",
+    breadcrumbHome: "Inicio",
+    breadcrumbCurrent: "Ahora",
+    openProject: "Abrir proyecto",
     items: [
       { label: "Proyecto en foco", title: "Astrolink en evolución", description: "Estructurando una solución de bajo costo para vender y gestionar acceso Wi-Fi en redes locales con Starlink, OpenWrt, PIX y vouchers.", proof: "Go · SvelteKit · OpenWrt", icon: "network", href: "https://github.com/charlles-dev/Astrolink" },
       { label: "Mejora reciente", title: "Portafolio como producto", description: "Refinando narrativa, rendimiento y presentación para comunicar trabajo real en diferentes idiomas.", proof: "Next.js · TypeScript · i18n", icon: "sparkles" },
@@ -688,6 +725,9 @@ const spanish: PortfolioDictionary = {
     linkLabel: "Notas de ingeniería",
     backHome: "Volver al inicio",
     openWork: "Ver trabajos",
+    breadcrumbLabel: "Navegación estructural",
+    breadcrumbHome: "Inicio",
+    breadcrumbCurrent: "Ingeniería",
     sections: [
       {
         title: "Progressive enhancement en el hero",

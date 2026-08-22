@@ -33,6 +33,7 @@ describe("reference-inspired localized home", () => {
     expect(screen.getByRole("button", { name: "Trabalhos" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Sobre" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Contato" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Agora" })).toHaveAttribute("href", "/pt-BR/now");
     expect(screen.getByRole("link", { name: /charlles\.dev/i })).toHaveAttribute("href", "/pt-BR");
     expect(screen.getByRole("link", { name: "GitHub" })).toHaveAttribute("href", "https://github.com/charlles-dev");
     expect(screen.getByRole("link", { name: "LinkedIn" })).toHaveAttribute("href", "https://www.linkedin.com/in/charlles-augusto/");
@@ -197,7 +198,8 @@ describe("reference-inspired localized home", () => {
     const menu = document.getElementById("reference-mobile-menu");
     expect(menu).toBeInTheDocument();
     expect(menu).toHaveAttribute("role", "menu");
-    expect(within(menu as HTMLElement).getAllByRole("menuitem")).toHaveLength(3);
+    expect(within(menu as HTMLElement).getAllByRole("menuitem")).toHaveLength(4);
+    expect(within(menu as HTMLElement).getByRole("menuitem", { name: "Agora" })).toHaveAttribute("href", "/pt-BR/now");
     expect(within(menu as HTMLElement).getByRole("link", { name: "Português" })).toHaveAttribute("href", "/pt-BR");
     expect(document.body.dataset.mobileMenuOpen).toBe("true");
 
