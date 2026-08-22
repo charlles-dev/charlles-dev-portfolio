@@ -22,6 +22,8 @@ A direção graphic novel de sinais pode alterar contorno, paleta, luz, material
 
 ## Controle de produção — 22 ago. 2026
 
+A produção visual foi explicitamente autorizada pelo usuário após a conclusão da fase lógica. Esta autorização permite gerar e avaliar candidatos finais; ela não promove automaticamente nenhuma imagem a asset aprovado. O gate de inspeção contra `public/reference/charlles-toy-canonical.png`, alpha, silhueta, escala e teste em jogo permanece obrigatório.
+
 A tentativa de gerar o primeiro lote de sprites finais foi interrompida pelo limite diário gratuito antes de concluir o lote. Os arquivos de tentativa foram movidos para `game-assets/production/rejected-player/` e não devem ser promovidos, importados ou tratados como aprovados. O pipeline permanece pronto para continuar após a renovação da cota, começando novamente pela validação da master `player-master-reference-v2.png` e pela geração individual de cada estado com recorte limpo.
 
 Enquanto a geração estiver indisponível, a produção pode avançar sem risco em especificação, graybox, sistemas, documentação, briefs de NPCs, props, ambientes, VFX e testes de integração. Não será usada uma substituição visual improvisada para mascarar a ausência dos sprites finais.
