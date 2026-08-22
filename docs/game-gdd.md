@@ -54,6 +54,7 @@ O repositório possui um blockout técnico Babylon com uma rota localizada e uma
 | Action | Drone mock anterior | Separar ThreatSystem com telegraphing |
 | UI | HUD, pausa, mapa e memória de proxy | Reescrever com conteúdo da nova narrativa |
 | Documentação de produção | Bible visual, briefs, roteiro, engenharia, QA e localização publicados | Pronta para execução |
+| Assets visuais | Master v2 candidata; recortes com halo e sprites de tentativa rejeitados/quarentenados | Retomar geração individual após renovação da cota gratuita |
 | Áudio | Direção documentada | Prototipar cues leves depois do graybox |
 
 ## Pacote mínimo de aprovação antes de código novo
