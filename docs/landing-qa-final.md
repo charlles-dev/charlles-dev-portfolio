@@ -6,7 +6,7 @@
 
 ## Quality gate
 
-O comando oficial `pnpm quality` passou integralmente após as últimas ondas. O resultado mais recente executou type-check, ESLint, Vitest, build de produção, verificação de assets, verificação de rotas e integridade do HTML; foram aprovados **16 arquivos de teste e 92 testes**.
+O comando oficial `pnpm quality` passou integralmente após a implementação da 404. O resultado mais recente executou type-check, ESLint, Vitest, build de produção, verificação de assets, verificação de rotas e integridade do HTML; foram aprovados **17 arquivos de teste e 97 testes**.
 
 O Vitest continua emitindo somente os avisos conhecidos do jsdom sobre métodos de `HTMLMediaElement` não implementados e o aviso do carregador CommonJS/ESM da configuração do Vite. Eles não bloquearam a suíte nem o build.
 
@@ -38,10 +38,16 @@ Os screenshots pós-intro cobriram a landing em desktop e mobile, reduced-motion
 
 Duas capturas mobile de painéis foram feitas durante o frame de entrada do overlay, portanto apareceram temporariamente escurecidas. Isso é um estado de animação de captura, não perda de conteúdo: o reduced-motion é tratado em CSS/runtime e os testes de foco, fechamento e restauração do acionador permanecem verdes.
 
+A nova captura desktop da 404 em PT-BR e a captura mobile da 404 em ES confirmaram a direção “avatar procurando a rota”: o avatar toy existente, a placa com três caminhos, os CTAs e a navegação por idiomas permanecem legíveis. A página raiz possui CSS autocontido para não depender do layout localizado; a versão localizada resolve o locale pelo pathname do navegador sem tornar o restante do site dinâmico. Não houve overflow horizontal aparente e a cena continua verticalmente rolável em viewport estreita.
+
+## Fallback 404
+
+Rotas inexistentes localizadas retornaram HTTP 404 em produção para `/pt-BR/rota-inexistente`, `/en/missing-route` e `/es/ruta-inexistente`. A tela usa o fallback interno `/_not-found`, mantém PT-BR como fallback seguro, localiza a cópia em EN/ES no cliente pela URL solicitada, marca a página com `robots: index:false, follow:true`, inclui JSON-LD `WebPage` e não foi adicionada ao sitemap.
+
 ## Remoção do protótipo
 
 Foi feita uma varredura final no código e documentação rastreados para nomes, runtime e rota da experiência experimental removida. A única frase histórica encontrada foi neutralizada no relatório de pesquisa. Não há rota, componente, dependência ou referência ativa do protótipo no build.
 
 ## Decisão
 
-A landing e as páginas editoriais estão prontas para a publicação desta onda: hero preservado sem alteração nesta etapa, dialogs acessíveis, i18n PT-BR/EN/ES, deep links, páginas de Engenharia/Agora/Processo, schemas estruturados, observabilidade opt-in sem provedor, checks de links manuais e quality gate reproduzível. Nenhuma integração de analytics externo foi ativada.
+A landing, as páginas editoriais e o fallback 404 estão prontas para a publicação desta onda: hero preservado sem alteração nesta etapa, dialogs acessíveis, i18n PT-BR/EN/ES, deep links, páginas de Engenharia/Agora/Processo, 404 noindex fora do sitemap, schemas estruturados, observabilidade opt-in sem provedor, checks de links manuais e quality gate reproduzível. Nenhuma integração de analytics externo foi ativada.

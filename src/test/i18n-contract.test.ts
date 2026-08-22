@@ -1,6 +1,6 @@
 import { dictionaries, locales } from "@/lib/i18n";
 
-const topLevelKeys = ["meta", "nav", "hero", "about", "work", "expertise", "now", "contact", "footer", "process", "engineering", "projects"];
+const topLevelKeys = ["meta", "nav", "hero", "about", "work", "expertise", "now", "contact", "notFound", "footer", "process", "engineering", "projects"];
 const projectKeys = ["astrolink", "laudos-proxxima", "3035-teach"];
 
 function sortedKeys(value: object) {

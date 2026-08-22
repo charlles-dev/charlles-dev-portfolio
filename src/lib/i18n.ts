@@ -138,6 +138,21 @@ export type PortfolioDictionary = {
     briefingTitle: string;
     briefingBody: string;
   };
+  notFound: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    routeLabel: string;
+    routeStatus: string;
+    avatarAlt: string;
+    signTitle: string;
+    work: string;
+    about: string;
+    contact: string;
+    homeCta: string;
+    processCta: string;
+    engineeringCta: string;
+  };
   footer: {
     availability: string;
     rights: string;
@@ -355,6 +370,21 @@ const portuguese: PortfolioDictionary = {
     whatsappCopied: "WhatsApp copiado",
     briefingTitle: "Para começar",
     briefingBody: "Envie o contexto do problema, o que precisa ser construído ou melhorado e o próximo marco importante.",
+  },
+  notFound: {
+    eyebrow: "Rota não encontrada",
+    title: "O avatar está procurando esse caminho.",
+    description: "A página saiu do mapa, mas os próximos caminhos continuam disponíveis.",
+    routeLabel: "404 / rota ausente",
+    routeStatus: "status: rota não localizada",
+    avatarAlt: "Avatar Charlles procurando a rota perdida",
+    signTitle: "Escolha um caminho",
+    work: "Ver trabalhos",
+    about: "Conhecer o perfil",
+    contact: "Falar comigo",
+    homeCta: "Voltar ao início",
+    processCta: "Ver processo",
+    engineeringCta: "Ler engenharia",
   },
   footer: {
     availability: "Em contato com a comunidade",
@@ -574,6 +604,21 @@ const english: PortfolioDictionary = {
     briefingTitle: "To get started",
     briefingBody: "Share the problem context, what needs to be built or improved, and the next important milestone.",
   },
+  notFound: {
+    eyebrow: "Route not found",
+    title: "The avatar is looking for this path.",
+    description: "This page slipped off the map, but the next paths are still open.",
+    routeLabel: "404 / route missing",
+    routeStatus: "status: route not found",
+    avatarAlt: "Charlles avatar looking for the missing route",
+    signTitle: "Pick a direction",
+    work: "View work",
+    about: "About me",
+    contact: "Contact me",
+    homeCta: "Back to home",
+    processCta: "See the process",
+    engineeringCta: "Read engineering notes",
+  },
   footer: { availability: "In touch with the community", rights: "© 2026 Charlles Augusto", built: "Built with Next.js and attention to detail." },
   process: {
     eyebrow: "Working method",
@@ -756,6 +801,21 @@ const spanish: PortfolioDictionary = {
     whatsappCopied: "WhatsApp copiado",
     briefingTitle: "Para comenzar",
     briefingBody: "Comparte el contexto del problema, qué necesita construirse o mejorarse y el próximo hito importante.",
+  },
+  notFound: {
+    eyebrow: "Ruta no encontrada",
+    title: "El avatar está buscando este camino.",
+    description: "Esta página salió del mapa, pero los siguientes caminos siguen disponibles.",
+    routeLabel: "404 / ruta ausente",
+    routeStatus: "estado: ruta no localizada",
+    avatarAlt: "Avatar de Charlles buscando la ruta perdida",
+    signTitle: "Elige un camino",
+    work: "Ver trabajos",
+    about: "Conocer el perfil",
+    contact: "Contactarme",
+    homeCta: "Volver al inicio",
+    processCta: "Ver el proceso",
+    engineeringCta: "Leer notas de ingeniería",
   },
   footer: { availability: "En contacto con la comunidad", rights: "© 2026 Charlles Augusto", built: "Hecho con Next.js y atención al detalle." },
   process: {

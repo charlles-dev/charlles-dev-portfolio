@@ -10,6 +10,7 @@
 - Cases com problema, decisão, próximo passo, resumo em 30 segundos e links públicos verificáveis.
 - Cópia de link de Trabalhos, cópia de e-mail, cópia de WhatsApp, mailto contextualizado, agenda, LinkedIn e bloco “para começar”.
 - Página editorial de engenharia e página “Agora” nos três idiomas, com breadcrumbs e JSON-LD específico.
+- Fallback 404 multilíngue na direção “avatar procurando a rota”, com avatar toy existente, placa de direções, CTAs de recuperação, noindex e JSON-LD WebPage.
 - Navegação por setas nas tabs e no menu mobile, preservação do contexto ao trocar idioma e estado ativo dos dialogs.
 - Quality gate com type-check, lint, Vitest, build, integridade de assets, rotas, HTML e schemas estruturados.
 - Telemetria opt-in privacy-first, sem provedor externo padrão e sem dados pessoais.
@@ -22,4 +23,4 @@
 
 ### Qualidade
 
-O release foi validado com `pnpm quality`, incluindo a suíte automatizada e build das páginas localizadas de home, engenharia e “Agora”. Warnings conhecidos do jsdom sobre métodos de mídia não implementados não bloquearam o gate.
+O release foi validado com `pnpm quality`, incluindo **17 arquivos de teste e 97 testes**, build das 12 páginas localizadas de conteúdo, verificação de 20 assets, rotas e integridade HTML. A 404 foi exercitada em produção com HTTP 404 para PT-BR, EN e ES e screenshots desktop/mobile; warnings conhecidos do jsdom sobre métodos de mídia não implementados não bloquearam o gate.
