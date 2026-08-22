@@ -9,10 +9,11 @@ import { GameStateStore } from "./game-state";
 import { SaveSystem } from "./save-system";
 import { PuzzleSystem, type PuzzleSignal } from "../systems/puzzle-system";
 import { ThreatSystem } from "../systems/threat-system";
-import { objectiveFor, routeGate } from "../systems/progression-system";
+import { checkpointFor, objectiveFor, routeGate } from "../systems/progression-system";
 import { DialogueSystem } from "../systems/dialogue-system";
 import { resolveEnding } from "../systems/ending-system";
 import { useLumenTool } from "../systems/tool-system";
+import { createCheckpoint, restoreCheckpoint, type CheckpointAnchor } from "../systems/checkpoint-system";
 import { InputManager } from "../input/input-manager";
 import { Player } from "../entities/player";
 import type { GameLocale } from "../data/game-copy";
@@ -84,6 +85,7 @@ export class GameWorld {
   private gardenWitnessed = false;
   private readonly locale: GameLocale;
   private readonly narrative: ReturnType<typeof getNarrative>;
+  private checkpointAnchor!: CheckpointAnchor;
 
   constructor(private readonly scene: Scene, store: GameStateStore, input: InputManager, locale: GameLocale = "pt-BR") {
     this.locale = locale;
@@ -133,7 +135,15 @@ export class GameWorld {
       if (this.energyTick > 1.2) {
         this.energyTick = 0;
         const snapshot = this.store.getSnapshot();
-        this.store.patch({ energy: Math.max(0, snapshot.energy - 3), message: "O cone de varredura encontrou a assinatura Lumen." });
+        const nextEnergy = Math.max(0, snapshot.energy - 3);
+        if (nextEnergy <= 0) {
+          const restored = restoreCheckpoint(snapshot, this.checkpointAnchor);
+          this.setActiveSector(restored.sector, false);
+          this.store.patch({ ...restored, message: "A assinatura foi perdida. A Âncora devolveu você ao último estado seguro." });
+          this.saveSystem.save(this.store.getSnapshot());
+        } else {
+          this.store.patch({ energy: nextEnergy, message: "O cone de varredura encontrou a assinatura Lumen." });
+        }
       }
     } else {
       this.energyTick = 0;
@@ -372,11 +382,13 @@ export class GameWorld {
       sector,
       sectorTitle: this.narrative.sectors[sector].title,
       objective: objectiveFor(this.store.getSnapshot(), sector, this.locale),
+      checkpoint: checkpointFor(sector),
       message: announce ? this.narrative.sectors[sector].arrival : this.store.getSnapshot().message,
       threatState: "patrol",
       lastInteraction: previous === sector ? null : `Entrada registrada: ${this.narrative.sectors[sector].title}`,
     });
     if (sector === "core") this.speak("NÚCLEO", this.narrative.coreDialogue);
+    this.checkpointAnchor = createCheckpoint(this.store.getSnapshot());
     this.saveSystem.save(this.store.getSnapshot());
   }
 
