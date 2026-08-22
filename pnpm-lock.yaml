@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@babylonjs/core':
-        specifier: ^9.22.1
-        version: 9.22.1
       '@iconify-icons/solar':
         specifier: ^1.2.3
         version: 1.2.4
@@ -163,9 +160,6 @@ packages:
   '@babel/types@7.29.8':
     resolution: {integrity: sha512-Vj1jF3cPfxg7OAfoI7QnVKLoILlm2JF9pnVHrX8qx7AHMiYWT+NDAA7jChlNgRS4WTLc/fD1lXLmPixluj+3Gg==}
     engines: {node: '>=6.9.0'}
-
-  '@babylonjs/core@9.22.1':
-    resolution: {integrity: sha512-Aa27Ngp3nGSAei4MKBOMpvy/qoXp+Pb0Ds4+peLCXTAO3NKkKL2jZj74zaD2EONefX41yttzMYdrInpKvZm/oQ==}
 
   '@bramus/specificity@2.4.2':
     resolution: {integrity: sha512-ctxtJ/eA+t+6q2++vj5j7FYX3nRu311q1wfYH3xjlLOsczhlhxAg2FWNUXhpGvAw3BWo1xBcvOV6/YLc2r5FJw==}
@@ -2859,8 +2853,6 @@ snapshots:
     dependencies:
       '@babel/helper-string-parser': 7.29.7
       '@babel/helper-validator-identifier': 7.29.7
-
-  '@babylonjs/core@9.22.1': {}
 
   '@bramus/specificity@2.4.2':
     dependencies:

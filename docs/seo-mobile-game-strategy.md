@@ -1,4 +1,4 @@
-# Estratégia de SEO, mobile e projeto de jogo
+# Estratégia de SEO e usabilidade mobile
 
 ## SEO e descoberta
 
@@ -15,26 +15,6 @@ O JSON-LD será mantido preciso e visível como `ProfilePage` com `mainEntity` `
 A revisão deverá ampliar targets de toque para pelo menos uma área confortável, evitar overflow horizontal, preservar foco visível, fechar o menu por Escape e clique externo, manter a navegação de idioma acessível e transformar o menu mobile em uma superfície claramente identificável. Dialogs de Trabalhos, Sobre e Contato devem respeitar a altura útil da viewport, permitir scroll interno sem prender o documento e manter um caminho de saída sempre visível.
 
 O hero será revisado em larguras estreitas para controlar a quebra do `h1`, reduzir a densidade da descrição e garantir que o rail social não concorra com o CTA. Animações não essenciais respeitarão `prefers-reduced-motion`; o comportamento do vídeo deve continuar funcional, mas sem obrigar o usuário a acompanhar uma animação para entender o conteúdo.
-
-## Projeto de jogo recomendado
-
-### Núcleo em Órbita — jogo 2D de ação-puzzle
-
-A melhor primeira versão é um jogo 2D curto, jogável no navegador e diretamente conectado ao universo visual do portfólio. O jogador controla uma versão toy/biscuit do personagem de Charlles em um cenário que começa escuro e evolui para um céu cósmico. Cada fase representa um problema de sistema: coletar fragmentos de sinal, conectar nós na ordem correta e escapar de zonas de ruído antes que o circuito seja corrompido.
-
-A escolha por 2D é intencional: permite gerar um conjunto pequeno e consistente de sprites, entregar uma experiência completa com baixo risco e demonstrar competências valiosas para um portfólio de software — máquina de estados, colisões, partículas, parallax, áudio opcional, performance, acessibilidade e arquitetura de componentes. Um 3D completo pode ser uma segunda etapa, depois que a versão 2D provar o conceito.
-
-| Elemento | Escopo recomendado para o MVP |
-|---|---|
-| Loop principal | Mover, coletar fragmentos, ativar três nós e alcançar a saída |
-| Duração | Três fases de 60–120 segundos |
-| Identidade | Personagem toy de Charlles, óculos redondos, cabelo cacheado e moletom escuro |
-| Sprites essenciais | Idle, corrida em quatro quadros, salto/queda, interação, dano e conclusão |
-| Cenário | Fundo escuro, partículas, nuvens/parallax e transição gradual para luz azul |
-| Diferencial técnico | Níveis declarativos, replay rápido, teclado e controles touch, `prefers-reduced-motion` |
-| Evidência no portfólio | Link “Jogar”, estudo de caso, decisões de arquitetura e medição de performance |
-
-O projeto não deve ser adicionado à página como um mockup estático. A próxima etapa, após aprovação do conceito, será criar um pequeno documento de escopo, produzir uma referência visual, gerar os sprites com transparência e consistência de poses, implementar o slice de movimento/colisão e só então integrar o link ao painel Trabalhos.
 
 ## Referências
 
