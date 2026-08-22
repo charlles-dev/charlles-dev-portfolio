@@ -87,3 +87,10 @@ Os avisos observados no Chromium foram de ambiente — software WebGL, GPU stall
 | Build limpa mobile | PNG 390×844 íntegro; controles touch sem colisão crítica |
 | Localização usada na captura | PT-BR desktop e EN mobile |
 | Assets finais | Bloqueados por decisão de produção |
+
+
+## QA CDP — hidratação e input no build atual
+
+Após um falso negativo causado por uma instância `next-server` antiga na porta 3101, o servidor foi encerrado e reiniciado contra o build atual. A rodada fresh em `/en/game` confirmou `document.readyState=complete`, título `Núcleo em Órbita — web RPG`, canvas `.game-canvas` presente, Babylon 9.22.1 inicializado em WebGL2 e React hidratado. O save versionado foi criado automaticamente no primeiro snapshot.
+
+O botão Map abriu a folha com `aria-label="Signal map"` e o botão de fechamento removeu o diálogo. O teste unitário dedicado continua cobrindo M/J global, toggle e bloqueio durante pausa/diálogo. Não foram observadas exceções de runtime nessa rodada; a mensagem de console do Babylon foi informativa.
