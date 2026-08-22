@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type SyntheticEvent } from "react";
 
 import { IconGlyph } from "@/components/icon-glyph";
 import type { PortfolioDictionary } from "@/lib/i18n";
@@ -13,6 +13,15 @@ type LoopState = "idle" | "transition" | "awake";
 const SCROLL_VIDEO_START = 0.12;
 const SCROLL_VIDEO_END = 0.85;
 const AWAKE_LOOP_SRC = "/reference/charlles-hero-awake-loop.webm";
+
+function handleVideoError(event: SyntheticEvent<HTMLVideoElement>) {
+  const video = event.currentTarget;
+  const fallback = video.dataset.fallbackSrc;
+  if (!fallback || video.dataset.fallbackUsed === "true") return;
+  video.dataset.fallbackUsed = "true";
+  video.src = fallback;
+  video.load();
+}
 
 function SocialGlyph({ kind }: { kind: SocialKind }) {
   if (kind === "linkedin") return <svg aria-hidden="true" viewBox="0 0 24 24" className="reference-social-glyph"><path d="M4.7 3.2A2.3 2.3 0 1 1 4.7 7.8a2.3 2.3 0 0 1 0-4.6ZM2.7 9.2h4v11.6h-4V9.2Zm6.4 0h3.8v1.6h.05c.53-1 1.84-2.05 3.78-2.05 4.04 0 4.79 2.66 4.79 6.12v5.92h-4v-5.25c0-1.25-.02-2.86-1.75-2.86-1.75 0-2.02 1.37-2.02 2.77v5.34h-4V9.2Z" fill="currentColor" /></svg>;
@@ -163,6 +172,8 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
           ref={primaryVideo}
           className="reference-video reference-video-primary reference-video-scrub"
           src="/reference/charlles-hero-two-state.webm"
+          data-fallback-src="/reference/charlles-hero-two-state.mp4"
+          onError={handleVideoError}
           poster="/reference/charlles-hero-two-state-poster.webp"
           muted
           playsInline
@@ -173,6 +184,8 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
           ref={idleVideo}
           className="reference-video reference-video-idle"
           src="/reference/charlles-hero-idle-loop.webm"
+          data-fallback-src="/reference/charlles-hero-idle-loop.mp4"
+          onError={handleVideoError}
           poster="/reference/charlles-hero-two-state-poster.webp"
           loop
           muted
@@ -183,6 +196,8 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
         <video
           ref={awakeVideo}
           className="reference-video reference-video-awake"
+          data-fallback-src="/reference/charlles-hero-awake-loop.mp4"
+          onError={handleVideoError}
           poster="/reference/charlles-hero-two-state-poster.webp"
           loop
           muted

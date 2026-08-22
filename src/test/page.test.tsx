@@ -247,3 +247,34 @@ describe("landing mobile menu focus behavior", () => {
     expect(document.activeElement).toBe(trigger);
   });
 });
+
+
+describe("hero media resilience", () => {
+  beforeEach(() => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("fetch disabled in tests")));
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it("declares MP4 fallbacks and switches once after a media error", () => {
+    renderHome();
+    const primary = document.querySelector(".reference-video-scrub") as HTMLVideoElement;
+    const idle = document.querySelector(".reference-video-idle") as HTMLVideoElement;
+    const awake = document.querySelector(".reference-video-awake") as HTMLVideoElement;
+
+    expect(primary.dataset.fallbackSrc).toBe("/reference/charlles-hero-two-state.mp4");
+    expect(idle.dataset.fallbackSrc).toBe("/reference/charlles-hero-idle-loop.mp4");
+    expect(awake.dataset.fallbackSrc).toBe("/reference/charlles-hero-awake-loop.mp4");
+
+    fireEvent.error(primary);
+    expect(primary.src).toContain("/reference/charlles-hero-two-state.mp4");
+    expect(primary.dataset.fallbackUsed).toBe("true");
+
+    const fallbackSrc = primary.src;
+    fireEvent.error(primary);
+    expect(primary.src).toBe(fallbackSrc);
+  });
+});
