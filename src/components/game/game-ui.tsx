@@ -7,6 +7,7 @@ import { gameUiCopy, type GameLocale } from "@/game/data/game-copy";
 import { SAVE_KEY } from "@/game/core/save-system";
 import { getNarrative, sectorOrder } from "@/game/data/narrative-content";
 import { puzzleDefinitions } from "@/game/systems/puzzle-system";
+import { hintFor } from "@/game/systems/hint-system";
 
 interface GameUiProps {
   locale: GameLocale;
@@ -69,6 +70,7 @@ export function GameUi({ locale, snapshot, input }: GameUiProps) {
   const finalEnding = snapshot.ending ? narrative.endings[snapshot.ending] : null;
   const activePuzzle = snapshot.sector === "archive" ? snapshot.puzzles["archive-frequency"] : snapshot.sector === "garden" ? snapshot.puzzles["garden-route"] : null;
   const activePuzzleDefinition = activePuzzle ? puzzleDefinitions[activePuzzle.id] : null;
+  const activeHint = activePuzzle ? hintFor(activePuzzle.id, activePuzzle.attempts) : null;
   const togglePause = () => {
     input?.press("pause");
     window.setTimeout(() => input?.release("pause"), 80);
@@ -145,6 +147,7 @@ export function GameUi({ locale, snapshot, input }: GameUiProps) {
             ))}
           </div>
           <small>{activePuzzle.feedback === "wrong" ? "A sequência reiniciou. Observe os sinais antes de escolher." : activePuzzle.feedback === "solved" ? "Sequência estabilizada." : activePuzzle.feedback === "correct" ? "Sinal aceito. Continue a leitura." : "Interaja com um módulo para registrar a frequência."}</small>
+          {activeHint?.text ? <p className="game-puzzle-hint"><b>DICA {activeHint.level}/3</b> {activeHint.text}</p> : null}
         </section>
       ) : null}
 

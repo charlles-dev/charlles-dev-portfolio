@@ -462,3 +462,5 @@ body[data-mobile-menu-open="true"] { overflow: hidden; }
   .game-objective-progress { margin-top: .6rem; }
   .game-objective-progress span { width: 1.35rem; }
 }
+
+.game-puzzle-hint { margin-top: .65rem !important; padding-top: .55rem; border-top: 1px dashed rgba(168,121,255,.28); color: rgba(214,194,255,.8) !important; font-size: .54rem !important; }.game-puzzle-hint b { margin-right: .25rem; color: #a879ff; font-family: var(--font-mono), monospace; font-size: .48rem; letter-spacing: .08em; }
