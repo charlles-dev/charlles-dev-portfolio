@@ -7,6 +7,7 @@ import { ReferencePanels } from "@/components/reference-panels";
 import { SiteHeader } from "@/components/site-header";
 import type { Locale, PortfolioDictionary } from "@/lib/i18n";
 import type { ProjectsPayload } from "@/lib/projects/types";
+import { trackTelemetry } from "@/lib/telemetry";
 
 type Panel = "work" | "about" | "contact" | null;
 
@@ -33,6 +34,7 @@ export function PortfolioHome({ locale, dictionary }: { locale: Locale; dictiona
   const notifyPanelChange = () => window.dispatchEvent(new PopStateEvent("popstate"));
   const openPanel = useCallback((nextPanel: Exclude<Panel, null>) => {
     if (typeof window !== "undefined" && window.location.hash !== `#${nextPanel}`) {
+      trackTelemetry({ name: "panel_open", panel: nextPanel });
       window.history.pushState({ panel: nextPanel }, "", `${window.location.pathname}${window.location.search}#${nextPanel}`);
       notifyPanelChange();
     }

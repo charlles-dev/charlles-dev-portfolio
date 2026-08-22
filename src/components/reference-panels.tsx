@@ -8,6 +8,7 @@ import { localePath, type Locale, type PortfolioDictionary } from "@/lib/i18n";
 import type { IconName } from "@/components/icon-glyph";
 import { bookingUrl, profile, projects, socialLinks } from "@/lib/portfolio";
 import { copyText } from "@/lib/clipboard";
+import { trackTelemetry } from "@/lib/telemetry";
 
 type Panel = "work" | "about" | "contact" | null;
 type WorkTab = "product" | "visual" | "motion";
@@ -292,11 +293,11 @@ function ContactDialog({ dictionary, onClose }: { dictionary: PortfolioDictionar
             <span className="contact-dialog-status"><i aria-hidden="true" />{dictionary.contact.availability}</span>
           </div>
           {email && <div className="contact-dialog-email-row">
-            <a className="contact-dialog-email-link" href={email.href}>
+            <a className="contact-dialog-email-link" href={email.href} onClick={() => trackTelemetry({ name: "contact_cta_click", channel: "email" })}>
               <PanelSocialGlyph kind="email" />
               <span>{profile.email}</span>
             </a>
-            <button type="button" className="contact-dialog-copy-button" onClick={copyEmail} aria-live="polite">
+            <button type="button" className="contact-dialog-copy-button" onClick={() => { void copyEmail(); trackTelemetry({ name: "contact_cta_click", channel: "email" }); }} aria-live="polite">
               <IconGlyph name="mail" className="size-4" />
               <span>{emailCopied ? dictionary.contact.copyEmailSuccess : dictionary.contact.copyEmail}</span>
             </button>
@@ -308,11 +309,11 @@ function ContactDialog({ dictionary, onClose }: { dictionary: PortfolioDictionar
           <div className="contact-dialog-actions">
             {whatsapp && <div className="contact-action-group contact-action-group-whatsapp">
               <ContactSpriteSwap base="/reference/charlles-contact-whatsapp.webp" hover="/reference/charlles-contact-whatsapp-hover.webp" />
-              <a className="contact-dialog-action contact-dialog-action-primary" href={whatsapp.href} target="_blank" rel="noreferrer"><span className="contact-dialog-action-label">{dictionary.contact.primaryCta}</span><IconGlyph name="external-link" className="size-4" /></a>
+              <a className="contact-dialog-action contact-dialog-action-primary" href={whatsapp.href} target="_blank" rel="noreferrer" onClick={() => trackTelemetry({ name: "contact_cta_click", channel: "whatsapp" })}><span className="contact-dialog-action-label">{dictionary.contact.primaryCta}</span><IconGlyph name="external-link" className="size-4" /></a>
             </div>}
             <div className="contact-action-group contact-action-group-call">
               <ContactSpriteSwap base="/reference/charlles-contact-call.webp" hover="/reference/charlles-contact-call-hover.webp" />
-              <a className="contact-dialog-action contact-dialog-action-secondary" href={bookingUrl} target="_blank" rel="noreferrer"><span className="contact-dialog-call-icon"><MeetGlyph /></span><span className="contact-dialog-action-copy"><strong>{dictionary.contact.callCta}</strong><small>{dictionary.contact.callMeta}</small></span><IconGlyph name="external-link" className="size-4" /></a>
+              <a className="contact-dialog-action contact-dialog-action-secondary" href={bookingUrl} target="_blank" rel="noreferrer" onClick={() => trackTelemetry({ name: "contact_cta_click", channel: "calendar" })}><span className="contact-dialog-call-icon"><MeetGlyph /></span><span className="contact-dialog-action-copy"><strong>{dictionary.contact.callCta}</strong><small>{dictionary.contact.callMeta}</small></span><IconGlyph name="external-link" className="size-4" /></a>
             </div>
           </div>
         </div>

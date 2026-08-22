@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, type SyntheticEvent } from "react";
 import { IconGlyph } from "@/components/icon-glyph";
 import type { PortfolioDictionary } from "@/lib/i18n";
 import { profile, socialLinks } from "@/lib/portfolio";
+import { trackTelemetry } from "@/lib/telemetry";
 
 type SocialKind = "github" | "linkedin" | "email" | "discord" | "whatsapp";
 
@@ -18,6 +19,8 @@ function handleVideoError(event: SyntheticEvent<HTMLVideoElement>) {
   const video = event.currentTarget;
   const fallback = video.dataset.fallbackSrc;
   if (!fallback || video.dataset.fallbackUsed === "true") return;
+  const media = video.classList.contains("reference-video-scrub") ? "hero-scrub" : video.classList.contains("reference-video-idle") ? "hero-idle" : "hero-awake";
+  trackTelemetry({ name: "video_fallback", media });
   video.dataset.fallbackUsed = "true";
   video.src = fallback;
   video.load();
