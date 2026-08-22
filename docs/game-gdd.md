@@ -1,11 +1,11 @@
 # Núcleo em Órbita
 ## Game Design Bible — índice mestre
 
-**Versão:** 0.1 — pré-produção de estúdio
+**Versão:** 0.2 — vertical slice lógica com proxies
 
 **Responsável:** Charlles Augusto / Manus AI
 
-**Status geral:** design reformulado; runtime anterior tratado como protótipo descartável; reconstrução aguardando alinhamento e execução do novo design
+**Status geral:** design reformulado; vertical slice jogável em Babylon com lógica, UX, localização, save e QA de proxy implementados; arte final permanece bloqueada até aprovação visual
 
 ## Visão executiva
 
@@ -38,24 +38,26 @@ A direção visual aprovada é **graphic novel de sinais**: contornos editoriais
 
 ## Estado real do projeto
 
-O repositório possui um blockout técnico Babylon com uma rota localizada e uma cena simples de Hub. Esse trabalho serviu para validar engine, lifecycle, input e bridge de UI. Ele não representa o padrão de qualidade final e não deve ser expandido como se fosse o jogo acabado.
+O repositório possui uma vertical slice técnica Babylon em `/pt-BR/game`, `/en/game` e `/es/game`, com quatro setores alternáveis em uma única Scene, HUD React, progressão Hub → Arquivo → Jardim → Núcleo, save versionado, puzzles, ameaça, diálogos, finais e checkpoint. O runtime ainda usa marcadores geométricos e ambientes procedurais de proxy; ele valida lógica e experiência, não o padrão visual final.
 
 | Elemento | Estado atual | Próxima decisão |
 |---|---|---|
-| História | Reformulada neste pacote | Roteiro da slice e diálogos |
-| Personagens | Conceito e arcos definidos | Brief visual fiel ao avatar canônico |
-| Direção de arte | Graphic novel de sinais aprovada | Criar bible visual de produção |
-| Player | Proxy geométrico no blockout | Substituir somente após referência aprovada |
-| Hub | Blockout funcional e simples | Reconstruir segundo beats e composição do level design |
-| Arquivo | Documentado, sem setor final | Graybox com puzzle de frequência |
-| Jardim | Documentado, sem setor final | Graybox com ameaça e rota alternativa |
-| Núcleo | Documentado, sem setor final | Graybox do puzzle final e finais |
-| Puzzles | Regras documentadas, mock anterior | Implementar sistemas isolados |
-| Action | Drone mock anterior | Separar ThreatSystem com telegraphing |
-| UI | HUD, pausa, mapa e memória de proxy | Reescrever com conteúdo da nova narrativa |
-| Documentação de produção | Bible visual, briefs, roteiro, engenharia, QA e localização publicados | Pronta para execução |
-| Assets visuais | Master v2 candidata; recortes com halo e sprites de tentativa rejeitados/quarentenados | Retomar geração individual após renovação da cota gratuita |
-| Áudio | Direção documentada | Prototipar cues leves depois do graybox |
+| História | Canon, arcos, roteiro da slice e três finais definidos | Validar ritmo em playthrough completo |
+| Personagens | MIRA, PONTO, NIX e Núcleo com relações jogáveis | Produzir identidade visual somente na fase de assets |
+| Direção de arte | Graphic Novel de Sinais aprovada | Aplicar após aprovação de cada asset |
+| Player | Proxy geométrico neutro no runtime | Substituir somente após referência fiel aprovada |
+| Hub | Funcional, com nós, MIRA e portal | Refinar composição e props na fase visual |
+| Arquivo | Funcional, com PONTO, módulos e puzzle de frequência | Refinar graybox e feedback visual depois |
+| Jardim | Funcional, com NIX, drone, cone, Pulso e rota | Refinar graybox e telegraphing visual depois |
+| Núcleo | Funcional, com módulos e três conclusões | Refinar leitura da decisão final depois |
+| Puzzles | `PuzzleSystem` isolado, persistente e com dicas progressivas | Playtest de dificuldade e telemetria manual |
+| Action | `ThreatSystem`, `ToolSystem` e recuperação por checkpoint | Balancear custos, janela do Pulso e drenagem |
+| Diálogo | Sessões multi-linha com avanço por E/Continuar e flags no fim | Playthrough narrativo e revisão de timing |
+| UI | HUD, pausa, mapa, memória, touch, localização e atalhos M/J globais | Conferir estados intermediários no playthrough |
+| QA | 103 testes, type-check, build e capturas desktop/mobile aprovados | Exercitar save/keyboard em browser interativo |
+| Documentação de produção | Visão, bible, systems, levels, UX, technical, QA, localização e validação atualizados | Consolidar checklist de release candidate |
+| Assets visuais | Candidatos/rejeitados isolados; nenhum asset final importado | Gerar individualmente somente após autorização e aprovação |
+| Áudio | Direção documentada, sem runtime final | Prototipar cues leves depois da aprovação visual |
 
 ## Pacote mínimo de aprovação antes de código novo
 
