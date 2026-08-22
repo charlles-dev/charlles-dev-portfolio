@@ -35,6 +35,15 @@ O portfólio foi desenvolvido com:
 - Groq em rota server-side
 - Vercel
 
+## Desenvolvimento local
+
+Use Node.js 22.13+ e pnpm 11.21.0 para reproduzir o ambiente do projeto. A configuração versionada em `pnpm-workspace.yaml` permite somente o script nativo de `unrs-resolver` durante a instalação, mantendo a proteção de supply chain do pnpm 11 sem liberar scripts de dependências indiscriminadamente.
+
+```bash
+pnpm install --frozen-lockfile
+pnpm quality
+```
+
 ## Projetos
 
 Os projetos exibidos no site são sincronizados a partir dos repositórios públicos do perfil [charlles-dev](https://github.com/charlles-dev).

@@ -14,6 +14,7 @@
 - Navegação por setas nas tabs e no menu mobile, preservação do contexto ao trocar idioma e estado ativo dos dialogs.
 - Quality gate com type-check, lint, Vitest, build, integridade de assets, rotas, HTML e schemas estruturados.
 - Telemetria opt-in privacy-first, sem provedor externo padrão e sem dados pessoais.
+- Configuração de instalação do pnpm 11 com `allowBuilds` restrito ao `unrs-resolver`, corrigindo o build limpo no Vercel sem liberar scripts arbitrários.
 
 ### Removido ou mantido fora do escopo
 
