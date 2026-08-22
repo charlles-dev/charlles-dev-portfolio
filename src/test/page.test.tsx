@@ -332,3 +332,27 @@ describe("landing panel deep links", () => {
     expect(background.inert).toBe(false);
   });
 });
+
+
+describe("contact conversion", () => {
+  beforeEach(() => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("fetch disabled in tests")));
+    Object.defineProperty(document, "execCommand", { configurable: true, value: vi.fn().mockReturnValue(true) });
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it("offers a direct email link and confirms copy", async () => {
+    renderHome();
+    fireEvent.click(screen.getByRole("button", { name: "Contato" }));
+
+    expect(screen.getByRole("link", { name: /charllesgst@gmail\.com/i })).toHaveAttribute("href", "mailto:charllesgst@gmail.com");
+    fireEvent.click(screen.getByRole("button", { name: "Copiar e-mail" }));
+
+    await waitFor(() => expect(screen.getByText("E-mail copiado")).toBeInTheDocument());
+    expect(document.execCommand).toHaveBeenCalledWith("copy");
+  });
+});

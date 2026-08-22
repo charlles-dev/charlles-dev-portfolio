@@ -118,6 +118,8 @@ export type PortfolioDictionary = {
     };
     callCta: string;
     callMeta: string;
+    copyEmail: string;
+    copyEmailSuccess: string;
   };
   footer: {
     availability: string;
@@ -284,6 +286,8 @@ const portuguese: PortfolioDictionary = {
     stats: { projects: "+20", projectsLabel: "Projetos", experience: "+5 anos", experienceLabel: "Experiência", response: "12h", responseLabel: "Resposta" },
     callCta: "Agendar uma call",
     callMeta: "30 min · Google Meet",
+    copyEmail: "Copiar e-mail",
+    copyEmailSuccess: "E-mail copiado",
   },
   footer: {
     availability: "Em contato com a comunidade",
@@ -424,6 +428,8 @@ const english: PortfolioDictionary = {
     stats: { projects: "+20", projectsLabel: "Projects", experience: "+5 years", experienceLabel: "Experience", response: "12h", responseLabel: "Response" },
     callCta: "Schedule a call",
     callMeta: "30 min · Google Meet",
+    copyEmail: "Copy email",
+    copyEmailSuccess: "Email copied",
   },
   footer: { availability: "In touch with the community", rights: "© 2026 Charlles Augusto", built: "Built with Next.js and attention to detail." },
   projects: {
@@ -529,6 +535,8 @@ const spanish: PortfolioDictionary = {
     stats: { projects: "+20", projectsLabel: "Proyectos", experience: "+5 años", experienceLabel: "Experiencia", response: "12h", responseLabel: "Respuesta" },
     callCta: "Agendar una llamada",
     callMeta: "30 min · Google Meet",
+    copyEmail: "Copiar email",
+    copyEmailSuccess: "Email copiado",
   },
   footer: { availability: "En contacto con la comunidad", rights: "© 2026 Charlles Augusto", built: "Hecho con Next.js y atención al detalle." },
   projects: {

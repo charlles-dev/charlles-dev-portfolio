@@ -237,6 +237,8 @@ function MeetGlyph() {
 function ContactDialog({ dictionary, onClose }: { dictionary: PortfolioDictionary; onClose: () => void }) {
   const whatsapp = socialLinks.find((link) => link.kind === "whatsapp");
   const discord = socialLinks.find((link) => link.kind === "discord");
+  const email = socialLinks.find((link) => link.kind === "email");
+  const [emailCopied, setEmailCopied] = useState(false);
   const dialogCloseLabel = dictionary.work.panelClose;
   const dialogRef = useDialogFocus(onClose);
   const stats = [
@@ -244,6 +246,23 @@ function ContactDialog({ dictionary, onClose }: { dictionary: PortfolioDictionar
     { value: dictionary.contact.stats.experience, label: dictionary.contact.stats.experienceLabel },
     { value: dictionary.contact.stats.response, label: dictionary.contact.stats.responseLabel },
   ];
+  const copyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(profile.email);
+    } catch {
+      const textarea = document.createElement("textarea");
+      textarea.value = profile.email;
+      textarea.setAttribute("readonly", "true");
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      textarea.remove();
+    }
+    setEmailCopied(true);
+    window.setTimeout(() => setEmailCopied(false), 2200);
+  };
 
   return (
     <>
@@ -260,6 +279,16 @@ function ContactDialog({ dictionary, onClose }: { dictionary: PortfolioDictionar
             <span className="contact-dialog-tag">{dictionary.contact.specialty}</span>
             <span className="contact-dialog-status"><i aria-hidden="true" />{dictionary.contact.availability}</span>
           </div>
+          {email && <div className="contact-dialog-email-row">
+            <a className="contact-dialog-email-link" href={email.href}>
+              <PanelSocialGlyph kind="email" />
+              <span>{profile.email}</span>
+            </a>
+            <button type="button" className="contact-dialog-copy-button" onClick={copyEmail} aria-live="polite">
+              <IconGlyph name="mail" className="size-4" />
+              <span>{emailCopied ? dictionary.contact.copyEmailSuccess : dictionary.contact.copyEmail}</span>
+            </button>
+          </div>}
           <h2 id="contact-dialog-title">{dictionary.contact.cardTitle}</h2>
           <div className="contact-dialog-stats" aria-label={dictionary.contact.direct}>
             {stats.map((stat) => <div key={stat.label}><strong>{stat.value}</strong><span>{stat.label}</span></div>)}
