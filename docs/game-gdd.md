@@ -26,9 +26,15 @@ A direção visual aprovada é **graphic novel de sinais**: contornos editoriais
 | 5 | [Level design](./game-level-design.md) | Hub, Arquivo, Jardim, Núcleo, rotas e ritmo | Nova base espacial |
 | 6 | [UX e direção audiovisual](./game-ux-audio-direction.md) | HUD, diálogos, mapa, memória, acessibilidade e áudio | Nova base de experiência |
 | 7 | [Plano de produção](./game-production-plan.md) | Escopo, milestones, assets, riscos, QA e Definition of Done | Plano de execução |
-| 8 | [Decisão de engine](./game-engine-decision.md) | Babylon 2.5D + React/HTML | Decisão técnica |
-| 9 | [Validação do blockout anterior](./game-blockout-validation.md) | Registro do protótipo técnico inicial | Histórico; não é alvo visual |
-| 10 | [Direções de arte](./game-art-directions.md) | Comparação que levou à direção escolhida | Opção 5 aprovada |
+| 8 | [Bible visual](./game-visual-bible.md) | Regras de graphic novel de sinais, identidade, alpha e consistência | Contrato visual |
+| 9 | [Briefs de assets](./game-asset-briefs.md) | Especificações de player, NPCs, props, ambientes, VFX e UI | Pipeline de geração |
+| 10 | [Roteiro da slice](./game-vertical-slice-script.md) | Triggers, falas, registros, relações e finais | Roteiro de implementação |
+| 11 | [Technical design](./game-technical-design.md) | Estado, transições, sistemas, assets, performance e fallback | Contrato de engenharia |
+| 12 | [Plano de QA](./game-qa-test-plan.md) | Smoke tests, acessibilidade, action, lifecycle e severidade | Gates de qualidade |
+| 13 | [Matriz de localização](./game-localization-matrix.md) | PT-BR, EN, ES, chaves, termos e limites de texto | Preparada |
+| 14 | [Decisão de engine](./game-engine-decision.md) | Babylon 2.5D + React/HTML | Decisão técnica |
+| 15 | [Validação do blockout anterior](./game-blockout-validation.md) | Registro do protótipo técnico inicial | Histórico; não é alvo visual |
+| 16 | [Direções de arte](./game-art-directions.md) | Comparação que levou à direção escolhida | Opção 5 aprovada |
 
 ## Estado real do projeto
 
@@ -47,6 +53,7 @@ O repositório possui um blockout técnico Babylon com uma rota localizada e uma
 | Puzzles | Regras documentadas, mock anterior | Implementar sistemas isolados |
 | Action | Drone mock anterior | Separar ThreatSystem com telegraphing |
 | UI | HUD, pausa, mapa e memória de proxy | Reescrever com conteúdo da nova narrativa |
+| Documentação de produção | Bible visual, briefs, roteiro, engenharia, QA e localização publicados | Pronta para execução |
 | Áudio | Direção documentada | Prototipar cues leves depois do graybox |
 
 ## Pacote mínimo de aprovação antes de código novo
