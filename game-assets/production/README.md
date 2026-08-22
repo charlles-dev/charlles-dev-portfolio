@@ -8,7 +8,7 @@
 
 A folha foi corrigida para aproximar o cabelo do bonequinho 3D canônico: volume contínuo, modelado, com grandes seções lisas e conectadas, sem bolinhas separadas, cachos redondos individualizados, espirais ou mechas espetadas. O restante da identidade deve permanecer estável: óculos redondos marrom-escuros, pele morena, rosto, moletom escuro, proporções toy e expressão neutra.
 
-A versão `player-master-reference.png` fica **rejeitada para produção** porque exagerou o cabelo em mechas arredondadas. Os arquivos históricos `player-ref.png`, `player-ref-clean.png`, `player-ref-graphic-novel.png`, `player-ref-final.png` e equivalentes também não podem ser importados pelo runtime.
+A versão `rejected-player/player-master-reference.png` fica **rejeitada para produção** porque exagerou o cabelo em mechas arredondadas. Os arquivos `rejected-player/sprite-*.png` são tentativas com fundo artificial ou sem validação de alpha. Os arquivos históricos `player-ref.png`, `player-ref-clean.png`, `player-ref-graphic-novel.png`, `player-ref-final.png` e equivalentes também não podem ser importados pelo runtime.
 
 ## Gate de aprovação
 
@@ -22,6 +22,6 @@ A direção graphic novel de sinais pode alterar contorno, paleta, luz, material
 
 ## Controle de produção — 22 ago. 2026
 
-A tentativa de gerar o primeiro lote de sprites finais foi interrompida pelo limite diário gratuito antes de concluir o lote. Nenhum dos arquivos de tentativa deve ser promovido, importado ou tratado como aprovado. O pipeline permanece pronto para continuar após a renovação da cota, começando novamente pela validação da master `player-master-reference-v2.png` e pela geração individual de cada estado com recorte limpo.
+A tentativa de gerar o primeiro lote de sprites finais foi interrompida pelo limite diário gratuito antes de concluir o lote. Os arquivos de tentativa foram movidos para `game-assets/production/rejected-player/` e não devem ser promovidos, importados ou tratados como aprovados. O pipeline permanece pronto para continuar após a renovação da cota, começando novamente pela validação da master `player-master-reference-v2.png` e pela geração individual de cada estado com recorte limpo.
 
 Enquanto a geração estiver indisponível, a produção pode avançar sem risco em especificação, graybox, sistemas, documentação, briefs de NPCs, props, ambientes, VFX e testes de integração. Não será usada uma substituição visual improvisada para mascarar a ausência dos sprites finais.
