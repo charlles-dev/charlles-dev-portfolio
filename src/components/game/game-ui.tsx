@@ -123,36 +123,35 @@ export function GameUi({ locale, snapshot, input }: GameUiProps) {
         </div>
       </header>
 
-      <section className="game-objective" aria-label="Objetivo atual">
+      <section className="game-objective" aria-label={copy.objectiveAria}>
         <p className="game-kicker">{copy.currentObjective.toUpperCase()} // {snapshot.sectorTitle.toUpperCase()}</p>
         <strong>{snapshot.objective}</strong>
         <p className="game-objective-context">{sector.arrival}</p>
-        <div className="game-objective-progress" aria-label={`${snapshot.nodesRestored} de ${snapshot.nodesTotal} sinais restaurados`}>
+        <div className="game-objective-progress" aria-label={copy.nodeProgressAria(snapshot.nodesRestored, snapshot.nodesTotal)}>
           {Array.from({ length: snapshot.nodesTotal }, (_, index) => (
             <span key={index} className={index < snapshot.nodesRestored ? "is-on" : ""} />
           ))}
         </div>
       </section>
 
-      <section className="game-energy" aria-label={`Energia da Lumen: ${snapshot.energy} de ${snapshot.maxEnergy}`}>
+      <section className="game-energy" aria-label={copy.energyAria(snapshot.energy, snapshot.maxEnergy)}>
         <div className="game-energy-label"><span>LUMEN // {snapshot.activeTool.toUpperCase()}</span><strong>{snapshot.energy}</strong><small>/{snapshot.maxEnergy}</small></div>
         <div className="game-energy-bar"><span style={{ width: energyRatio }} /></div>
-        <div className="game-tool-strip" aria-label="Ferramentas">
-          {(["Lente", "Pulso", "Âncora"] as const).map((tool) => (
-            <span key={tool} className={`${snapshot.toolsUnlocked.includes(tool) ? "is-unlocked" : "is-locked"} ${snapshot.activeTool === tool ? "is-current" : ""}`}>
-              <i aria-hidden="true">{tool === "Lente" ? "◌" : tool === "Pulso" ? "◉" : "⌖"}</i>{tool}
-            </span>
-          ))}
+        <div className="game-tool-strip" aria-label={copy.toolsAria}>
+          {(["Lente", "Pulso", "Âncora"] as const).map((tool) => {
+            const toolLabel = tool === "Lente" ? copy.tools.lens : tool === "Pulso" ? copy.tools.pulse : copy.tools.anchor;
+            return <span key={tool} className={`${snapshot.toolsUnlocked.includes(tool) ? "is-unlocked" : "is-locked"} ${snapshot.activeTool === tool ? "is-current" : ""}`}><i aria-hidden="true">{tool === "Lente" ? "◌" : tool === "Pulso" ? "◉" : "⌖"}</i>{toolLabel}</span>;
+          })}
         </div>
         <p>{copy.moveHint}</p>
       </section>
 
       {activePuzzle && activePuzzleDefinition ? (
-        <section className={`game-puzzle-card is-${activePuzzle.feedback}`} aria-label={`Puzzle: ${activePuzzleDefinition.title}`}>
+        <section className={`game-puzzle-card is-${activePuzzle.feedback}`} aria-label={copy.puzzleAria(activePuzzleCopy?.title ?? "")}>
           <p className="game-kicker">{copy.puzzleSequence.toUpperCase()} // {(activePuzzle.id === "archive-frequency" ? copy.puzzleArchive : copy.puzzleGarden).toUpperCase()}</p>
           <div className="game-puzzle-heading"><strong>{activePuzzleCopy?.title}</strong><span>{activePuzzle.step}/{activePuzzleDefinition.sequence.length}</span></div>
           <p>{activePuzzleCopy?.hint}</p>
-          <div className="game-puzzle-sequence" aria-label={`Progresso ${activePuzzle.step} de ${activePuzzleDefinition.sequence.length}`}>
+          <div className="game-puzzle-sequence" aria-label={copy.puzzleProgressAria(activePuzzle.step, activePuzzleDefinition.sequence.length)}>
             {activePuzzleDefinition.sequence.map((signal, index) => (
               <span key={`${activePuzzle.id}-${index}`} className={index < activePuzzle.step ? "is-done" : index === activePuzzle.step ? "is-current" : ""}>
                 <i aria-hidden="true">{index < activePuzzle.step ? "●" : index === activePuzzle.step ? "◐" : "○"}</i>{signal}
@@ -173,7 +172,7 @@ export function GameUi({ locale, snapshot, input }: GameUiProps) {
             <button ref={closeButtonRef} type="button" className="game-sheet-close" onClick={() => setPanel(null)} aria-label={copy.close}>×</button>
           </div>
           {panel === "map" ? (
-            <div className="game-map" aria-label="Setores da vertical slice">
+            <div className="game-map" aria-label={copy.mapSectorsAria}>
               <div className="game-map-line" aria-hidden="true" />
               {sectorOrder.map((id, index) => {
                 const destination = narrative.sectors[id];
@@ -183,11 +182,11 @@ export function GameUi({ locale, snapshot, input }: GameUiProps) {
                   <div key={id} className={`game-map-stop ${isCurrent ? "is-current" : ""} ${isUnlocked ? "is-active" : ""}`}>
                     <span>{String(index + 1).padStart(2, "0")}</span>
                     <strong>{destination.title}</strong>
-                    <small>{isCurrent ? "Você está aqui" : isUnlocked ? destination.subtitle : "Sinal ainda não encontrado"}</small>
+                    <small>{isCurrent ? copy.mapHere : isUnlocked ? destination.subtitle : copy.mapUnknown}</small>
                   </div>
                 );
               })}
-              <p className="game-sheet-note">A Orbe-9 não desenha rotas. Ela mostra onde uma decisão deixou sinal.</p>
+              <p className="game-sheet-note">{copy.mapNote}</p>
             </div>
           ) : (
             <div className="game-memory-copy">
@@ -197,17 +196,17 @@ export function GameUi({ locale, snapshot, input }: GameUiProps) {
                   const found = snapshot.fragmentsFound.includes(fragment.id);
                   return (
                     <article key={fragment.id} className={`game-memory-entry ${found ? "is-found" : "is-hidden"}`}>
-                      <span>FRAGMENTO {String(index + 1).padStart(2, "0")}</span>
+                      <span>{copy.memoryFragmentLabel(index + 1).toUpperCase()}</span>
                       <strong>{found ? fragment.title : copy.fragmentUnknown}</strong>
-                      <small>{found ? fragment.text : "A Lente ainda não encontrou uma forma de lê-lo."}</small>
+                      <small>{found ? fragment.text : copy.fragmentHidden}</small>
                     </article>
                   );
                 })}
               </div>
               <div className="game-relationship-grid" aria-label="Estado das relações">
                 <span>{narrative.relationshipLabels[snapshot.relationship.mira]}</span>
-                <span>PONTO: {snapshot.relationship.ponto}</span>
-                <span>NIX: {narrative.relationshipLabels[snapshot.relationship.nix]}</span>
+                <span>{copy.pontoLabel.toUpperCase()}: {snapshot.relationship.ponto}</span>
+                <span>{copy.nixLabel.toUpperCase()}: {narrative.relationshipLabels[snapshot.relationship.nix]}</span>
               </div>
             </div>
           )}
@@ -215,8 +214,8 @@ export function GameUi({ locale, snapshot, input }: GameUiProps) {
       ) : null}
 
       {snapshot.dialogue ? (
-        <section className="game-dialogue" role="dialog" aria-label={`Diálogo com ${snapshot.dialogue.speaker}`} aria-modal="true">
-          <p className="game-kicker">TRANSMISSÃO // {snapshot.dialogue.speaker}</p>
+        <section className="game-dialogue" role="dialog" aria-label={copy.dialogueAria(snapshot.dialogue.speaker)} aria-modal="true">
+          <p className="game-kicker">{copy.transmissionLabel.toUpperCase()} // {snapshot.dialogue.speaker}</p>
           <p>{snapshot.dialogue.text}</p>
           <button type="button" className="game-dialogue-advance" onClick={() => closeWithInput(input)}>{copy.continue} <span aria-hidden="true">↵</span></button>
         </section>
@@ -256,7 +255,7 @@ export function GameUi({ locale, snapshot, input }: GameUiProps) {
         </div>
       </div>
 
-      <footer className="game-footer"><span>ORBE-9 / {snapshot.sector.toUpperCase()}</span><span>{snapshot.lastInteraction ?? "LUMEN ONLINE"}</span><span>ESC // PAUSAR</span></footer>
+      <footer className="game-footer"><span>ORBE-9 / {snapshot.sector.toUpperCase()}</span><span>{snapshot.lastInteraction ?? copy.lumenOnline.toUpperCase()}</span><span>{copy.pauseFooter}</span></footer>
     </div>
   );
 }
