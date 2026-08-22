@@ -6,6 +6,7 @@ import type { GameAction, InputManager } from "@/game/input/input-manager";
 import { gameUiCopy, type GameLocale } from "@/game/data/game-copy";
 import { SAVE_KEY } from "@/game/core/save-system";
 import { getNarrative, sectorOrder } from "@/game/data/narrative-content";
+import { puzzleDefinitions } from "@/game/systems/puzzle-system";
 
 interface GameUiProps {
   locale: GameLocale;
@@ -66,6 +67,8 @@ export function GameUi({ locale, snapshot, input }: GameUiProps) {
   const energyRatio = `${Math.max(0, Math.min(100, snapshot.energy))}%`;
   const sector = narrative.sectors[snapshot.sector];
   const finalEnding = snapshot.ending ? narrative.endings[snapshot.ending] : null;
+  const activePuzzle = snapshot.sector === "archive" ? snapshot.puzzles["archive-frequency"] : snapshot.sector === "garden" ? snapshot.puzzles["garden-route"] : null;
+  const activePuzzleDefinition = activePuzzle ? puzzleDefinitions[activePuzzle.id] : null;
   const togglePause = () => {
     input?.press("pause");
     window.setTimeout(() => input?.release("pause"), 80);
@@ -126,6 +129,22 @@ export function GameUi({ locale, snapshot, input }: GameUiProps) {
         </div>
         <p>{copy.moveHint}</p>
       </section>
+
+      {activePuzzle && activePuzzleDefinition ? (
+        <section className={`game-puzzle-card is-${activePuzzle.feedback}`} aria-label={`Puzzle: ${activePuzzleDefinition.title}`}>
+          <p className="game-kicker">SEQUÊNCIA // {activePuzzle.id === "archive-frequency" ? "ARQUIVO" : "JARDIM"}</p>
+          <div className="game-puzzle-heading"><strong>{activePuzzleDefinition.title}</strong><span>{activePuzzle.step}/{activePuzzleDefinition.sequence.length}</span></div>
+          <p>{activePuzzleDefinition.hint}</p>
+          <div className="game-puzzle-sequence" aria-label={`Progresso ${activePuzzle.step} de ${activePuzzleDefinition.sequence.length}`}>
+            {activePuzzleDefinition.sequence.map((signal, index) => (
+              <span key={`${activePuzzle.id}-${index}`} className={index < activePuzzle.step ? "is-done" : index === activePuzzle.step ? "is-current" : ""}>
+                <i aria-hidden="true">{index < activePuzzle.step ? "●" : index === activePuzzle.step ? "◐" : "○"}</i>{signal}
+              </span>
+            ))}
+          </div>
+          <small>{activePuzzle.feedback === "wrong" ? "A sequência reiniciou. Observe os sinais antes de escolher." : activePuzzle.feedback === "solved" ? "Sequência estabilizada." : activePuzzle.feedback === "correct" ? "Sinal aceito. Continue a leitura." : "Interaja com um módulo para registrar a frequência."}</small>
+        </section>
+      ) : null}
 
       <div className="game-message" role="status" aria-live="polite"><span aria-hidden="true">↳</span> {snapshot.message}</div>
 
