@@ -303,3 +303,32 @@ describe("hero reduced motion", () => {
     expect(addEventListener).toHaveBeenCalledWith("change", expect.any(Function));
   });
 });
+
+
+describe("landing panel deep links", () => {
+  beforeEach(() => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("fetch disabled in tests")));
+  });
+
+  afterEach(() => {
+    window.history.replaceState({}, "", "/pt-BR");
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it("opens a panel from the hash and makes the background inert", async () => {
+    window.history.replaceState({}, "", "/pt-BR#about");
+    renderHome();
+
+    const dialog = await screen.findByRole("dialog");
+    const background = document.querySelector(".reference-app > div") as HTMLElement;
+    expect(dialog).toHaveAttribute("aria-modal", "true");
+    expect(background).toHaveAttribute("aria-hidden", "true");
+    expect(background.inert).toBe(true);
+
+    fireEvent.keyDown(document, { key: "Escape" });
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    expect(window.location.hash).toBe("");
+    expect(background.inert).toBe(false);
+  });
+});
