@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 import { IconGlyph } from "@/components/icon-glyph";
-import type { PortfolioDictionary } from "@/lib/i18n";
+import { localePath, type Locale, type PortfolioDictionary } from "@/lib/i18n";
 import type { IconName } from "@/components/icon-glyph";
 import { bookingUrl, profile, projects, socialLinks } from "@/lib/portfolio";
 import { copyText } from "@/lib/clipboard";
@@ -321,7 +321,7 @@ function ContactDialog({ dictionary, onClose }: { dictionary: PortfolioDictionar
   );
 }
 
-function ProfileDialog({ dictionary, onClose }: { dictionary: PortfolioDictionary; onClose: () => void }) {
+function ProfileDialog({ locale, dictionary, onClose }: { locale: Locale; dictionary: PortfolioDictionary; onClose: () => void }) {
   const dialogRef = useDialogFocus(onClose);
   return (
     <>
@@ -346,13 +346,17 @@ function ProfileDialog({ dictionary, onClose }: { dictionary: PortfolioDictionar
           <p>{dictionary.about.body}</p>
           <p>{dictionary.expertise.description}</p>
           <AboutSocialLinks label={dictionary.about.socialLabel} />
+          <a className="profile-engineering-link" href={`${localePath(locale)}/engineering`}>
+            <span>{dictionary.engineering.linkLabel}</span>
+            <IconGlyph name="arrow-right" className="size-4" />
+          </a>
         </div>
       </section>
     </>
   );
 }
 
-export function ReferencePanels({ panel, dictionary, onClose }: { panel: Panel; dictionary: PortfolioDictionary; onClose: () => void }) {
+export function ReferencePanels({ panel, locale, dictionary, onClose }: { panel: Panel; locale: Locale; dictionary: PortfolioDictionary; onClose: () => void }) {
   useEffect(() => {
     if (!panel) return;
     const previousOverflow = document.body.style.overflow;
@@ -364,6 +368,6 @@ export function ReferencePanels({ panel, dictionary, onClose }: { panel: Panel; 
 
   if (panel === "work") return <WorkPanel dictionary={dictionary} onClose={onClose} />;
   if (panel === "contact") return <ContactDialog dictionary={dictionary} onClose={onClose} />;
-  if (panel === "about") return <ProfileDialog dictionary={dictionary} onClose={onClose} />;
+  if (panel === "about") return <ProfileDialog locale={locale} dictionary={dictionary} onClose={onClose} />;
   return null;
 }

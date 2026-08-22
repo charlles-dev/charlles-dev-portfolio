@@ -128,6 +128,26 @@ export type PortfolioDictionary = {
     rights: string;
     built: string;
   };
+  engineering: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    linkLabel: string;
+    backHome: string;
+    openWork: string;
+    sections: Array<{
+      title: string;
+      description: string;
+      items: Array<{ title: string; body: string; tags: string[] }>;
+    }>;
+    quality: {
+      eyebrow: string;
+      title: string;
+      description: string;
+      steps: string[];
+    };
+    note: string;
+  };
   projects: Record<string, LocalizedProjectCopy>;
 };
 
@@ -298,6 +318,47 @@ const portuguese: PortfolioDictionary = {
     rights: "© 2026 Charlles Augusto",
     built: "Feito com Next.js e atenção aos detalhes.",
   },
+  engineering: {
+    eyebrow: "Notas de engenharia",
+    title: "Como esta landing foi construída.",
+    description: "Uma página editorial sobre as decisões que sustentam esta experiência: mídia progressiva, navegação com contexto, conteúdo localizado e uma rotina de qualidade antes de publicar.",
+    linkLabel: "Notas de engenharia",
+    backHome: "Voltar ao início",
+    openWork: "Ver trabalhos",
+    sections: [
+      {
+        title: "Progressive enhancement no hero",
+        description: "O vídeo enriquece a apresentação sem ser a única forma de entender a página.",
+        items: [
+          { title: "Poster primeiro", body: "A composição começa com um poster estável e previsível. WebM é usado quando disponível, com MP4 como fallback explícito para navegadores que não carregarem o codec principal.", tags: ["poster", "WebM", "MP4"] },
+          { title: "Movimento sob controle", body: "O scrub acompanha a posição do scroll, os loops só entram nos estados necessários e a preferência de movimento reduzido interrompe a mídia em runtime.", tags: ["scroll", "reduced motion", "visibilitychange"] },
+        ],
+      },
+      {
+        title: "Interface que não esconde o estado",
+        description: "Trabalhos, Sobre e Contato funcionam como painéis compartilháveis, navegáveis e fecháveis.",
+        items: [
+          { title: "Deep links previsíveis", body: "Cada painel tem um hash próprio. Isso mantém o contexto no histórico e permite compartilhar diretamente a área de Trabalhos sem criar uma tela paralela.", tags: ["#work", "#about", "#contact"] },
+          { title: "Foco e contexto", body: "Ao abrir um painel, o foco entra no conteúdo, o Tab permanece dentro do dialog, Escape fecha e o fundo fica inerte enquanto a decisão está em andamento.", tags: ["focus trap", "inert", "aria-modal"] },
+        ],
+      },
+      {
+        title: "Conteúdo localizado e verificável",
+        description: "A experiência mantém a mesma estrutura em três idiomas sem transformar tradução em cópia automática.",
+        items: [
+          { title: "Um contrato, três vozes", body: "Os dicionários de PT-BR, EN e ES compartilham a mesma forma tipada. Assim, uma nova label não entra em produção em um idioma e desaparece nos outros.", tags: ["PT-BR", "EN", "ES"] },
+          { title: "Evidência antes de adjetivo", body: "Cases e notas usam links públicos e decisões que podem ser conferidas no código. Métricas não são inventadas para preencher espaço editorial.", tags: ["public work", "evidence", "honest copy"] },
+        ],
+      },
+    ],
+    quality: {
+      eyebrow: "Quality gate",
+      title: "Publicar só depois de checar o essencial.",
+      description: "Cada mudança passa pela mesma sequência local antes de chegar ao repositório: tipos, regras, testes e build de produção.",
+      steps: ["Type-check", "Lint", "Vitest", "Next build"],
+    },
+    note: "Estas notas descrevem decisões já presentes no código. Elas não são métricas de performance nem uma promessa de disponibilidade.",
+  },
   projects: {
     astrolink: {
       summary: "Infraestrutura e software para vender e gerenciar acesso Wi-Fi em redes locais com Starlink.",
@@ -438,6 +499,47 @@ const english: PortfolioDictionary = {
     copyEmailSuccess: "Email copied",
   },
   footer: { availability: "In touch with the community", rights: "© 2026 Charlles Augusto", built: "Built with Next.js and attention to detail." },
+  engineering: {
+    eyebrow: "Engineering notes",
+    title: "How this landing is built.",
+    description: "An editorial page about the decisions behind this experience: progressive media, contextual navigation, localized content and a quality routine before shipping.",
+    linkLabel: "Engineering notes",
+    backHome: "Back to home",
+    openWork: "See the work",
+    sections: [
+      {
+        title: "Progressive enhancement in the hero",
+        description: "Video enriches the presentation without becoming the only way to understand the page.",
+        items: [
+          { title: "Poster first", body: "The composition starts with a stable, predictable poster. WebM is used when available, with an explicit MP4 fallback for browsers that cannot load the primary codec.", tags: ["poster", "WebM", "MP4"] },
+          { title: "Motion under control", body: "Scrubbing follows scroll position, loops enter only when needed and reduced-motion preference stops media at runtime.", tags: ["scroll", "reduced motion", "visibilitychange"] },
+        ],
+      },
+      {
+        title: "An interface that makes state visible",
+        description: "Work, About and Contact behave as shareable, navigable and dismissible panels.",
+        items: [
+          { title: "Predictable deep links", body: "Each panel has its own hash. That keeps context in browser history and lets someone share the Work area without creating a parallel screen.", tags: ["#work", "#about", "#contact"] },
+          { title: "Focus and context", body: "When a panel opens, focus enters its content, Tab stays inside the dialog, Escape closes it and the background becomes inert while the decision is in progress.", tags: ["focus trap", "inert", "aria-modal"] },
+        ],
+      },
+      {
+        title: "Localized and verifiable content",
+        description: "The experience keeps the same structure across three languages without turning translation into automated copy.",
+        items: [
+          { title: "One contract, three voices", body: "PT-BR, EN and ES dictionaries share one typed shape. A new label therefore cannot ship in one language and silently disappear in the others.", tags: ["PT-BR", "EN", "ES"] },
+          { title: "Evidence before adjectives", body: "Cases and notes use public links and decisions that can be checked in the code. Metrics are not invented to fill editorial space.", tags: ["public work", "evidence", "honest copy"] },
+        ],
+      },
+    ],
+    quality: {
+      eyebrow: "Quality gate",
+      title: "Ship only after checking the essentials.",
+      description: "Every change follows the same local sequence before reaching the repository: types, rules, tests and a production build.",
+      steps: ["Type-check", "Lint", "Vitest", "Next build"],
+    },
+    note: "These notes describe decisions already present in the code. They are not performance metrics or a promise of availability.",
+  },
   projects: {
     astrolink: { summary: "Infrastructure and software to sell and manage Wi-Fi access on local networks with Starlink.", problem: "How to bring a low-cost connectivity operation to remote areas and communities.", decision: "Separate a Go backend, a SvelteKit captive portal and integrations for payments, vouchers and OpenWrt.", next: "Validate the operation on real hardware and expand deployment documentation.", category: "Infrastructure", metric: "Go · connectivity", reason: "Connectivity in remote areas" },
     "laudos-proxxima": { summary: "A corporate web system to standardize, manage and speed up technical maintenance reports.", problem: "Turn field notes into consistent reports without slowing down the operation.", decision: "Combine dashboard, authentication, assisted generation, history and export in one flow.", next: "Deepen usage metrics and keep refining review and sharing workflows.", category: "Automation", metric: "TypeScript · interface", reason: "Less friction in internal operations" },
@@ -547,6 +649,47 @@ const spanish: PortfolioDictionary = {
     copyEmailSuccess: "Email copiado",
   },
   footer: { availability: "En contacto con la comunidad", rights: "© 2026 Charlles Augusto", built: "Hecho con Next.js y atención al detalle." },
+  engineering: {
+    eyebrow: "Notas de ingeniería",
+    title: "Cómo se construye esta landing.",
+    description: "Una página editorial sobre las decisiones detrás de esta experiencia: medios progresivos, navegación contextual, contenido localizado y una rutina de calidad antes de publicar.",
+    linkLabel: "Notas de ingeniería",
+    backHome: "Volver al inicio",
+    openWork: "Ver trabajos",
+    sections: [
+      {
+        title: "Progressive enhancement en el hero",
+        description: "El video enriquece la presentación sin ser la única forma de entender la página.",
+        items: [
+          { title: "Poster primero", body: "La composición comienza con un poster estable y predecible. WebM se usa cuando está disponible, con MP4 como fallback explícito para navegadores que no carguen el códec principal.", tags: ["poster", "WebM", "MP4"] },
+          { title: "Movimiento bajo control", body: "El scrub sigue la posición del scroll, los loops entran solo cuando hacen falta y la preferencia de movimiento reducido detiene los medios en runtime.", tags: ["scroll", "reduced motion", "visibilitychange"] },
+        ],
+      },
+      {
+        title: "Una interfaz que hace visible el estado",
+        description: "Trabajos, Sobre y Contacto funcionan como paneles compartibles, navegables y cerrables.",
+        items: [
+          { title: "Deep links previsibles", body: "Cada panel tiene su propio hash. Esto mantiene el contexto en el historial y permite compartir directamente la zona de Trabajos sin crear una pantalla paralela.", tags: ["#work", "#about", "#contact"] },
+          { title: "Foco y contexto", body: "Al abrir un panel, el foco entra en el contenido, Tab permanece dentro del diálogo, Escape lo cierra y el fondo queda inerte mientras la decisión está en curso.", tags: ["focus trap", "inert", "aria-modal"] },
+        ],
+      },
+      {
+        title: "Contenido localizado y verificable",
+        description: "La experiencia mantiene la misma estructura en tres idiomas sin convertir la traducción en copia automática.",
+        items: [
+          { title: "Un contrato, tres voces", body: "Los diccionarios de PT-BR, EN y ES comparten una misma forma tipada. Así, una nueva etiqueta no llega a producción en un idioma y desaparece silenciosamente en los demás.", tags: ["PT-BR", "EN", "ES"] },
+          { title: "Evidencia antes que adjetivos", body: "Los casos y las notas usan enlaces públicos y decisiones que pueden comprobarse en el código. No se inventan métricas para llenar espacio editorial.", tags: ["public work", "evidence", "honest copy"] },
+        ],
+      },
+    ],
+    quality: {
+      eyebrow: "Quality gate",
+      title: "Publicar solo después de revisar lo esencial.",
+      description: "Cada cambio sigue la misma secuencia local antes de llegar al repositorio: tipos, reglas, tests y build de producción.",
+      steps: ["Type-check", "Lint", "Vitest", "Next build"],
+    },
+    note: "Estas notas describen decisiones ya presentes en el código. No son métricas de rendimiento ni una promesa de disponibilidad.",
+  },
   projects: {
     astrolink: { summary: "Infraestructura y software para vender y gestionar acceso Wi-Fi en redes locales con Starlink.", problem: "Cómo llevar una operación de conectividad de bajo costo a comunidades y áreas remotas.", decision: "Separar un backend en Go, un portal cautivo en SvelteKit e integraciones para pagos, vouchers y OpenWrt.", next: "Validar la operación en hardware real y ampliar la documentación de despliegue.", category: "Infraestructura", metric: "Go · conectividad", reason: "Conectividad en áreas remotas" },
     "laudos-proxxima": { summary: "Sistema web corporativo para estandarizar, gestionar y agilizar informes técnicos de mantenimiento.", problem: "Convertir notas de campo en informes consistentes sin perder velocidad operativa.", decision: "Combinar dashboard, autenticación, generación asistida, historial y exportación en un solo flujo.", next: "Profundizar las métricas de uso y seguir refinando la revisión y el uso compartido.", category: "Automatización", metric: "TypeScript · interfaz", reason: "Menos fricción en la operación interna" },

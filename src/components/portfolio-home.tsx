@@ -65,7 +65,7 @@ export function PortfolioHome({ locale, dictionary }: { locale: Locale; dictiona
           <ReferenceHero dictionary={dictionary} onOpenWork={() => openPanel("work")} />
         </main>
       </div>
-      <ReferencePanels panel={panel} dictionary={dictionary} onClose={closePanel} />
+      <ReferencePanels panel={panel} locale={locale} dictionary={dictionary} onClose={closePanel} />
     </div>
   );
 }
