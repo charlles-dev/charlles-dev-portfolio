@@ -4,15 +4,17 @@ import { useEffect, useRef } from "react";
 import { Engine } from "@babylonjs/core/Engines/engine";
 import type { GameSnapshot } from "@/game/core/game-state";
 import type { InputManager } from "@/game/input/input-manager";
+import type { GameLocale } from "@/game/data/game-copy";
 import { createGameScene, type GameHandle } from "@/game/scene";
 
 interface GameCanvasProps {
   onSnapshot: (snapshot: GameSnapshot) => void;
   onInputReady: (input: InputManager | null) => void;
   onError: (message: string) => void;
+  locale: GameLocale;
 }
 
-export function GameCanvas({ onSnapshot, onInputReady, onError }: GameCanvasProps) {
+export function GameCanvas({ onSnapshot, onInputReady, onError, locale }: GameCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<Engine | null>(null);
 
@@ -37,7 +39,7 @@ export function GameCanvas({ onSnapshot, onInputReady, onError }: GameCanvasProp
     window.addEventListener("resize", resize);
     resize();
 
-    void createGameScene(engine, canvas)
+    void createGameScene(engine, canvas, locale)
       .then((createdHandle) => {
         if (disposed) {
           createdHandle.dispose();
@@ -64,7 +66,7 @@ export function GameCanvas({ onSnapshot, onInputReady, onError }: GameCanvasProp
       engine.dispose();
       engineRef.current = null;
     };
-  }, [onError, onInputReady, onSnapshot]);
+  }, [locale, onError, onInputReady, onSnapshot]);
 
-  return <canvas ref={canvasRef} className="game-canvas" aria-label="Cena jogável de Núcleo em Órbita" />;
+  return <canvas ref={canvasRef} className="game-canvas" aria-label="Playable scene of Núcleo em Órbita" />;
 }

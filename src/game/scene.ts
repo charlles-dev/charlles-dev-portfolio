@@ -7,6 +7,7 @@ import { Scene } from "@babylonjs/core/scene";
 import { GameStateStore } from "./core/game-state";
 import { GameWorld } from "./core/game-world";
 import { InputManager } from "./input/input-manager";
+import type { GameLocale } from "./data/game-copy";
 
 export interface GameHandle {
   scene: Scene;
@@ -15,7 +16,7 @@ export interface GameHandle {
   dispose: () => void;
 }
 
-export async function createGameScene(engine: Engine, canvas: HTMLCanvasElement): Promise<GameHandle> {
+export async function createGameScene(engine: Engine, canvas: HTMLCanvasElement, locale: GameLocale = "pt-BR"): Promise<GameHandle> {
   const scene = new Scene(engine);
   scene.clearColor = new Color4(0.025, 0.03, 0.055, 1);
 
@@ -36,7 +37,7 @@ export async function createGameScene(engine: Engine, canvas: HTMLCanvasElement)
 
   const store = new GameStateStore();
   const input = new InputManager(window);
-  const world = new GameWorld(scene, store, input);
+  const world = new GameWorld(scene, store, input, locale);
   const observer = scene.onBeforeRenderObservable.add(() => {
     world.update(engine.getDeltaTime() / 1000);
   });

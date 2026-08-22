@@ -3,9 +3,11 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import type { GameSnapshot } from "@/game/core/game-state";
 import type { GameAction, InputManager } from "@/game/input/input-manager";
+import { gameUiCopy, type GameLocale } from "@/game/data/game-copy";
 import { endings, fragments, relationshipLabels, sectors, sectorOrder } from "@/game/data/narrative-content";
 
 interface GameUiProps {
+  locale: GameLocale;
   snapshot: GameSnapshot;
   input: InputManager | null;
 }
@@ -55,7 +57,8 @@ function closeWithInput(input: InputManager | null) {
   window.setTimeout(() => input?.release("interact"), 80);
 }
 
-export function GameUi({ snapshot, input }: GameUiProps) {
+export function GameUi({ locale, snapshot, input }: GameUiProps) {
+  const copy = gameUiCopy[locale];
   const [panel, setPanel] = useState<"map" | "memory" | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const energyRatio = `${Math.max(0, Math.min(100, snapshot.energy))}%`;
@@ -81,17 +84,17 @@ export function GameUi({ snapshot, input }: GameUiProps) {
           <p className="game-sector-line"><span aria-hidden="true">◆</span> {sector.title} <span aria-hidden="true">/</span> {sector.subtitle}</p>
         </div>
         <div className="game-top-actions">
-          <button type="button" className="game-top-action" onClick={() => setPanel("map")} aria-expanded={panel === "map"}>Mapa <span aria-hidden="true">M</span></button>
-          <button type="button" className="game-top-action" onClick={() => setPanel("memory")} aria-expanded={panel === "memory"}>Memória <span aria-hidden="true">J</span></button>
+          <button type="button" className="game-top-action" onClick={() => setPanel("map")} aria-expanded={panel === "map"}>{copy.map} <span aria-hidden="true">M</span></button>
+          <button type="button" className="game-top-action" onClick={() => setPanel("memory")} aria-expanded={panel === "memory"}>{copy.memory} <span aria-hidden="true">J</span></button>
           <div className={`game-threat game-threat-${snapshot.threatState}`}>
             <span className="game-threat-dot" aria-hidden="true" />
-            <span>{snapshot.threatState === "alert" ? "Sentinela em alerta" : snapshot.threatState === "suspicious" ? "Assinatura observada" : snapshot.threatState === "disabled" ? "Pulso estabilizado" : "Setor estável"}</span>
+            <span>{snapshot.threatState === "alert" ? copy.sentinelAlert : snapshot.threatState === "suspicious" ? copy.suspiciousSignature : snapshot.threatState === "disabled" ? copy.pulseStabilized : copy.stableSector}</span>
           </div>
         </div>
       </header>
 
       <section className="game-objective" aria-label="Objetivo atual">
-        <p className="game-kicker">OBJETIVO // {snapshot.sectorTitle.toUpperCase()}</p>
+        <p className="game-kicker">{copy.currentObjective.toUpperCase()} // {snapshot.sectorTitle.toUpperCase()}</p>
         <strong>{snapshot.objective}</strong>
         <p className="game-objective-context">{sector.arrival}</p>
         <div className="game-objective-progress" aria-label={`${snapshot.nodesRestored} de ${snapshot.nodesTotal} sinais restaurados`}>
@@ -111,16 +114,16 @@ export function GameUi({ snapshot, input }: GameUiProps) {
             </span>
           ))}
         </div>
-        <p>WASD / setas mover · E interagir · Espaço Pulso · Shift dash · ESC pausar</p>
+        <p>{copy.moveHint}</p>
       </section>
 
       <div className="game-message" role="status" aria-live="polite"><span aria-hidden="true">↳</span> {snapshot.message}</div>
 
       {panel ? (
-        <section className="game-sheet" role="dialog" aria-modal="true" aria-label={panel === "map" ? "Mapa da estação" : "Memória da estação"}>
+        <section className="game-sheet" role="dialog" aria-modal="true" aria-label={panel === "map" ? copy.mapTitle : copy.memoryTitle}>
           <div className="game-sheet-header">
-            <div><p className="game-kicker">{panel === "map" ? "CARTOGRAFIA // ORBE-9" : "REGISTRO // ORBE-9"}</p><h2>{panel === "map" ? "Mapa de sinais" : "Memória recuperada"}</h2></div>
-            <button ref={closeButtonRef} type="button" className="game-sheet-close" onClick={() => setPanel(null)} aria-label="Fechar painel">×</button>
+            <div><p className="game-kicker">{panel === "map" ? "CARTOGRAPHY // ORBE-9" : "RECORD // ORBE-9"}</p><h2>{panel === "map" ? copy.mapTitle : copy.memoryTitle}</h2></div>
+            <button ref={closeButtonRef} type="button" className="game-sheet-close" onClick={() => setPanel(null)} aria-label={copy.close}>×</button>
           </div>
           {panel === "map" ? (
             <div className="game-map" aria-label="Setores da vertical slice">
@@ -141,14 +144,14 @@ export function GameUi({ snapshot, input }: GameUiProps) {
             </div>
           ) : (
             <div className="game-memory-copy">
-              <p className="game-memory-intro">Os módulos não guardam apenas energia. Eles escolhem quais histórias permanecem acessíveis.</p>
+              <p className="game-memory-intro">{copy.fragmentIntro}</p>
               <div className="game-memory-grid">
                 {fragments.map((fragment, index) => {
                   const found = snapshot.fragmentsFound.includes(fragment.id);
                   return (
                     <article key={fragment.id} className={`game-memory-entry ${found ? "is-found" : "is-hidden"}`}>
                       <span>FRAGMENTO {String(index + 1).padStart(2, "0")}</span>
-                      <strong>{found ? fragment.title : "Registro sem origem"}</strong>
+                      <strong>{found ? fragment.title : copy.fragmentUnknown}</strong>
                       <small>{found ? fragment.text : "A Lente ainda não encontrou uma forma de lê-lo."}</small>
                     </article>
                   );
@@ -168,29 +171,29 @@ export function GameUi({ snapshot, input }: GameUiProps) {
         <section className="game-dialogue" role="dialog" aria-label={`Diálogo com ${snapshot.dialogue.speaker}`} aria-modal="true">
           <p className="game-kicker">TRANSMISSÃO // {snapshot.dialogue.speaker}</p>
           <p>{snapshot.dialogue.text}</p>
-          <button type="button" className="game-dialogue-advance" onClick={() => closeWithInput(input)}>Continuar <span aria-hidden="true">↵</span></button>
+          <button type="button" className="game-dialogue-advance" onClick={() => closeWithInput(input)}>{copy.continue} <span aria-hidden="true">↵</span></button>
         </section>
       ) : null}
 
       {snapshot.paused ? (
         <section className="game-paused" role="dialog" aria-label="Jogo pausado" aria-modal="true">
           <p className="game-kicker">SISTEMA EM ESPERA // {snapshot.sectorTitle.toUpperCase()}</p>
-          <h2>O sinal aguarda.</h2>
-          <p>O mundo está congelado. Pressione <strong>ESC</strong> para retomar a exploração.</p>
+          <h2>{copy.pausedTitle}</h2>
+          <p>{copy.pausedBody}</p>
         </section>
       ) : null}
 
       {snapshot.completed ? (
         <section className="game-complete" role="status">
-          <p className="game-kicker">REGISTRO FINAL // MEMÓRIA CONFIRMADA</p>
+          <p className="game-kicker">{copy.finalRecord}</p>
           <h2>{finalEnding?.title ?? "A estação voltou a respirar."}</h2>
           <p>{finalEnding?.line ?? "O primeiro fragmento de Núcleo em Órbita está completo."}</p>
           {finalEnding ? <small>{finalEnding.thesis}</small> : null}
-          <button type="button" onClick={() => window.location.reload()}>Reiniciar a slice</button>
+          <button type="button" onClick={() => window.location.reload()}>{copy.restart}</button>
         </section>
       ) : null}
 
-      <div className="game-touch-controls" aria-label="Controles touch">
+      <div className="game-touch-controls" aria-label={copy.controls}>
         <div className="game-dpad">
           <HoldButton action="up" label="↑" input={input} />
           <div><HoldButton action="left" label="←" input={input} /><HoldButton action="down" label="↓" input={input} /><HoldButton action="right" label="→" input={input} /></div>

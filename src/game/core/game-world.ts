@@ -8,6 +8,7 @@ import { TransformNode } from "@babylonjs/core/Meshes/transformNode";
 import { GameStateStore } from "./game-state";
 import { InputManager } from "../input/input-manager";
 import { Player } from "../entities/player";
+import type { GameLocale } from "../data/game-copy";
 import {
   archiveDialogue,
   coreDialogue,
@@ -81,8 +82,10 @@ export class GameWorld {
   private energyTick = 0;
   private archiveSolved = false;
   private gardenWitnessed = false;
+  private readonly locale: GameLocale;
 
-  constructor(private readonly scene: Scene, store: GameStateStore, input: InputManager) {
+  constructor(private readonly scene: Scene, store: GameStateStore, input: InputManager, locale: GameLocale = "pt-BR") {
+    this.locale = locale;
     this.store = store;
     this.input = input;
     for (const sector of sectorOrder) this.sectorRoots[sector] = new TransformNode(`sector-root-${sector}`, scene);
