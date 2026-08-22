@@ -200,8 +200,12 @@ export class GameWorld {
       node.ring.material = this.material(`restored-ring-${node.ring.name}`, palette.mint, palette.mint);
     }
     this.store.restoreProgress(progress);
-    this.puzzles.restore(progress.puzzles["archive-frequency"]);
-    this.puzzles.restore(progress.puzzles["garden-route"]);
+    const puzzleProgress = progress.puzzles ?? {
+      "archive-frequency": this.puzzles.get("archive-frequency"),
+      "garden-route": this.puzzles.get("garden-route"),
+    };
+    this.puzzles.restore(puzzleProgress["archive-frequency"]);
+    this.puzzles.restore(puzzleProgress["garden-route"]);
     this.setActiveSector(progress.sector, false);
   }
 
