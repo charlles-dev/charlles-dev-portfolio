@@ -11,6 +11,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@babylonjs/core": "^9.22.1",
     "@iconify-icons/solar": "^1.2.3",
     "@iconify-icons/tabler": "^1.2.95",
     "@iconify/react": "^6.0.2",
