@@ -312,3 +312,19 @@ A próxima onda não deve começar por laboratório, chatbot, IA ou mais animaç
 - [Relatório de QA final](./landing-qa-final.md)
 - [Observabilidade privacy-first](./privacy-first-observability.md)
 - [Pesquisa técnica da landing](./landing-improvement-research.md)
+
+## 19. Adendo após a onda de implementação sem dependências
+
+Este adendo atualiza o inventário para a execução autorizada pelo proprietário: implementar tudo que não envolva Hero, vídeo, scroll ou decisões/material externo. As linhas anteriores preservam o histórico do diagnóstico original; quando houver conflito de status, este adendo é a referência mais recente.
+
+| Bloco | Estado atualizado |
+|---|---|
+| Fundação e hardening | Concluído: dependências do manifest foram pinadas, há matriz de compatibilidade, fronteiras arquiteturais, convenções de contribuição, verificação de assets, rotas e HTML. |
+| Navegação e acessibilidade independente do scroll | Concluído o que era autossuficiente: estado ativo dos dialogs, roving tabindex nas tabs e menu mobile, preservação de contexto ao trocar locale, checklist versionado e forced colors no CSS. |
+| Cases e conversão independente de conteúdo proprietário | Concluído o resumo “Em 30 segundos”, mailto contextual, cópia de WhatsApp, LinkedIn, briefing inicial e eventos mínimos de contato. Papel, status, métricas e trade-offs por projeto continuam dependentes de confirmação. |
+| SEO e descoberta | Concluídos schemas de projetos na home, breadcrumbs/schema nas páginas editoriais, rota localizada “Agora”, rota localizada “Processo”, sitemap e crawler HTML atualizado. |
+| Diferenciação autossuficiente | Concluídas as páginas “Agora” e “Processo”, mantendo o modo recrutador, currículo, laboratório, comparadores e visualizador de arquitetura fora até haver conteúdo ou decisão suficiente. |
+| Observabilidade | Concluído o evento mínimo de falha da API pública; continua deliberadamente sem sink, dashboard, alertas ou analytics externo. |
+| Links externos | Check manual implementado e documentado. LinkedIn continua indeterminado por proteção anti-bot; agenda retorna 404; Laudos Proxxima existe como repositório privado. Nenhum desses destinos foi alterado por inferência. |
+
+Continuam realmente pendentes apenas os itens que exigem validação externa ou material do proprietário: troca e profiling real do Hero/vídeo/scroll, testes em dispositivos e leitores de tela reais, revisão nativa de EN/ES, papéis/status/métricas dos cases, currículo aprovado, formulário com endpoint e política de dados, disponibilidade, analytics com provedor escolhido e sistema editorial contínuo. Features opcionais que não aumentam a evidência profissional — chatbot, IA genérica, gamificação, laboratório sem experimento real e playground sem hipótese — permanecem fora por decisão de qualidade.

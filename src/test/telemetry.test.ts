@@ -29,6 +29,16 @@ describe("privacy-first telemetry", () => {
     expect(sink).toHaveBeenCalledWith({ name: "contact_cta_click", channel: "calendar" });
   });
 
+  it("forwards a project refresh error without extra payload after opt-in", () => {
+    const sink = vi.fn();
+    configureTelemetry(sink);
+    setTelemetryConsent(true);
+
+    trackTelemetry({ name: "projects_refresh_error", source: "api" });
+
+    expect(sink).toHaveBeenCalledWith({ name: "projects_refresh_error", source: "api" });
+  });
+
   it("stops emitting after consent is revoked", () => {
     const sink = vi.fn();
     configureTelemetry(sink);
