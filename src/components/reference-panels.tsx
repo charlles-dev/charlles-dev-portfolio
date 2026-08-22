@@ -140,9 +140,7 @@ function ProjectEntry({ dictionary, index }: { dictionary: PortfolioDictionary; 
               {dictionary.work.openProject}
               <IconGlyph name="arrow-right" className="size-4" />
             </a>
-            <button type="button" aria-label={`${project.name} ${dictionary.work.featuredLabel}`} className="works-like-button">
-              <span aria-hidden="true">♡</span> 0
-            </button>
+            <span className="works-project-index" aria-hidden="true">/{project.scene}</span>
           </div>
         </div>
       </article>

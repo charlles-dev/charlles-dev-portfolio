@@ -363,3 +363,13 @@ body[data-mobile-menu-open="true"] { overflow: hidden; }
 .contact-dialog-copy-button:hover, .contact-dialog-copy-button:focus-visible { border-color: rgba(255,255,255,.38); background: rgba(255,255,255,.14); transform: translateY(-1px); }
 .contact-dialog-copy-button svg { flex: 0 0 auto; }
 @media (max-width: 560px) { .contact-dialog-email-row { align-items: stretch; flex-direction: column; gap: .55rem; margin-top: -.55rem; }.contact-dialog-copy-button { justify-content: center; } }
+
+.works-project-index { color: var(--subtle); font-family: var(--font-mono), monospace; font-size: .68rem; letter-spacing: .12em; }
+@media (max-width: 640px) {
+  .reference-header { padding-top: max(.8rem, env(safe-area-inset-top)); }
+  .reference-mobile-menu-button { display: grid; min-width: 2.75rem; min-height: 2.75rem; place-items: center; padding: 0; }
+  .reference-social-rail a { width: 2.75rem; height: 2.75rem; }
+  .reference-social-rail a .reference-social-glyph { width: 1.25rem; height: 1.25rem; }
+  .reference-hero-content { padding-bottom: max(4.5rem, calc(4.5rem + env(safe-area-inset-bottom))); }
+  .reference-scroll-hint { bottom: max(1.5rem, calc(1.5rem + env(safe-area-inset-bottom))); }
+}
