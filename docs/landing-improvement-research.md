@@ -10,7 +10,7 @@ Para as três versões linguísticas, cada página deve listar a si própria e t
 
 ## Estado observado
 
-A remoção do jogo deixou a landing sem referências ativas ao runtime Babylon ou à rota `/game`. A captura fresh desktop/mobile confirma que o hero real, a logo, a navegação, o rail social e o loading continuam presentes. O próximo passe deve priorizar foco/escape dos dialogs, foco do menu mobile, redução do controle de tema obsoleto, labels localizados e refinamento de escala/enquadramento do hero em telas estreitas.
+A remoção do protótipo deixou a landing sem referências ativas ao runtime ou à rota experimental anterior. A captura fresh desktop/mobile confirma que o hero real, a logo, a navegação, o rail social e o loading continuam presentes. O próximo passe deve priorizar foco/escape dos dialogs, foco do menu mobile, redução do controle de tema obsoleto, labels localizados e refinamento de escala/enquadramento do hero em telas estreitas.
 
 ## Referências
 
