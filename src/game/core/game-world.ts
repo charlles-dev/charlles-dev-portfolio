@@ -9,6 +9,7 @@ import { GameStateStore } from "./game-state";
 import { SaveSystem } from "./save-system";
 import { PuzzleSystem, type PuzzleSignal } from "../systems/puzzle-system";
 import { ThreatSystem } from "../systems/threat-system";
+import { objectiveFor, routeGate } from "../systems/progression-system";
 import { InputManager } from "../input/input-manager";
 import { Player } from "../entities/player";
 import type { GameLocale } from "../data/game-copy";
@@ -363,21 +364,13 @@ export class GameWorld {
     this.store.patch({
       sector,
       sectorTitle: this.narrative.sectors[sector].title,
-      objective: this.objectiveForSector(sector),
+      objective: objectiveFor(this.store.getSnapshot(), sector, this.locale),
       message: announce ? this.narrative.sectors[sector].arrival : this.store.getSnapshot().message,
       threatState: "patrol",
       lastInteraction: previous === sector ? null : `Entrada registrada: ${this.narrative.sectors[sector].title}`,
     });
     if (sector === "core") this.speak("NÚCLEO", this.narrative.coreDialogue);
     this.saveSystem.save(this.store.getSnapshot());
-  }
-
-  private objectiveForSector(sector: SectorId): string {
-    const snapshot = this.store.getSnapshot();
-    if (sector === "hub") return snapshot.nodesRestored > 0 ? "Siga o sinal violeta até o Arquivo." : "Descubra por que a Orbe-9 reconheceu a Lumen.";
-    if (sector === "archive") return this.archiveSolved ? "Leve a frequência recuperada ao Jardim Orbital." : "Ajude PONTO a associar os três módulos de memória.";
-    if (sector === "garden") return this.gardenWitnessed ? "Atravesse a passagem que NIX deixou aberta." : "Atravesse a passarela sem repetir o medo de NIX.";
-    return "Decida o que a Orbe-9 deve lembrar.";
   }
 
   private handleInteractions(): void {
@@ -438,8 +431,8 @@ export class GameWorld {
   }
 
   private handleHubPortal(): void {
-    const snapshot = this.store.getSnapshot();
-    if (snapshot.nodesRestored === 0) {
+    const gate = routeGate(this.store.getSnapshot(), "archive", this.locale);
+    if (!gate.allowed) {
       this.store.patch({ message: "O portal mostra uma memória sem entrada. Primeiro, responda a um nó." });
       return;
     }
@@ -471,16 +464,9 @@ export class GameWorld {
   }
 
   private handleGardenExit(): void {
-    if (!this.archiveSolved) {
-      this.store.patch({ message: "O Jardim não responde a uma estação que ainda não escutou PONTO." });
-      return;
-    }
-    if (!this.gardenWitnessed) {
-      this.store.patch({ message: "NIX ainda observa. Converse com a sentinela antes de forçar passagem." });
-      return;
-    }
-    if (!this.puzzles.get("garden-route").solved) {
-      this.store.patch({ message: "A rota de irrigação ainda não sustenta a passagem. Siga a sequência de sinais." });
+    const gate = routeGate(this.store.getSnapshot(), "core", this.locale);
+    if (!gate.allowed) {
+      this.store.patch({ message: gate.reason });
       return;
     }
     this.setActiveSector("core");
