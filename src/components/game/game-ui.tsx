@@ -70,6 +70,7 @@ export function GameUi({ locale, snapshot, input }: GameUiProps) {
   const finalEnding = snapshot.ending ? narrative.endings[snapshot.ending] : null;
   const activePuzzle = snapshot.sector === "archive" ? snapshot.puzzles["archive-frequency"] : snapshot.sector === "garden" ? snapshot.puzzles["garden-route"] : null;
   const activePuzzleDefinition = activePuzzle ? puzzleDefinitions[activePuzzle.id] : null;
+  const activePuzzleCopy = activePuzzle ? copy.puzzles[activePuzzle.id] : null;
   const activeHint = activePuzzle ? hintFor(activePuzzle.id, activePuzzle.attempts, locale) : null;
   const togglePause = () => {
     input?.press("pause");
@@ -148,9 +149,9 @@ export function GameUi({ locale, snapshot, input }: GameUiProps) {
 
       {activePuzzle && activePuzzleDefinition ? (
         <section className={`game-puzzle-card is-${activePuzzle.feedback}`} aria-label={`Puzzle: ${activePuzzleDefinition.title}`}>
-          <p className="game-kicker">SEQUÊNCIA // {activePuzzle.id === "archive-frequency" ? "ARQUIVO" : "JARDIM"}</p>
-          <div className="game-puzzle-heading"><strong>{activePuzzleDefinition.title}</strong><span>{activePuzzle.step}/{activePuzzleDefinition.sequence.length}</span></div>
-          <p>{activePuzzleDefinition.hint}</p>
+          <p className="game-kicker">{copy.puzzleSequence.toUpperCase()} // {(activePuzzle.id === "archive-frequency" ? copy.puzzleArchive : copy.puzzleGarden).toUpperCase()}</p>
+          <div className="game-puzzle-heading"><strong>{activePuzzleCopy?.title}</strong><span>{activePuzzle.step}/{activePuzzleDefinition.sequence.length}</span></div>
+          <p>{activePuzzleCopy?.hint}</p>
           <div className="game-puzzle-sequence" aria-label={`Progresso ${activePuzzle.step} de ${activePuzzleDefinition.sequence.length}`}>
             {activePuzzleDefinition.sequence.map((signal, index) => (
               <span key={`${activePuzzle.id}-${index}`} className={index < activePuzzle.step ? "is-done" : index === activePuzzle.step ? "is-current" : ""}>
@@ -158,7 +159,7 @@ export function GameUi({ locale, snapshot, input }: GameUiProps) {
               </span>
             ))}
           </div>
-          <small>{activePuzzle.feedback === "wrong" ? "A sequência reiniciou. Observe os sinais antes de escolher." : activePuzzle.feedback === "solved" ? "Sequência estabilizada." : activePuzzle.feedback === "correct" ? "Sinal aceito. Continue a leitura." : "Interaja com um módulo para registrar a frequência."}</small>
+          <small>{activePuzzle.feedback === "wrong" ? copy.puzzleWrong : activePuzzle.feedback === "solved" ? copy.puzzleSolved : activePuzzle.feedback === "correct" ? copy.puzzleCorrect : copy.puzzleIdle}</small>
           {activeHint?.text ? <p className="game-puzzle-hint"><b>{copy.hintLabel.toUpperCase()} {activeHint.level}/3</b> {activeHint.text}</p> : null}
         </section>
       ) : null}

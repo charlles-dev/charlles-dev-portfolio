@@ -25,6 +25,17 @@ export interface GameUiCopy {
   fragmentUnknown: string;
   fragmentIntro: string;
   hintLabel: string;
+  puzzleSequence: string;
+  puzzleArchive: string;
+  puzzleGarden: string;
+  puzzleWrong: string;
+  puzzleSolved: string;
+  puzzleCorrect: string;
+  puzzleIdle: string;
+  puzzles: {
+    "archive-frequency": { title: string; hint: string };
+    "garden-route": { title: string; hint: string };
+  };
 }
 
 export const gameUiCopy: Record<GameLocale, GameUiCopy> = {
@@ -53,6 +64,17 @@ export const gameUiCopy: Record<GameLocale, GameUiCopy> = {
     fragmentUnknown: "Registro sem origem",
     fragmentIntro: "Os módulos não guardam apenas energia. Eles escolhem quais histórias permanecem acessíveis.",
     hintLabel: "Dica",
+    puzzleSequence: "Sequência",
+    puzzleArchive: "Arquivo",
+    puzzleGarden: "Jardim",
+    puzzleWrong: "A sequência reiniciou. Observe os sinais antes de escolher.",
+    puzzleSolved: "Sequência estabilizada.",
+    puzzleCorrect: "Sinal aceito. Continue a leitura.",
+    puzzleIdle: "Interaja com um módulo para registrar a frequência.",
+    puzzles: {
+      "archive-frequency": { title: "Frequência sem origem", hint: "A sequência aparece no intervalo entre ausência, memória e cuidado." },
+      "garden-route": { title: "Rota de irrigação", hint: "O jardim não pede mais energia. Pede uma passagem que não assuste a sentinela." },
+    },
   },
   en: {
     map: "Map",
@@ -79,6 +101,17 @@ export const gameUiCopy: Record<GameLocale, GameUiCopy> = {
     fragmentUnknown: "Record without origin",
     fragmentIntro: "The modules do not only store energy. They choose which stories remain accessible.",
     hintLabel: "Hint",
+    puzzleSequence: "Sequence",
+    puzzleArchive: "Archive",
+    puzzleGarden: "Garden",
+    puzzleWrong: "The sequence reset. Observe the signals before choosing.",
+    puzzleSolved: "Sequence stabilized.",
+    puzzleCorrect: "Signal accepted. Continue reading.",
+    puzzleIdle: "Interact with a module to record the frequency.",
+    puzzles: {
+      "archive-frequency": { title: "Frequency without origin", hint: "The sequence appears in the interval between absence, memory and care." },
+      "garden-route": { title: "Irrigation route", hint: "The garden does not ask for more energy. It asks for a passage that does not frighten the sentinel." },
+    },
   },
   es: {
     map: "Mapa",
@@ -105,6 +138,17 @@ export const gameUiCopy: Record<GameLocale, GameUiCopy> = {
     fragmentUnknown: "Registro sin origen",
     fragmentIntro: "Los módulos no solo guardan energía. Eligen qué historias permanecen accesibles.",
     hintLabel: "Pista",
+    puzzleSequence: "Secuencia",
+    puzzleArchive: "Archivo",
+    puzzleGarden: "Jardín",
+    puzzleWrong: "La secuencia se reinició. Observa las señales antes de elegir.",
+    puzzleSolved: "Secuencia estabilizada.",
+    puzzleCorrect: "Señal aceptada. Continúa la lectura.",
+    puzzleIdle: "Interactúa con un módulo para registrar la frecuencia.",
+    puzzles: {
+      "archive-frequency": { title: "Frecuencia sin origen", hint: "La secuencia aparece entre ausencia, memoria y cuidado." },
+      "garden-route": { title: "Ruta de irrigación", hint: "El jardín no pide más energía. Pide un paso que no asuste al centinela." },
+    },
   },
 };
 
