@@ -38,6 +38,7 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
   const awakeVideo = useRef<HTMLVideoElement>(null);
   const scrollProgressRef = useRef(0);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const github = socialLinks.find((link) => link.kind === "github");
   const linkedIn = socialLinks.find((link) => link.kind === "linkedin");
   const discord = socialLinks.find((link) => link.kind === "discord");
@@ -52,10 +53,24 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
   const tone = Math.round(255 - contrast * 245);
 
   useEffect(() => {
+    if (!window.matchMedia) return;
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setPrefersReducedMotion(media.matches);
+    update();
+    media.addEventListener?.("change", update);
+    return () => media.removeEventListener?.("change", update);
+  }, []);
+
+  useEffect(() => {
     const story = storyRef.current;
     if (!story) return;
 
     const handleScroll = () => {
+      if (prefersReducedMotion) {
+        scrollProgressRef.current = 0;
+        setScrollProgress(0);
+        return;
+      }
       const rect = story.getBoundingClientRect();
       const travel = Math.max(1, story.offsetHeight - window.innerHeight);
       const progress = Math.min(1, Math.max(0, -rect.top / travel));
@@ -66,7 +81,7 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [prefersReducedMotion]);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -86,6 +101,10 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
   useEffect(() => {
     const main = primaryVideo.current;
     if (!main) return;
+    if (prefersReducedMotion) {
+      main.pause();
+      return;
+    }
 
     let animationFrame = 0;
     const syncMain = () => {
@@ -108,12 +127,19 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
       main.removeEventListener("loadedmetadata", syncMain);
       document.removeEventListener("visibilitychange", handleVisibility);
     };
-  }, []);
+  }, [prefersReducedMotion]);
 
   useEffect(() => {
     const idle = idleVideo.current;
     const awake = awakeVideo.current;
     if (!idle || !awake) return;
+    if (prefersReducedMotion) {
+      idle.pause();
+      awake.pause();
+      idle.style.opacity = "0";
+      awake.style.opacity = "0";
+      return;
+    }
 
     const playVideo = (video: HTMLVideoElement) => {
       const attempt = () => {
@@ -163,11 +189,11 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
 
     document.addEventListener("visibilitychange", handleVisibility);
     return () => document.removeEventListener("visibilitychange", handleVisibility);
-  }, [loopState]);
+  }, [loopState, prefersReducedMotion]);
 
   return (
     <section ref={storyRef} className="reference-scroll-story" aria-labelledby="reference-hero-title">
-      <div className={`reference-sticky-scene ${isScrolled ? "is-scrolled" : ""} ${isLooping ? "is-looping" : ""} is-${loopState}-state`} data-loop-state={loopState}>
+        <div className={`reference-sticky-scene ${isScrolled ? "is-scrolled" : ""} ${isLooping ? "is-looping" : ""} is-${loopState}-state`} data-loop-state={loopState} data-motion={prefersReducedMotion ? "reduced" : "full"}>
         <video
           ref={primaryVideo}
           className="reference-video reference-video-primary reference-video-scrub"
@@ -177,7 +203,7 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
           poster="/reference/charlles-hero-two-state-poster.webp"
           muted
           playsInline
-          preload="auto"
+          preload={prefersReducedMotion ? "none" : "auto"}
           aria-hidden="true"
         />
         <video
@@ -190,7 +216,7 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
           loop
           muted
           playsInline
-          preload="auto"
+          preload={prefersReducedMotion ? "none" : "auto"}
           aria-hidden="true"
         />
         <video

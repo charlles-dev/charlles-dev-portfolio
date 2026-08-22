@@ -278,3 +278,28 @@ describe("hero media resilience", () => {
     expect(primary.src).toBe(fallbackSrc);
   });
 });
+
+
+describe("hero reduced motion", () => {
+  beforeEach(() => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("fetch disabled in tests")));
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it("keeps the poster path active and avoids video preloading", async () => {
+    const addEventListener = vi.fn();
+    const removeEventListener = vi.fn();
+    vi.stubGlobal("matchMedia", vi.fn().mockReturnValue({ matches: true, addEventListener, removeEventListener }));
+    renderHome("es");
+
+    await waitFor(() => expect(document.querySelector(".reference-sticky-scene")).toHaveAttribute("data-motion", "reduced"));
+    expect(document.querySelector(".reference-video-scrub")).toHaveAttribute("preload", "none");
+    expect(document.querySelector(".reference-video-idle")).toHaveAttribute("preload", "none");
+    expect(document.querySelector(".reference-video-awake")).toHaveAttribute("poster", "/reference/charlles-hero-two-state-poster.webp");
+    expect(addEventListener).toHaveBeenCalledWith("change", expect.any(Function));
+  });
+});
