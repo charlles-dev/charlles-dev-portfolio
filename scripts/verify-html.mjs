@@ -28,6 +28,7 @@ for (const page of pages) {
   const ogType = html.match(/<meta\s+property="og:type"\s+content="([^"]+)"/)?.[1];
   const twitterCard = html.match(/<meta\s+name="twitter:card"\s+content="([^"]+)"/)?.[1];
   const skipTargetCount = [...html.matchAll(/id="conteudo"/g)].length;
+  const headingOneCount = [...html.matchAll(/<h1\b/g)].length;
 
   if (htmlLang !== page.locale) failures.push(`${page.route}: expected lang=${page.locale}, got ${htmlLang ?? "missing"}`);
   if (!description) failures.push(`${page.route}: missing meta description`);
@@ -35,6 +36,7 @@ for (const page of pages) {
   if (ogType !== page.type) failures.push(`${page.route}: expected og:type=${page.type}, got ${ogType ?? "missing"}`);
   if (twitterCard !== "summary_large_image") failures.push(`${page.route}: missing Twitter card`);
   if (skipTargetCount !== 1) failures.push(`${page.route}: expected exactly one #conteudo target, got ${skipTargetCount}`);
+  if (headingOneCount !== 1) failures.push(`${page.route}: expected exactly one h1, got ${headingOneCount}`);
   if (page.route.endsWith("/engineering") && !html.includes('"@type":"BreadcrumbList"')) failures.push(`${page.route}: missing BreadcrumbList schema`);
   if (page.route.endsWith("/now") && !html.includes('"@type":"ItemList"')) failures.push(`${page.route}: missing ItemList schema`);
   if (page.route.endsWith("/process") && !html.includes('"@type":"HowTo"')) failures.push(`${page.route}: missing HowTo schema`);
