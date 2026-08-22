@@ -5,6 +5,8 @@ const checks = [
   ["lint", "pnpm exec eslint ."],
   ["tests", "pnpm exec vitest run"],
   ["production build", "pnpm exec next build"],
+  ["asset references", "pnpm exec node scripts/verify-assets.mjs"],
+  ["generated routes", "pnpm exec node scripts/verify-routes.mjs"],
 ];
 
 for (const [name, command] of checks) {
