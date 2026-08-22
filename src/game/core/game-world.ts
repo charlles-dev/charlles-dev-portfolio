@@ -216,6 +216,7 @@ export class GameWorld {
       node.ring.material = this.material(`restored-ring-${node.ring.name}`, palette.mint, palette.mint);
     }
     this.store.restoreProgress(progress);
+    this.store.patch({ message: this.copy.progressRestored, lastInteraction: this.copy.restoredCheckpoint });
     const puzzleProgress = progress.puzzles ?? {
       "archive-frequency": this.puzzles.get("archive-frequency"),
       "garden-route": this.puzzles.get("garden-route"),
