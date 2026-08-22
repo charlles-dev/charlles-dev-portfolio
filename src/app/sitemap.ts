@@ -17,6 +17,11 @@ const nowAlternates = {
   en: `${baseUrl}/en/now`,
   es: `${baseUrl}/es/now`,
 };
+const processAlternates = {
+  "pt-BR": `${baseUrl}/pt-BR/process`,
+  en: `${baseUrl}/en/process`,
+  es: `${baseUrl}/es/process`,
+};
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
@@ -29,5 +34,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: nowAlternates["pt-BR"], lastModified, changeFrequency: "monthly", priority: 0.7, alternates: { languages: nowAlternates } },
     { url: nowAlternates.en, lastModified, changeFrequency: "monthly", priority: 0.7, alternates: { languages: nowAlternates } },
     { url: nowAlternates.es, lastModified, changeFrequency: "monthly", priority: 0.7, alternates: { languages: nowAlternates } },
+    { url: processAlternates["pt-BR"], lastModified, changeFrequency: "yearly", priority: 0.65, alternates: { languages: processAlternates } },
+    { url: processAlternates.en, lastModified, changeFrequency: "yearly", priority: 0.65, alternates: { languages: processAlternates } },
+    { url: processAlternates.es, lastModified, changeFrequency: "yearly", priority: 0.65, alternates: { languages: processAlternates } },
   ];
 }
