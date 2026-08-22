@@ -172,7 +172,7 @@ button { border: 0; }
 @keyframes reference-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
 @keyframes reference-bars { from { transform: scaleY(.85); opacity: .7; } to { transform: scaleY(1.03); opacity: 1; } }
 
-@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .001ms !important; } .reference-video-primary { display: none; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .001ms !important; } .reference-sticky-scene { background: #121314 url('/reference/charlles-hero-two-state-poster.webp') center / cover no-repeat; } .reference-video { display: none; } }
 @media (max-width: 860px) { .reference-nav > button { font-size: .72rem; }.reference-work-grid { grid-template-columns: 1fr; }.reference-work-card { min-height: 360px; }.reference-project-visual { height: 180px; } }
 @media (max-width: 640px) {
   .reference-header { padding: .8rem 1rem; }.reference-header-inner { position: relative; align-items: flex-start; }.reference-brand { gap: .45rem; font-size: .76rem; }.reference-brand-mark { width: 1.8rem; height: 1.8rem; }.reference-nav { gap: .1rem; }.reference-nav > button:not(.reference-mobile-menu-button) { display: none; }.reference-mobile-menu-button { display: block; }.language-link { min-width: 1.55rem; font-size: .55rem; }.language-flag-icon { width: 1rem; height: .67rem; }

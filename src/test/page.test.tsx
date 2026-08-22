@@ -190,3 +190,60 @@ describe("reference-inspired localized home", () => {
     expect(visibleText).not.toMatch(/software, cyber e IA|cibersegurança e IA/i);
   });
 });
+
+
+describe("landing dialog focus behavior", () => {
+  beforeEach(() => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("fetch disabled in tests")));
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it("moves focus into the dialog, wraps Tab, and restores the trigger focus", async () => {
+    renderHome();
+    const trigger = screen.getByRole("button", { name: "Sobre" });
+    trigger.focus();
+    fireEvent.click(trigger);
+
+    const dialog = screen.getByRole("dialog", { name: "Charlles Augusto" });
+    const close = within(dialog).getByRole("button", { name: "Fechar" });
+    await waitFor(() => expect(document.activeElement).toBe(close));
+
+    const links = within(dialog).getAllByRole("link");
+    links[links.length - 1].focus();
+    fireEvent.keyDown(document, { key: "Tab" });
+    expect(document.activeElement).toBe(close);
+
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(screen.queryByRole("dialog", { name: "Charlles Augusto" })).not.toBeInTheDocument();
+    expect(document.activeElement).toBe(trigger);
+  });
+});
+
+
+describe("landing mobile menu focus behavior", () => {
+  beforeEach(() => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("fetch disabled in tests")));
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it("moves focus into the menu and restores the trigger on Escape", async () => {
+    renderHome();
+    const trigger = screen.getByRole("button", { name: /Abrir menu/i });
+    trigger.focus();
+    fireEvent.click(trigger);
+    const firstItem = screen.getByRole("menuitem", { name: "Trabalhos" });
+    await waitFor(() => expect(document.activeElement).toBe(firstItem));
+
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+    expect(document.activeElement).toBe(trigger);
+  });
+});

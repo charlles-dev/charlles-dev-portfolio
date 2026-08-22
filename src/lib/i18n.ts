@@ -31,7 +31,8 @@ export type PortfolioDictionary = {
     now: string;
     contact: string;
     menu: string;
-    theme: string;
+    main: string;
+    language: string;
   };
   hero: {
     eyebrow: string;
@@ -61,6 +62,7 @@ export type PortfolioDictionary = {
     tabs: { product: string; visual: string; motion: string };
     featuredLabel: string;
     openProject: string;
+    mediaLabel: string;
     problem: string;
     decision: string;
     next: string;
@@ -137,7 +139,8 @@ const portuguese: PortfolioDictionary = {
     now: "Agora",
     contact: "Contato",
     menu: "Abrir menu",
-    theme: "Alternar tema",
+    main: "Navegação principal",
+    language: "Idioma",
   },
   hero: {
     eyebrow: "Software · interfaces · sistemas",
@@ -190,6 +193,7 @@ const portuguese: PortfolioDictionary = {
     tabs: { product: "UI/UX & Front-end", visual: "Visual design", motion: "Motion" },
     featuredLabel: "Case selecionado",
     openProject: "Abrir projeto",
+    mediaLabel: "Prévia visual",
     problem: "Problema",
     decision: "Decisão técnica",
     next: "Próximo passo",
@@ -320,7 +324,7 @@ const english: PortfolioDictionary = {
     keywords: ["Charlles Augusto", "web developer", "software developer", "Next.js", "TypeScript", "React", "process automation", "digital interfaces", "Brazil"],
     ogAlt: "Charlles Augusto — web development, interfaces and automation",
   },
-  nav: { work: "Work", about: "About", now: "Now", contact: "Contact", menu: "Open menu", theme: "Toggle theme" },
+  nav: { work: "Work", about: "About", now: "Now", contact: "Contact", menu: "Open menu", main: "Main navigation", language: "Language" },
   hero: {
     ...portuguese.hero,
     eyebrow: "Software · interfaces · systems",
@@ -362,6 +366,7 @@ const english: PortfolioDictionary = {
     tabs: { product: "UI/UX & Front-end", visual: "Visual design", motion: "Motion" },
     featuredLabel: "Selected case",
     openProject: "Open project",
+    mediaLabel: "Visual preview",
     problem: "Problem",
     decision: "Technical decision",
     next: "Next step",
@@ -429,7 +434,7 @@ const spanish: PortfolioDictionary = {
     keywords: ["Charlles Augusto", "desarrollador web", "desarrollador de software", "Next.js", "TypeScript", "React", "automatización de procesos", "interfaces digitales", "Brasil"],
     ogAlt: "Charlles Augusto — desarrollo web, interfaces y automatización",
   },
-  nav: { work: "Trabajos", about: "Sobre mí", now: "Ahora", contact: "Contacto", menu: "Abrir menú", theme: "Cambiar tema" },
+  nav: { work: "Trabajos", about: "Sobre mí", now: "Ahora", contact: "Contacto", menu: "Abrir menú", main: "Navegación principal", language: "Idioma" },
   hero: {
     ...english.hero,
     eyebrow: "Software · interfaces · sistemas",
@@ -465,6 +470,7 @@ const spanish: PortfolioDictionary = {
     tabs: { product: "UI/UX & Front-end", visual: "Visual design", motion: "Motion" },
     featuredLabel: "Caso seleccionado",
     openProject: "Abrir proyecto",
+    mediaLabel: "Vista previa visual",
     problem: "Problema",
     decision: "Decisión técnica",
     next: "Próximo paso",

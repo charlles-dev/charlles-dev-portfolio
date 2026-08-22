@@ -32,9 +32,9 @@ function LocaleGlyph({ locale }: { locale: Locale }) {
   );
 }
 
-export function LanguageSwitcher({ currentLocale }: { currentLocale: Locale }) {
+export function LanguageSwitcher({ currentLocale, label }: { currentLocale: Locale; label: string }) {
   return (
-    <div className="language-switcher" aria-label="Idioma">
+    <div className="language-switcher" aria-label={label}>
       {locales.map((locale) => {
         const current = locale === currentLocale;
 
