@@ -242,6 +242,15 @@ export class GameWorld {
     const returnBeacon = this.addMesh(MeshBuilder.CreateCylinder("archive-return-beacon", { diameter: 0.32, height: 0.5, tessellation: 8 }, this.scene), root, this.material("archive-return-beacon-material", palette.mint, palette.mint));
     returnBeacon.position.set(-4.65, 0.35, -2.1);
     this.addInteraction(returnBeacon, "archive", 1.0, "Uma linha mint aponta de volta ao Hub.", () => this.setActiveSector("hub"));
+    const gardenBeacon = this.addMesh(MeshBuilder.CreateCylinder("archive-garden-beacon", { diameter: 0.42, height: 0.64, tessellation: 8 }, this.scene), root, this.material("archive-garden-beacon-material", palette.violet, palette.violet));
+    gardenBeacon.position.set(4.25, 0.42, -1.75);
+    this.addInteraction(gardenBeacon, "archive", 1.1, "A frequência recuperada aponta para o Jardim Orbital.", () => {
+      if (!this.archiveSolved) {
+        this.store.patch({ message: "A passagem não entende uma frequência que ainda não foi associada." });
+        return;
+      }
+      this.setActiveSector("garden");
+    });
   }
 
   private createGarden(): DroneParts {
@@ -324,9 +333,10 @@ export class GameWorld {
       sectorTitle: sectors[sector].title,
       objective: this.objectiveForSector(sector),
       message: announce ? sectors[sector].arrival : this.store.getSnapshot().message,
-      threatState: sector === "garden" ? "patrol" : "patrol",
+      threatState: "patrol",
       lastInteraction: previous === sector ? null : `Entrada registrada: ${sectors[sector].title}`,
     });
+    if (sector === "core") this.speak("NÚCLEO", coreDialogue);
   }
 
   private objectiveForSector(sector: SectorId): string {
@@ -433,7 +443,7 @@ export class GameWorld {
   }
 
   private confirmEnding(ending: EndingId): void {
-    if (this.store.getSnapshot().nodesRestored < 1 || !this.archiveSolved || !this.gardenWitnessed) {
+    if (this.store.getSnapshot().nodesRestored < 3 || !this.archiveSolved || !this.gardenWitnessed) {
       this.store.patch({ message: "O Núcleo não aceita uma configuração sem as três testemunhas." });
       return;
     }
