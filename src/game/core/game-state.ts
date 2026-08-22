@@ -78,6 +78,22 @@ export class GameStateStore {
     for (const listener of this.listeners) listener(this.snapshot);
   }
 
+  restoreProgress(progress: Pick<GameSnapshot, "energy" | "nodesRestored" | "fragmentsFound" | "relationship" | "toolsUnlocked" | "checkpoint" | "sector" | "ending" | "completed">): void {
+    this.snapshot = {
+      ...this.snapshot,
+      ...progress,
+      fragmentsFound: [...progress.fragmentsFound],
+      relationship: { ...progress.relationship },
+      toolsUnlocked: [...progress.toolsUnlocked],
+      paused: false,
+      dialogue: null,
+      threatState: "patrol",
+      message: "Progresso restaurado. A estação aguardava o seu retorno.",
+      lastInteraction: "Checkpoint restaurado",
+    };
+    for (const listener of this.listeners) listener(this.snapshot);
+  }
+
   reset(): void {
     this.snapshot = { ...initialSnapshot };
     for (const listener of this.listeners) listener(this.snapshot);

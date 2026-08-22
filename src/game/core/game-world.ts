@@ -6,6 +6,7 @@ import { StandardMaterial } from "@babylonjs/core/Materials/standardMaterial";
 import { Scene } from "@babylonjs/core/scene";
 import { TransformNode } from "@babylonjs/core/Meshes/transformNode";
 import { GameStateStore } from "./game-state";
+import { SaveSystem } from "./save-system";
 import { InputManager } from "../input/input-manager";
 import { Player } from "../entities/player";
 import type { GameLocale } from "../data/game-copy";
@@ -56,6 +57,7 @@ export class GameWorld {
   readonly player: Player;
   private readonly input: InputManager;
   private readonly store: GameStateStore;
+  private readonly saveSystem: SaveSystem;
   private readonly nodes: SignalNode[] = [];
   private readonly interactions: InteractionTarget[] = [];
   private readonly sectorRoots = {} as Record<SectorId, TransformNode>;
@@ -79,6 +81,7 @@ export class GameWorld {
     this.locale = locale;
     this.narrative = getNarrative(locale);
     this.store = store;
+    this.saveSystem = new SaveSystem();
     this.input = input;
     for (const sector of sectorOrder) this.sectorRoots[sector] = new TransformNode(`sector-root-${sector}`, scene);
 
@@ -95,6 +98,7 @@ export class GameWorld {
     this.portal = this.createPortal(this.sectorRoots.hub, new Vector3(3.9, 0.9, 1.55), "hub-memory-portal");
     this.addInteraction(this.portal, "hub", 1.45, "O portal aguarda os três sinais.", () => this.handleHubPortal());
     this.setActiveSector("hub", false);
+    this.restoreSavedProgress();
   }
 
   dispose(): void {
@@ -174,6 +178,22 @@ export class GameWorld {
       const star = this.addMesh(MeshBuilder.CreateSphere(`${name}-star-${index}`, { diameter: 0.025 + (index % 3) * 0.018, segments: 4 }, this.scene), root, starMaterial);
       star.position.set(-5.5 + ((index * 2.7) % 11), 1.8 + (index % 3) * 0.48, -3.6 + (index % 5) * 1.7);
     }
+  }
+
+  private restoreSavedProgress(): void {
+    const saved = this.saveSystem.read();
+    if (!saved) return;
+    const progress = saved.snapshot;
+    this.archiveSolved = progress.toolsUnlocked.includes("Pulso");
+    this.gardenWitnessed = progress.relationship.nix === "recognition";
+    for (let index = 0; index < Math.min(progress.nodesRestored, this.nodes.length); index += 1) {
+      const node = this.nodes[index];
+      node.restored = true;
+      node.mesh.material = this.material(`restored-node-${node.mesh.name}`, palette.mint, palette.mint);
+      node.ring.material = this.material(`restored-ring-${node.ring.name}`, palette.mint, palette.mint);
+    }
+    this.store.restoreProgress(progress);
+    this.setActiveSector(progress.sector, false);
   }
 
   private createHub(): void {
@@ -332,6 +352,7 @@ export class GameWorld {
       lastInteraction: previous === sector ? null : `Entrada registrada: ${this.narrative.sectors[sector].title}`,
     });
     if (sector === "core") this.speak("NÚCLEO", this.narrative.coreDialogue);
+    this.saveSystem.save(this.store.getSnapshot());
   }
 
   private objectiveForSector(sector: SectorId): string {
@@ -396,6 +417,7 @@ export class GameWorld {
       message: restored === 3 ? "Os três sinais responderam. O portal de memória está aberto." : `Sinal ${String(restored).padStart(2, "0")} restaurado. A rota mudou.`,
       lastInteraction: `Nó de sinal ${String(restored).padStart(2, "0")} restaurado`,
     });
+    this.saveSystem.save(this.store.getSnapshot());
   }
 
   private handleHubPortal(): void {
@@ -423,6 +445,7 @@ export class GameWorld {
       lastInteraction: "Fragmento associado: a caixa sem origem",
       relationship: { ...snapshot.relationship, ponto: "association" },
     });
+    this.saveSystem.save(this.store.getSnapshot());
   }
 
   private handleGardenExit(): void {
@@ -451,6 +474,7 @@ export class GameWorld {
       lastInteraction: `Configuração confirmada: ${definition.title}`,
       fragmentsFound: [...new Set([...this.store.getSnapshot().fragmentsFound, "choice"])],
     });
+    this.saveSystem.save(this.store.getSnapshot());
   }
 
   private handleTool(): void {
@@ -466,6 +490,7 @@ export class GameWorld {
     }
     if (this.activeSector === "garden" && this.player.distanceTo(this.drone.position) < 2.1 && snapshot.threatState !== "disabled") {
       this.store.patch({ energy: snapshot.energy - 12, threatState: "disabled", message: "Pulso Lumen emitido. A sentinela abriu uma janela de passagem.", lastInteraction: "Drone estabilizado por 3,2 s" });
+      this.saveSystem.save(this.store.getSnapshot());
       this.messageCooldown = 2.2;
       const timeout = window.setTimeout(() => {
         this.scheduledTimeouts.delete(timeout);

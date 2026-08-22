@@ -441,3 +441,9 @@ body[data-mobile-menu-open="true"] { overflow: hidden; }
   .game-shell::after { opacity: .16; }
   .game-dialogue-advance, .game-top-action, .game-control-button { transition: none; }
 }
+
+.game-paused-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; margin-top: 1rem; }
+.game-paused-actions button { min-height: 2.55rem; padding: .65rem .85rem; border: 1px solid rgba(118,240,192,.45); background: rgba(118,240,192,.07); color: #76f0c0; cursor: pointer; font-family: var(--font-mono), monospace; font-size: .55rem; letter-spacing: .08em; text-transform: uppercase; }
+.game-paused-actions button:hover, .game-paused-actions button:focus-visible { background: #76f0c0; color: #171923; outline: none; }
+.game-paused-actions button + button { border-color: rgba(244,233,207,.24); background: transparent; color: rgba(244,233,207,.64); }
+@media (max-width: 700px) { .game-paused-actions { display: grid; grid-template-columns: 1fr; }.game-paused-actions button { width: 100%; } }

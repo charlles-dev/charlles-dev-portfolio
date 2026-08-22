@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } f
 import type { GameSnapshot } from "@/game/core/game-state";
 import type { GameAction, InputManager } from "@/game/input/input-manager";
 import { gameUiCopy, type GameLocale } from "@/game/data/game-copy";
+import { SAVE_KEY } from "@/game/core/save-system";
 import { getNarrative, sectorOrder } from "@/game/data/narrative-content";
 
 interface GameUiProps {
@@ -65,6 +66,14 @@ export function GameUi({ locale, snapshot, input }: GameUiProps) {
   const energyRatio = `${Math.max(0, Math.min(100, snapshot.energy))}%`;
   const sector = narrative.sectors[snapshot.sector];
   const finalEnding = snapshot.ending ? narrative.endings[snapshot.ending] : null;
+  const togglePause = () => {
+    input?.press("pause");
+    window.setTimeout(() => input?.release("pause"), 80);
+  };
+  const resetSave = () => {
+    window.localStorage.removeItem(SAVE_KEY);
+    window.location.reload();
+  };
 
   useEffect(() => {
     if (!panel) return;
@@ -177,10 +186,14 @@ export function GameUi({ locale, snapshot, input }: GameUiProps) {
       ) : null}
 
       {snapshot.paused ? (
-        <section className="game-paused" role="dialog" aria-label="Jogo pausado" aria-modal="true">
-          <p className="game-kicker">SISTEMA EM ESPERA // {snapshot.sectorTitle.toUpperCase()}</p>
+        <section className="game-paused" role="dialog" aria-label={copy.pausedTitle} aria-modal="true">
+          <p className="game-kicker">SYSTEM // {snapshot.sectorTitle.toUpperCase()}</p>
           <h2>{copy.pausedTitle}</h2>
           <p>{copy.pausedBody}</p>
+          <div className="game-paused-actions">
+            <button type="button" onClick={togglePause}>{copy.continue}</button>
+            <button type="button" onClick={resetSave}>{copy.restart}</button>
+          </div>
         </section>
       ) : null}
 
