@@ -24,6 +24,7 @@ export interface GameUiCopy {
   signalNotFound: string;
   fragmentUnknown: string;
   fragmentIntro: string;
+  hintLabel: string;
 }
 
 export const gameUiCopy: Record<GameLocale, GameUiCopy> = {
@@ -51,6 +52,7 @@ export const gameUiCopy: Record<GameLocale, GameUiCopy> = {
     signalNotFound: "Sinal ainda não encontrado",
     fragmentUnknown: "Registro sem origem",
     fragmentIntro: "Os módulos não guardam apenas energia. Eles escolhem quais histórias permanecem acessíveis.",
+    hintLabel: "Dica",
   },
   en: {
     map: "Map",
@@ -76,6 +78,7 @@ export const gameUiCopy: Record<GameLocale, GameUiCopy> = {
     signalNotFound: "Signal not found yet",
     fragmentUnknown: "Record without origin",
     fragmentIntro: "The modules do not only store energy. They choose which stories remain accessible.",
+    hintLabel: "Hint",
   },
   es: {
     map: "Mapa",
@@ -101,6 +104,7 @@ export const gameUiCopy: Record<GameLocale, GameUiCopy> = {
     signalNotFound: "Señal aún no encontrada",
     fragmentUnknown: "Registro sin origen",
     fragmentIntro: "Los módulos no solo guardan energía. Eligen qué historias permanecen accesibles.",
+    hintLabel: "Pista",
   },
 };
 

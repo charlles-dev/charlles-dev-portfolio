@@ -12,6 +12,7 @@ import { ThreatSystem } from "../systems/threat-system";
 import { objectiveFor, routeGate } from "../systems/progression-system";
 import { DialogueSystem } from "../systems/dialogue-system";
 import { resolveEnding } from "../systems/ending-system";
+import { useLumenTool } from "../systems/tool-system";
 import { InputManager } from "../input/input-manager";
 import { Player } from "../entities/player";
 import type { GameLocale } from "../data/game-copy";
@@ -500,16 +501,20 @@ export class GameWorld {
   private handleTool(): void {
     if (!this.input.consume("tool")) return;
     const snapshot = this.store.getSnapshot();
-    if (!snapshot.toolsUnlocked.includes("Pulso")) {
-      this.store.patch({ message: "A Lente encontrou o caminho. O Pulso ainda precisa de uma frequência associada." });
+    const targetInRange = this.activeSector === "garden" && this.player.distanceTo(this.drone.position) < 2.1 && snapshot.threatState !== "disabled";
+    const requestedTool = targetInRange ? "Pulso" : "Lente";
+    const result = useLumenTool({
+      tool: requestedTool,
+      energy: snapshot.energy,
+      hasTool: snapshot.toolsUnlocked.includes(requestedTool),
+      targetInRange,
+    });
+    if (!result.success) {
+      this.store.patch({ message: result.kind === "locked" ? "A Lente encontrou o caminho. O Pulso ainda precisa de uma frequência associada." : "A Lumen precisa de energia para emitir outra ação." });
       return;
     }
-    if (snapshot.energy < 12) {
-      this.store.patch({ message: "A Lumen precisa de energia para emitir outro Pulso." });
-      return;
-    }
-    if (this.activeSector === "garden" && this.player.distanceTo(this.drone.position) < 2.1 && snapshot.threatState !== "disabled") {
-      this.store.patch({ energy: snapshot.energy - 12, threatState: "disabled", message: "Pulso Lumen emitido. A sentinela abriu uma janela de passagem.", lastInteraction: "Drone estabilizado por 3,2 s" });
+    if (result.kind === "pulse") {
+      this.store.patch({ energy: result.energy, threatState: "disabled", message: "Pulso Lumen emitido. A sentinela abriu uma janela de passagem.", lastInteraction: "Drone estabilizado por 3,2 s" });
       this.saveSystem.save(this.store.getSnapshot());
       this.messageCooldown = 2.2;
       const timeout = window.setTimeout(() => {
@@ -520,7 +525,7 @@ export class GameWorld {
       this.scheduledTimeouts.add(timeout);
       return;
     }
-    this.store.patch({ energy: Math.max(0, snapshot.energy - 4), message: `A Lente percorreu o setor ${this.narrative.sectors[this.activeSector].title}. Um sinal responde ao longe.` });
+    this.store.patch({ energy: result.energy, message: `A Lente percorreu o setor ${this.narrative.sectors[this.activeSector].title}. Um sinal responde ao longe.` });
   }
 
   private updateDrone(delta: number): void {
