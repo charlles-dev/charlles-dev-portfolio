@@ -9,6 +9,7 @@ import brainIcon from "@iconify-icons/tabler/brain";
 import certificateIcon from "@iconify-icons/tabler/certificate";
 import clockIcon from "@iconify-icons/tabler/clock";
 import codeIcon from "@iconify-icons/tabler/code";
+import copyIcon from "@iconify-icons/tabler/copy";
 import databaseIcon from "@iconify-icons/tabler/database";
 import deviceLaptopIcon from "@iconify-icons/tabler/device-laptop";
 import externalLinkIcon from "@iconify-icons/tabler/external-link";
@@ -54,6 +55,7 @@ const icons = {
   certificate: certificateIcon,
   clock: clockIcon,
   code: codeIcon,
+  copy: copyIcon,
   database: databaseIcon,
   "device-laptop": deviceLaptopIcon,
   "external-link": externalLinkIcon,

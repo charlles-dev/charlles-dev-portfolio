@@ -127,6 +127,11 @@ function ProjectEntry({ dictionary, index }: { dictionary: PortfolioDictionary; 
           </div>
           <h3>{project.name}</h3>
           <p className="works-project-summary">{copy.summary}</p>
+          <div className="works-project-quickview" aria-label={dictionary.work.quickLabel}>
+            <span className="works-project-quickview-label">{dictionary.work.quickLabel}</span>
+            <p>{copy.reason}</p>
+            <div className="works-project-quickview-meta"><span>{project.language}</span><span>{copy.category}</span><span>{copy.metric}</span></div>
+          </div>
           <ul className="works-project-bullets">
             <li><strong>{dictionary.work.problem}:</strong> {copy.problem}</li>
             <li><strong>{dictionary.work.decision}:</strong> {copy.decision}</li>
@@ -154,7 +159,7 @@ function WorkTabPanel({ tab, dictionary, onCopyWorkLink, linkCopied }: { tab: Wo
   if (tab === "product") {
     return (
       <>
-        <ul id="painel-product" className="works-list" role="tabpanel" aria-label={dictionary.work.tabs.product}>
+        <ul id="painel-product" className="works-list" role="tabpanel" aria-labelledby="work-tab-product">
           {projects.map((_, index) => <ProjectEntry key={projects[index].name} dictionary={dictionary} index={index} />)}
         </ul>
         <div className="works-rise works-cta">
@@ -182,7 +187,7 @@ function WorkTabPanel({ tab, dictionary, onCopyWorkLink, linkCopied }: { tab: Wo
   const items = tab === "visual" ? dictionary.expertise.items : dictionary.now.items;
 
   return (
-    <div id={`painel-${tab}`} className="works-tab-content" role="tabpanel" aria-label={tab === "visual" ? dictionary.work.tabs.visual : dictionary.work.tabs.motion}>
+    <div id={`painel-${tab}`} className="works-tab-content" role="tabpanel" aria-labelledby={`work-tab-${tab}`}>
       <p className="reference-eyebrow">{tab === "visual" ? dictionary.work.tabs.visual : dictionary.work.tabs.motion}</p>
       <h3>{title}</h3>
       <p className="works-tab-description">{description}</p>
@@ -203,6 +208,7 @@ function WorkTabPanel({ tab, dictionary, onCopyWorkLink, linkCopied }: { tab: Wo
 function WorkPanel({ dictionary, onClose }: { dictionary: PortfolioDictionary; onClose: () => void }) {
   const [tab, setTab] = useState<WorkTab>("product");
   const [linkCopied, setLinkCopied] = useState(false);
+  const tabRefs = useRef<Record<WorkTab, HTMLButtonElement | null>>({ product: null, visual: null, motion: null });
   const dialogRef = useDialogFocus(onClose);
   const handleCopyWorkLink = async () => {
     const copied = await copyText(`${window.location.origin}${window.location.pathname}${window.location.search}#work`);
@@ -216,17 +222,27 @@ function WorkPanel({ dictionary, onClose }: { dictionary: PortfolioDictionary; o
     motion: dictionary.work.tabs.motion,
   };
   const tabIcons: Record<WorkTab, IconName> = { product: "stack", visual: "sparkles", motion: "route" };
+  const tabOrder: WorkTab[] = ["product", "visual", "motion"];
+  const handleTabKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>, currentTab: WorkTab) => {
+    const currentIndex = tabOrder.indexOf(currentTab);
+    const nextIndex = event.key === "Home" ? 0 : event.key === "End" ? tabOrder.length - 1 : event.key === "ArrowRight" || event.key === "ArrowDown" ? (currentIndex + 1) % tabOrder.length : event.key === "ArrowLeft" || event.key === "ArrowUp" ? (currentIndex + tabOrder.length - 1) % tabOrder.length : -1;
+    if (nextIndex < 0) return;
+    event.preventDefault();
+    const nextTab = tabOrder[nextIndex];
+    setTab(nextTab);
+    window.setTimeout(() => tabRefs.current[nextTab]?.focus(), 0);
+  };
 
   return (
     <>
       <div className="works-veil" aria-hidden="true" onClick={onClose} />
-      <section ref={dialogRef} className="works-panel bg-card fixed inset-x-0 top-3 bottom-0 z-100 flex flex-col overflow-hidden rounded-t-3xl outline-none" data-state="open" role="dialog" aria-modal="true" aria-label={dictionary.work.panelTitle} tabIndex={-1}>
+      <section ref={dialogRef} className="works-panel bg-card fixed inset-x-0 top-3 bottom-0 z-100 flex flex-col overflow-hidden rounded-t-3xl outline-none" id="reference-work-panel" data-state="open" role="dialog" aria-modal="true" aria-label={dictionary.work.panelTitle} tabIndex={-1}>
         <header className="works-rise border-border/70 flex shrink-0 items-center gap-2 border-b px-4 py-3 sm:gap-4 sm:px-8 sm:py-4">
           <h2 id="reference-work-title">{dictionary.work.panelTitle}</h2>
           <div className="reference-work-tabs" role="tablist" aria-label={dictionary.work.panelTitle}>
             <span className="reference-tab-indicator" aria-hidden="true" />
             {(Object.keys(tabLabels) as WorkTab[]).map((value) => (
-              <button type="button" role="tab" aria-selected={tab === value} aria-controls={`painel-${value}`} className={tab === value ? "is-active" : ""} key={value} onClick={() => setTab(value)}>
+              <button ref={(node) => { tabRefs.current[value] = node; }} type="button" role="tab" id={`work-tab-${value}`} tabIndex={tab === value ? 0 : -1} aria-selected={tab === value} aria-controls={`painel-${value}`} className={tab === value ? "is-active" : ""} key={value} onKeyDown={(event) => handleTabKeyDown(event, value)} onClick={() => setTab(value)}>
                 <IconGlyph name={tabIcons[value]} className="size-3.5" />
                 <span>{tabLabels[value]}</span>
               </button>
@@ -251,7 +267,10 @@ function ContactDialog({ dictionary, onClose }: { dictionary: PortfolioDictionar
   const whatsapp = socialLinks.find((link) => link.kind === "whatsapp");
   const discord = socialLinks.find((link) => link.kind === "discord");
   const email = socialLinks.find((link) => link.kind === "email");
+  const linkedin = socialLinks.find((link) => link.kind === "linkedin");
   const [emailCopied, setEmailCopied] = useState(false);
+  const [whatsappCopied, setWhatsappCopied] = useState(false);
+  const emailHref = `mailto:${profile.email}?subject=${encodeURIComponent(dictionary.contact.emailSubject)}&body=${encodeURIComponent(dictionary.contact.emailBody)}`;
   const dialogCloseLabel = dictionary.work.panelClose;
   const dialogRef = useDialogFocus(onClose);
   const stats = [
@@ -260,27 +279,23 @@ function ContactDialog({ dictionary, onClose }: { dictionary: PortfolioDictionar
     { value: dictionary.contact.stats.response, label: dictionary.contact.stats.responseLabel },
   ];
   const copyEmail = async () => {
-    try {
-      await navigator.clipboard.writeText(profile.email);
-    } catch {
-      const textarea = document.createElement("textarea");
-      textarea.value = profile.email;
-      textarea.setAttribute("readonly", "true");
-      textarea.style.position = "fixed";
-      textarea.style.opacity = "0";
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand("copy");
-      textarea.remove();
-    }
+    const copied = await copyText(profile.email);
+    if (!copied) return;
     setEmailCopied(true);
     window.setTimeout(() => setEmailCopied(false), 2200);
+  };
+  const copyWhatsApp = async () => {
+    if (!whatsapp) return;
+    const copied = await copyText(whatsapp.href);
+    if (!copied) return;
+    setWhatsappCopied(true);
+    window.setTimeout(() => setWhatsappCopied(false), 2200);
   };
 
   return (
     <>
       <div className="works-veil profile-veil" aria-hidden="true" onClick={onClose} />
-      <section ref={dialogRef} className="profile-dialog profile-dialog-contact contact-dialog" data-panel="contact" data-state="open" role="dialog" aria-modal="true" aria-labelledby="contact-dialog-title" tabIndex={-1}>
+      <section ref={dialogRef} className="profile-dialog profile-dialog-contact contact-dialog" id="reference-contact-panel" data-panel="contact" data-state="open" role="dialog" aria-modal="true" aria-labelledby="contact-dialog-title" tabIndex={-1}>
         <div className="contact-dialog-body">
           <PanelClose label={dialogCloseLabel} onClose={onClose} />
           <div className="contact-dialog-socials" aria-label={dictionary.contact.direct}>
@@ -293,7 +308,7 @@ function ContactDialog({ dictionary, onClose }: { dictionary: PortfolioDictionar
             <span className="contact-dialog-status"><i aria-hidden="true" />{dictionary.contact.availability}</span>
           </div>
           {email && <div className="contact-dialog-email-row">
-            <a className="contact-dialog-email-link" href={email.href} onClick={() => trackTelemetry({ name: "contact_cta_click", channel: "email" })}>
+            <a className="contact-dialog-email-link" href={emailHref} onClick={() => trackTelemetry({ name: "contact_cta_click", channel: "email" })}>
               <PanelSocialGlyph kind="email" />
               <span>{profile.email}</span>
             </a>
@@ -306,15 +321,21 @@ function ContactDialog({ dictionary, onClose }: { dictionary: PortfolioDictionar
           <div className="contact-dialog-stats" aria-label={dictionary.contact.direct}>
             {stats.map((stat) => <div key={stat.label}><strong>{stat.value}</strong><span>{stat.label}</span></div>)}
           </div>
+          <div className="contact-dialog-briefing">
+            <strong>{dictionary.contact.briefingTitle}</strong>
+            <p>{dictionary.contact.briefingBody}</p>
+          </div>
           <div className="contact-dialog-actions">
             {whatsapp && <div className="contact-action-group contact-action-group-whatsapp">
               <ContactSpriteSwap base="/reference/charlles-contact-whatsapp.webp" hover="/reference/charlles-contact-whatsapp-hover.webp" />
               <a className="contact-dialog-action contact-dialog-action-primary" href={whatsapp.href} target="_blank" rel="noreferrer" onClick={() => trackTelemetry({ name: "contact_cta_click", channel: "whatsapp" })}><span className="contact-dialog-action-label">{dictionary.contact.primaryCta}</span><IconGlyph name="external-link" className="size-4" /></a>
+              <button type="button" className="contact-dialog-copy-button contact-dialog-copy-whatsapp" onClick={() => { void copyWhatsApp(); trackTelemetry({ name: "contact_cta_click", channel: "whatsapp" }); }} aria-live="polite"><IconGlyph name="copy" className="size-4" /><span>{whatsappCopied ? dictionary.contact.whatsappCopied : dictionary.contact.copyWhatsApp}</span></button>
             </div>}
             <div className="contact-action-group contact-action-group-call">
               <ContactSpriteSwap base="/reference/charlles-contact-call.webp" hover="/reference/charlles-contact-call-hover.webp" />
               <a className="contact-dialog-action contact-dialog-action-secondary" href={bookingUrl} target="_blank" rel="noreferrer" onClick={() => trackTelemetry({ name: "contact_cta_click", channel: "calendar" })}><span className="contact-dialog-call-icon"><MeetGlyph /></span><span className="contact-dialog-action-copy"><strong>{dictionary.contact.callCta}</strong><small>{dictionary.contact.callMeta}</small></span><IconGlyph name="external-link" className="size-4" /></a>
             </div>
+            {linkedin && <a className="contact-dialog-linkedin-link" href={linkedin.href} target="_blank" rel="noreferrer"><PanelSocialGlyph kind="linkedin" /><span>{dictionary.contact.linkedinCta}</span><IconGlyph name="external-link" className="size-4" /></a>}
           </div>
         </div>
       </section>
@@ -327,7 +348,7 @@ function ProfileDialog({ locale, dictionary, onClose }: { locale: Locale; dictio
   return (
     <>
       <div className="works-veil profile-veil" aria-hidden="true" onClick={onClose} />
-      <section ref={dialogRef} className="profile-dialog profile-dialog-about" data-panel="about" data-state="open" role="dialog" aria-modal="true" aria-labelledby="profile-dialog-title" tabIndex={-1}>
+      <section ref={dialogRef} className="profile-dialog profile-dialog-about" id="reference-about-panel" data-panel="about" data-state="open" role="dialog" aria-modal="true" aria-labelledby="profile-dialog-title" tabIndex={-1}>
         <div className="profile-dialog-cover">
           <Image src="/reference/charlles-toy-canonical.png" alt="" fill sizes="(max-width: 640px) 100vw, 420px" priority />
           <div className="profile-dialog-cover-tint" />

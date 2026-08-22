@@ -1,7 +1,10 @@
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-afterEach(() => cleanup());
+afterEach(() => {
+  cleanup();
+  window.history.replaceState({}, "", "/pt-BR");
+});
 
 import { PortfolioHome } from "@/components/portfolio-home";
 import { getDictionary } from "@/lib/i18n";
@@ -124,6 +127,22 @@ describe("reference-inspired localized home", () => {
     expect(screen.queryByRole("dialog", { name: "Trabalhos" })).not.toBeInTheDocument();
   });
 
+  it("moves through work tabs with arrow keys and keeps one tab tabbable", async () => {
+    renderHome();
+    fireEvent.click(screen.getByRole("button", { name: "Trabalhos" }));
+    const dialog = screen.getByRole("dialog", { name: "Trabalhos" });
+    const productTab = within(dialog).getByRole("tab", { name: /UI\/UX & Front-end/ });
+    const visualTab = within(dialog).getByRole("tab", { name: "Visual design" });
+
+    productTab.focus();
+    fireEvent.keyDown(productTab, { key: "ArrowRight" });
+
+    await waitFor(() => expect(document.activeElement).toBe(visualTab));
+    expect(visualTab).toHaveAttribute("aria-selected", "true");
+    expect(visualTab).toHaveAttribute("tabindex", "0");
+    expect(productTab).toHaveAttribute("tabindex", "-1");
+  });
+
   it("opens About and Contact as modal dialogs and closes with Escape", () => {
     renderHome();
 
@@ -154,6 +173,12 @@ describe("reference-inspired localized home", () => {
     expect(screen.queryByRole("dialog", { name: "Vamos tirar sua ideia do papel?" })).not.toBeInTheDocument();
   });
 
+  it("keeps the open panel context when switching language", () => {
+    renderHome();
+    fireEvent.click(screen.getByRole("button", { name: "Trabalhos" }));
+    expect(document.querySelector('.language-link[href="/en#work"]')).toBeInTheDocument();
+  });
+
   it("renders localized English copy and keeps the same interaction model", () => {
     renderHome("en");
 
@@ -182,6 +207,17 @@ describe("reference-inspired localized home", () => {
     fireEvent.click(trigger);
     fireEvent.pointerDown(document.body);
     expect(document.getElementById("reference-mobile-menu")).not.toBeInTheDocument();
+  });
+
+  it("moves between mobile menu items with arrow keys", async () => {
+    renderHome();
+    fireEvent.click(screen.getByRole("button", { name: /Abrir menu/i }));
+    const items = screen.getAllByRole("menuitem");
+
+    items[0].focus();
+    fireEvent.keyDown(items[0], { key: "ArrowDown" });
+
+    await waitFor(() => expect(document.activeElement).toBe(items[1]));
   });
 
   it("does not expose the old generic dashboard language", () => {
@@ -351,10 +387,21 @@ describe("contact conversion", () => {
     renderHome();
     fireEvent.click(screen.getByRole("button", { name: "Contato" }));
 
-    expect(screen.getByRole("link", { name: /charllesgst@gmail\.com/i })).toHaveAttribute("href", "mailto:charllesgst@gmail.com");
+    expect(screen.getByRole("link", { name: /charllesgst@gmail\.com/i })).toHaveAttribute("href", expect.stringContaining("mailto:charllesgst@gmail.com?subject="));
     fireEvent.click(screen.getByRole("button", { name: "Copiar e-mail" }));
 
     await waitFor(() => expect(screen.getByText("E-mail copiado")).toBeInTheDocument());
+    expect(document.execCommand).toHaveBeenCalledWith("copy");
+  });
+
+  it("offers contextual contact actions without exposing extra personal data", async () => {
+    renderHome();
+    fireEvent.click(screen.getByRole("button", { name: "Contato" }));
+
+    expect(screen.getByRole("link", { name: "Conectar no LinkedIn" })).toHaveAttribute("href", "https://www.linkedin.com/in/charlles-augusto/");
+    fireEvent.click(screen.getByRole("button", { name: "Copiar WhatsApp" }));
+
+    await waitFor(() => expect(screen.getByText("WhatsApp copiado")).toBeInTheDocument());
     expect(document.execCommand).toHaveBeenCalledWith("copy");
   });
 });

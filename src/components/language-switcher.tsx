@@ -32,7 +32,7 @@ function LocaleGlyph({ locale }: { locale: Locale }) {
   );
 }
 
-export function LanguageSwitcher({ currentLocale, label }: { currentLocale: Locale; label: string }) {
+export function LanguageSwitcher({ currentLocale, label, contextHash }: { currentLocale: Locale; label: string; contextHash?: string }) {
   return (
     <div className="language-switcher" aria-label={label}>
       {locales.map((locale) => {
@@ -43,7 +43,7 @@ export function LanguageSwitcher({ currentLocale, label }: { currentLocale: Loca
             aria-current={current ? "page" : undefined}
             aria-label={localeLabels[locale].name}
             className={current ? "language-link is-current" : "language-link"}
-            href={localePath(locale)}
+            href={`${localePath(locale)}${contextHash ? `#${contextHash}` : ""}`}
             hrefLang={locale}
             lang={locale}
             key={locale}

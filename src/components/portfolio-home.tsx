@@ -62,7 +62,7 @@ export function PortfolioHome({ locale, dictionary }: { locale: Locale; dictiona
   return (
     <div className="reference-app" id="conteudo">
       <div ref={backgroundRef}>
-        <SiteHeader locale={locale} dictionary={dictionary} onOpenWork={() => openPanel("work")} onOpenAbout={() => openPanel("about")} onOpenContact={() => openPanel("contact")} />
+        <SiteHeader locale={locale} dictionary={dictionary} activePanel={panel} onOpenWork={() => openPanel("work")} onOpenAbout={() => openPanel("about")} onOpenContact={() => openPanel("contact")} />
         <main>
           <ReferenceHero dictionary={dictionary} onOpenWork={() => openPanel("work")} />
         </main>

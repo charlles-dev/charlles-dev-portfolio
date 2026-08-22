@@ -80,6 +80,7 @@ export type PortfolioDictionary = {
     noResultsDescription: string;
     copyWorkLink: string;
     workLinkCopied: string;
+    quickLabel: string;
   };
   expertise: {
     eyebrow: string;
@@ -120,8 +121,15 @@ export type PortfolioDictionary = {
     };
     callCta: string;
     callMeta: string;
+    linkedinCta: string;
+    emailSubject: string;
+    emailBody: string;
     copyEmail: string;
     copyEmailSuccess: string;
+    copyWhatsApp: string;
+    whatsappCopied: string;
+    briefingTitle: string;
+    briefingBody: string;
   };
   footer: {
     availability: string;
@@ -243,6 +251,7 @@ const portuguese: PortfolioDictionary = {
     noResultsDescription: "Ajuste a busca ou escolha outra categoria para continuar explorando.",
     copyWorkLink: "Copiar link dos trabalhos",
     workLinkCopied: "Link copiado",
+    quickLabel: "Em 30 segundos",
   },
   expertise: {
     eyebrow: "Áreas de atuação",
@@ -310,8 +319,15 @@ const portuguese: PortfolioDictionary = {
     stats: { projects: "+20", projectsLabel: "Projetos", experience: "+5 anos", experienceLabel: "Experiência", response: "12h", responseLabel: "Resposta" },
     callCta: "Agendar uma call",
     callMeta: "30 min · Google Meet",
+    linkedinCta: "Conectar no LinkedIn",
+    emailSubject: "Conversa sobre um projeto",
+    emailBody: "Olá, Charlles!\n\nQuero conversar sobre um projeto.\n\nContexto:\nPróximo marco:\n",
     copyEmail: "Copiar e-mail",
     copyEmailSuccess: "E-mail copiado",
+    copyWhatsApp: "Copiar WhatsApp",
+    whatsappCopied: "WhatsApp copiado",
+    briefingTitle: "Para começar",
+    briefingBody: "Envie o contexto do problema, o que precisa ser construído ou melhorado e o próximo marco importante.",
   },
   footer: {
     availability: "Em contato com a comunidade",
@@ -458,6 +474,7 @@ const english: PortfolioDictionary = {
     noResultsDescription: "Adjust your search or choose another category to keep exploring.",
     copyWorkLink: "Copy work link",
     workLinkCopied: "Link copied",
+    quickLabel: "In 30 seconds",
   },
   expertise: {
     ...portuguese.expertise,
@@ -495,8 +512,15 @@ const english: PortfolioDictionary = {
     stats: { projects: "+20", projectsLabel: "Projects", experience: "+5 years", experienceLabel: "Experience", response: "12h", responseLabel: "Response" },
     callCta: "Schedule a call",
     callMeta: "30 min · Google Meet",
+    linkedinCta: "Connect on LinkedIn",
+    emailSubject: "Project conversation",
+    emailBody: "Hi, Charlles!\n\nI would like to talk about a project.\n\nContext:\nNext milestone:\n",
     copyEmail: "Copy email",
     copyEmailSuccess: "Email copied",
+    copyWhatsApp: "Copy WhatsApp",
+    whatsappCopied: "WhatsApp copied",
+    briefingTitle: "To get started",
+    briefingBody: "Share the problem context, what needs to be built or improved, and the next important milestone.",
   },
   footer: { availability: "In touch with the community", rights: "© 2026 Charlles Augusto", built: "Built with Next.js and attention to detail." },
   engineering: {
@@ -608,6 +632,7 @@ const spanish: PortfolioDictionary = {
     noResultsDescription: "Ajusta la búsqueda o elige otra categoría para seguir explorando.",
     copyWorkLink: "Copiar enlace de trabajos",
     workLinkCopied: "Enlace copiado",
+    quickLabel: "En 30 segundos",
   },
   expertise: {
     ...english.expertise,
@@ -645,8 +670,15 @@ const spanish: PortfolioDictionary = {
     stats: { projects: "+20", projectsLabel: "Proyectos", experience: "+5 años", experienceLabel: "Experiencia", response: "12h", responseLabel: "Respuesta" },
     callCta: "Agendar una llamada",
     callMeta: "30 min · Google Meet",
+    linkedinCta: "Conectar en LinkedIn",
+    emailSubject: "Conversación sobre un proyecto",
+    emailBody: "¡Hola, Charlles!\n\nQuiero conversar sobre un proyecto.\n\nContexto:\nPróximo hito:\n",
     copyEmail: "Copiar email",
     copyEmailSuccess: "Email copiado",
+    copyWhatsApp: "Copiar WhatsApp",
+    whatsappCopied: "WhatsApp copiado",
+    briefingTitle: "Para comenzar",
+    briefingBody: "Comparte el contexto del problema, qué necesita construirse o mejorarse y el próximo hito importante.",
   },
   footer: { availability: "En contacto con la comunidad", rights: "© 2026 Charlles Augusto", built: "Hecho con Next.js y atención al detalle." },
   engineering: {
