@@ -81,16 +81,28 @@ export function GameUi({ locale, snapshot, input }: GameUiProps) {
   };
 
   useEffect(() => {
-    if (!panel) return;
-    closeButtonRef.current?.focus();
+    if (panel) closeButtonRef.current?.focus();
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setPanel(null);
-      if (event.key.toLowerCase() === "m") setPanel((current) => current === "map" ? null : "map");
-      if (event.key.toLowerCase() === "j") setPanel((current) => current === "memory" ? null : "memory");
+      const target = event.target as HTMLElement | null;
+      const isEditable = Boolean(target && typeof target.matches === "function" && target.matches("input, textarea, select, [contenteditable=\"true\"]"));
+      if (isEditable || event.defaultPrevented || event.metaKey || event.ctrlKey || event.altKey) return;
+      if (event.key === "Escape") {
+        if (panel) {
+          event.preventDefault();
+          setPanel(null);
+        }
+        return;
+      }
+      if (snapshot.dialogue || snapshot.paused || snapshot.completed) return;
+      const key = event.key.toLowerCase();
+      if (key === "m" || key === "j") {
+        event.preventDefault();
+        setPanel((current) => key === "m" ? (current === "map" ? null : "map") : (current === "memory" ? null : "memory"));
+      }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [panel]);
+  }, [panel, snapshot.completed, snapshot.dialogue, snapshot.paused]);
 
   return (
     <div className="game-ui">
