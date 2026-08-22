@@ -56,3 +56,15 @@ A captura de produção em 1440×900 confirma que o canvas Babylon e o HUD narra
 O player exibido continua sendo o marcador geométrico deliberadamente provisório. Isso é uma pendência de arte, não uma falha escondida: a produção final será feita depois que a lógica estiver completa, conforme a ordem aprovada.
 
 A validação automatizada atual está em 82 testes passando, com type-check e build de produção concluídos. A antiga contagem de 61 testes permanece apenas como histórico das etapas iniciais.
+
+## QA mobile — 390×844
+
+A captura mobile confirma que o canvas vertical, o HUD, o mapa/memória, a energia e os controles touch são renderizados. Os controles possuem área de toque visível e o footer é corretamente removido em viewport estreito.
+
+Foi identificado um ponto de polish: o painel de objetivo fica alto e largo demais para 390 px, comprimindo a leitura do título do setor e sobrepondo visualmente a parte superior do diorama. Antes de considerar a UI responsiva concluída, o painel deve ser reduzido em altura, o subtítulo deve ganhar limite de linhas e os botões de mapa/memória devem manter respiro consistente. Essa correção não exige assets e será feita na etapa de polish com proxies.
+
+## Correção da validação mobile
+
+A captura v2 foi descartada porque atingiu um processo de produção antigo e exibiu a página em estado de loading/HTML sem a hidratação atual. Após reiniciar o servidor contra a build recém-compilada, a captura v3 em 390×844 confirmou a composição correta.
+
+Na captura v3, o painel de objetivo está abaixo do cabeçalho, com altura reduzida e subtítulo limitado; mapa, memória, ameaça, energia e controles touch permanecem visíveis. O diorama ocupa a maior parte da área central e não há tela vazia nem sobreposição crítica. O player permanece o proxy geométrico esperado.
