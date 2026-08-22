@@ -48,3 +48,11 @@ O player continua deliberadamente geométrico como proxy de gameplay. Nenhum ass
 | Setores e progressão | Implementados no `GameWorld` |
 | Conteúdo narrativo | Separado em módulo de dados |
 | Arte final do player | Intencionalmente bloqueada |
+
+## Captura de produção — lógica completa com proxies
+
+A captura de produção em 1440×900 confirma que o canvas Babylon e o HUD narrativo carregam juntos após a integração de save, puzzles, progressão e telegraphing. O snapshot restaurado exibe a mensagem de retorno sem bloquear a exploração. A hierarquia de objetivo, setor, mapa/memória, ameaça, Lumen, ferramentas e footer permanece legível.
+
+O player exibido continua sendo o marcador geométrico deliberadamente provisório. Isso é uma pendência de arte, não uma falha escondida: a produção final será feita depois que a lógica estiver completa, conforme a ordem aprovada.
+
+A validação automatizada atual está em 82 testes passando, com type-check e build de produção concluídos. A antiga contagem de 61 testes permanece apenas como histórico das etapas iniciais.
