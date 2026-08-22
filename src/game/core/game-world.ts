@@ -11,6 +11,7 @@ import { PuzzleSystem, type PuzzleSignal } from "../systems/puzzle-system";
 import { ThreatSystem } from "../systems/threat-system";
 import { objectiveFor, routeGate } from "../systems/progression-system";
 import { DialogueSystem } from "../systems/dialogue-system";
+import { resolveEnding } from "../systems/ending-system";
 import { InputManager } from "../input/input-manager";
 import { Player } from "../entities/player";
 import type { GameLocale } from "../data/game-copy";
@@ -476,18 +477,18 @@ export class GameWorld {
   }
 
   private confirmEnding(ending: EndingId): void {
-    if (this.store.getSnapshot().nodesRestored < 3 || !this.archiveSolved || !this.gardenWitnessed) {
-      this.store.patch({ message: "O Núcleo não aceita uma configuração sem as três testemunhas." });
+    const result = resolveEnding(this.store.getSnapshot(), ending, this.narrative);
+    if (!result.allowed || !result.ending) {
+      this.store.patch({ message: result.reason });
       return;
     }
-    const definition = this.narrative.endings[ending];
     this.store.patch({
       completed: true,
-      ending,
-      objective: `Registro concluído: ${definition.title}`,
-      message: definition.visualChange,
-      lastInteraction: `Configuração confirmada: ${definition.title}`,
-      fragmentsFound: [...new Set([...this.store.getSnapshot().fragmentsFound, "choice"])],
+      ending: result.ending,
+      objective: result.objective,
+      message: result.message,
+      lastInteraction: `Configuração confirmada: ${result.title}`,
+      fragmentsFound: result.fragmentsFound,
     });
     this.saveSystem.save(this.store.getSnapshot());
   }
