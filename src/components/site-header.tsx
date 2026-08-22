@@ -71,7 +71,7 @@ export function SiteHeader({
               <button type="button" role="menuitem" onClick={() => open(onOpenAbout)}>{dictionary.nav.about}</button>
               <button type="button" role="menuitem" onClick={() => open(onOpenContact)}>{dictionary.nav.contact}</button>
               <div className="reference-mobile-languages" role="group" aria-label={dictionary.nav.language}>
-                {(Object.keys(localeLabels) as Locale[]).map((option) => <a key={option} href={localePath(option)} aria-current={option === locale ? "page" : undefined}>{localeLabels[option].name}</a>)}
+                {(Object.keys(localeLabels) as Locale[]).map((option) => <a key={option} href={localePath(option)} hrefLang={option} lang={option} aria-current={option === locale ? "page" : undefined}>{localeLabels[option].name}</a>)}
               </div>
             </div>}
           </div>

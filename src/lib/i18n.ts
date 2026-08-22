@@ -51,6 +51,7 @@ export type PortfolioDictionary = {
     title: string;
     body: string;
     link: string;
+    socialLabel: string;
     values: Array<{ title: string; description: string; icon: IconName }>;
   };
   work: {
@@ -165,6 +166,7 @@ const portuguese: PortfolioDictionary = {
     body:
       "Meu trabalho nasce da curiosidade de entender como as coisas funcionam — e da vontade de torná-las melhores. Misturo front-end, back-end e automação para criar experiências claras, rápidas e fáceis de continuar. Gosto do detalhe visual, mas também do código que sustenta cada decisão.",
     link: "Ver perfil no LinkedIn",
+    socialLabel: "Links sociais",
     values: [
       {
         title: "Interfaces que orientam",
@@ -350,6 +352,7 @@ const english: PortfolioDictionary = {
     body:
       "My work starts with curiosity about how things work — and the desire to make them better. I move between front-end, back-end and automation to create experiences that feel clear, fast and easy to evolve. I care about visual detail, but also about the code behind every decision.",
     link: "View my LinkedIn profile",
+    socialLabel: "Social links",
     values: [
       { title: "Interfaces that guide", description: "Visual detail, rhythm and hierarchy that turn interaction into understanding.", icon: "device-laptop" },
       { title: "Connected code", description: "APIs, data and automation that help different parts of a system work together.", icon: "api" },
@@ -454,6 +457,7 @@ const spanish: PortfolioDictionary = {
     title: "Me gusta transformar la complejidad en claridad.",
     body: "Mi trabajo nace de la curiosidad por entender cómo funcionan las cosas y del deseo de mejorarlas. Me muevo entre front-end, back-end y automatización para crear experiencias claras, rápidas y fáciles de evolucionar. Me importa el detalle visual, pero también el código que sostiene cada decisión.",
     link: "Ver mi perfil en LinkedIn",
+    socialLabel: "Enlaces sociales",
     values: [
       { title: "Interfaces que guían", description: "Detalle visual, ritmo y jerarquía para convertir la interacción en comprensión.", icon: "device-laptop" },
       { title: "Código conectado", description: "APIs, datos y automatización para que las distintas partes de un sistema trabajen juntas.", icon: "api" },

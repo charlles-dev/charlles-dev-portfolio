@@ -83,9 +83,9 @@ function ContactSpriteSwap({ base, hover, className }: { base: string; hover: st
   );
 }
 
-function AboutSocialLinks() {
+function AboutSocialLinks({ label }: { label: string }) {
   return (
-    <nav className="profile-social-links" aria-label="Social links">
+    <nav className="profile-social-links" aria-label={label}>
       {socialLinks.filter((link) => link.kind !== "whatsapp").map((link) => (
         <a key={link.kind} href={link.href} target={link.kind === "email" ? undefined : "_blank"} rel={link.kind === "email" ? undefined : "noreferrer"} aria-label={link.label}>
           <PanelSocialGlyph kind={link.kind} />
@@ -303,7 +303,7 @@ function ProfileDialog({ dictionary, onClose }: { dictionary: PortfolioDictionar
           <h3>{dictionary.about.title}</h3>
           <p>{dictionary.about.body}</p>
           <p>{dictionary.expertise.description}</p>
-          <AboutSocialLinks />
+          <AboutSocialLinks label={dictionary.about.socialLabel} />
         </div>
       </section>
     </>
