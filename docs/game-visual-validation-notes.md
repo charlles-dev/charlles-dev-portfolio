@@ -19,3 +19,9 @@ A captura ainda não representa a qualidade final de arte do jogo porque os kits
 A master v2 mantém uma forma de cabelo escuro contínua, com grandes volumes conectados e sem cachos individuais em forma de bolinha. Os óculos redondos marrom-escuros permanecem legíveis em todas as poses, a pele e o moletom escuro estão consistentes e as poses cobrem idle, deslocamento, interação com terminal, uso da Lumen e dash.
 
 Ela ainda é uma folha de referência em fundo creme sólido, não um atlas transparente. Portanto, permanece como candidata visual e não como asset final. Antes da integração, será necessário gerar ou recortar estados individuais, remover o fundo com alpha real, padronizar pivô/base, conferir escala e validar cada estado contra o avatar canônico.
+
+## Revisão dos recortes candidatos
+
+A extração determinística confirmou tecnicamente cinco PNGs RGBA com alpha real e dimensões variáveis, mas a inspeção visual do idle ainda mostra áreas claras/halo e resíduos do fundo creme próximos ao contorno. Esses arquivos permanecem **candidatos técnicos rejeitados para runtime**. Eles não devem ser chamados de sprites finais nem usados para mascarar a ausência de arte aprovada.
+
+A correção adequada será uma nova extração/matting validada por pose ou uma geração individual com fundo realmente removível quando a cota estiver disponível. O critério continua sendo: silhueta limpa, contorno preservado, nenhum quadriculado/creme, alpha real e proporções consistentes entre estados.
