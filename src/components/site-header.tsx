@@ -29,6 +29,7 @@ export function SiteHeader({
     if (!menuOpen) {
       return;
     }
+    const menuButton = menuButtonRef.current;
     const focusTimer = window.setTimeout(() => firstMenuItemRef.current?.focus(), 0);
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") closeMenu();
@@ -44,7 +45,7 @@ export function SiteHeader({
       document.removeEventListener("keydown", handleKeyDown);
       document.removeEventListener("pointerdown", handlePointerDown);
       delete document.body.dataset.mobileMenuOpen;
-      menuButtonRef.current?.focus();
+      menuButton?.focus();
     };
   }, [menuOpen]);
   const open = (action: () => void) => {

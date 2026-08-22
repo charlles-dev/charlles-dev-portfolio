@@ -27,12 +27,12 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "autoprefixer": "latest",
-    "eslint": "latest",
+    "eslint": "9.39.5",
     "eslint-config-next": "latest",
     "jsdom": "latest",
     "postcss": "latest",
     "tailwindcss": "3.4.17",
-    "typescript": "latest",
+    "typescript": "5.9.3",
     "vitest": "latest"
   }
 }
