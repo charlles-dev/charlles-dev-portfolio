@@ -10,7 +10,7 @@ A direção não é pixel art, não é um render fotorealista, não é um cyberp
 
 | Regra | Aplicação |
 |---|---|
-| Identidade do protagonista | Óculos redondos marrom-escuros, cabelo cacheado escuro, pele morena, moletom carvão e silhueta toy/biscuit; não alterar sem decisão explícita |
+| Identidade do protagonista | Óculos redondos marrom-escuros, cabelo escuro contínuo e modelado como no bonequinho 3D canônico, pele morena, moletom carvão e silhueta toy/biscuit; não converter em cachos separados ou bolinhas |
 | Perspectiva | 3/4 top-down consistente; personagens e props devem compartilhar base, sombra e escala |
 | Linha | Contorno carvão escuro, firme e ligeiramente orgânico; não usar outline preto puro em tudo |
 | Paleta | Carvão `#171923`, creme `#E9D9B5`, mint `#76F0C0`, violeta `#A879FF`, âmbar `#F3A65A` |
@@ -26,9 +26,13 @@ A direção não é pixel art, não é um render fotorealista, não é um cyberp
 | Nome | Descrição | Tamanho alvo | Arquivo | Status |
 |---|---|---:|---|---|
 | `world_ref` | Cena-base com player, terminal, nó de sinal, portal, ameaça e HUD, na direção graphic novel de sinais | 2560x1440 px | `game-assets/art-directions/05-graphic-novel-sinais.png` | **Aprovado como visual target** |
-| `player_ref` | Charlles toy/biscuit fiel ao bonequinho 3D da landing page, com o cabelo original modelado e a identidade preservada | Não definido | **Somente `public/reference/charlles-toy-canonical.png` como referência** | **Bloqueado: não gerar sprite até validação explícita do cabelo** |
+| `player_ref` | Charlles toy/biscuit fiel ao bonequinho 3D da landing page, com o cabelo original contínuo/modelado e a identidade preservada | Não definido | `public/reference/charlles-toy-canonical.png` + `game-assets/production/player/player-master-reference-v2.png` | **Master v2 candidata; atlas aguardando validação final** |
 | `player_ref_graphic_novel` | Estudo intermediário que reinterpretou incorretamente o cabelo em cachos separados | 1920x1920 px | `game-assets/player/player-ref-graphic-novel.png` | **Rejeitado; arquivado, não usar** |
 | `charlles_canonical` | Avatar toy canônico do portfólio; fonte exclusiva de identidade, incluindo cabelo, óculos, rosto, pele e roupa; não alterar | conforme original | `public/reference/charlles-toy-canonical.png` | **Canônico; única fonte aprovada** |
+
+## Pipeline de produção visual
+
+A bible visual está em `docs/game-visual-bible.md`, os briefs operacionais estão em `docs/game-asset-briefs.md` e o registro de aprovação está em `game-assets/production/README.md`. Esses documentos são obrigatórios antes de promover qualquer imagem a asset final.
 
 ## Ordem de produção da vertical slice
 
@@ -97,7 +101,7 @@ O action deve ser lido em menos de um segundo: patrulha é silenciosa, alerta re
 
 ## Atlas de animação do player
 
-O atlas está **suspenso**. Nenhum frame será produzido enquanto o usuário não aprovar uma referência do player fiel ao bonequinho 3D da landing page. Os arquivos `player-ref-graphic-novel.png` e `player-ref-final.png` são estudos rejeitados por apresentarem uma interpretação incorreta do cabelo e não podem ser usados como base. Quando a produção for retomada, cada frame deverá manter o cabelo original modelado, o mesmo centro de base, a altura aparente e a proporção dos óculos.
+O atlas está **suspenso até a validação final da master v2**. Os arquivos `player-ref-graphic-novel.png`, `player-ref-final.png` e a master v1 são estudos rejeitados por apresentarem uma interpretação incorreta ou exagerada do cabelo e não podem ser usados como base. Quando a produção for retomada, cada frame deverá manter o cabelo original contínuo/modelado, o mesmo centro de base, a altura aparente e a proporção dos óculos.
 
 | Ação | Tipo | Duração alvo | Frames alvo | Observação |
 |---|---|---:|---:|---|
