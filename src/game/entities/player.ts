@@ -11,12 +11,20 @@ export interface PlayerUpdateResult {
   position: Vector3;
 }
 
+export interface PlayerBounds {
+  minX: number;
+  maxX: number;
+  minZ: number;
+  maxZ: number;
+}
+
 export class Player {
   readonly root: Mesh;
   private readonly direction = new Vector3();
   private readonly speed = 3.8;
   private dashTime = 0;
   private readonly input: InputManager;
+  private bounds: PlayerBounds = { minX: -4.9, maxX: 4.9, minZ: -2.55, maxZ: 2.75 };
 
   constructor(private readonly scene: Scene, input: InputManager) {
     this.input = input;
@@ -39,6 +47,16 @@ export class Player {
     marker.material = markerMaterial;
   }
 
+  setBounds(bounds: PlayerBounds): void {
+    this.bounds = bounds;
+    this.root.position.x = Math.max(bounds.minX, Math.min(bounds.maxX, this.root.position.x));
+    this.root.position.z = Math.max(bounds.minZ, Math.min(bounds.maxZ, this.root.position.z));
+  }
+
+  placeAt(position: Vector3): void {
+    this.root.position.copyFrom(position);
+  }
+
   update(delta: number): PlayerUpdateResult {
     const horizontal = Number(this.input.isHeld("right")) - Number(this.input.isHeld("left"));
     const vertical = Number(this.input.isHeld("down")) - Number(this.input.isHeld("up"));
@@ -52,8 +70,8 @@ export class Player {
     const distance = this.speed * multiplier * delta;
     const previous = this.root.position.clone();
     this.root.position.addInPlace(this.direction.scale(distance));
-    this.root.position.x = Math.max(-4.9, Math.min(4.9, this.root.position.x));
-    this.root.position.z = Math.max(-2.55, Math.min(2.75, this.root.position.z));
+    this.root.position.x = Math.max(this.bounds.minX, Math.min(this.bounds.maxX, this.root.position.x));
+    this.root.position.z = Math.max(this.bounds.minZ, Math.min(this.bounds.maxZ, this.root.position.z));
 
     if (this.direction.lengthSquared() > 0) {
       this.root.rotation.y = Math.atan2(this.direction.x, this.direction.z);

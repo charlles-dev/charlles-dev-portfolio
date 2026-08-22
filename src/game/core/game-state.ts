@@ -1,4 +1,12 @@
-export type ThreatState = "patrol" | "alert" | "disabled";
+import type { EndingId, RelationshipState, SectorId } from "../data/narrative-content";
+
+export type ThreatState = "patrol" | "suspicious" | "alert" | "disabled";
+
+export interface RelationshipFlags {
+  mira: RelationshipState;
+  ponto: "unknown" | "listening" | "association" | "recognition";
+  nix: RelationshipState;
+}
 
 export interface DialogueState {
   speaker: string;
@@ -17,6 +25,14 @@ export interface GameSnapshot {
   completed: boolean;
   paused: boolean;
   activeTool: "Lente" | "Pulso" | "Âncora";
+  sector: SectorId;
+  sectorTitle: string;
+  fragmentsFound: string[];
+  relationship: RelationshipFlags;
+  toolsUnlocked: Array<"Lente" | "Pulso" | "Âncora">;
+  checkpoint: string;
+  ending: EndingId | null;
+  lastInteraction: string | null;
 }
 
 export type GameListener = (snapshot: GameSnapshot) => void;
@@ -33,6 +49,14 @@ const initialSnapshot: GameSnapshot = {
   completed: false,
   paused: false,
   activeTool: "Lente",
+  sector: "hub",
+  sectorTitle: "Doca / Hub",
+  fragmentsFound: [],
+  relationship: { mira: "protocol", ponto: "unknown", nix: "protocol" },
+  toolsUnlocked: ["Lente"],
+  checkpoint: "dock",
+  ending: null,
+  lastInteraction: null,
 };
 
 export class GameStateStore {

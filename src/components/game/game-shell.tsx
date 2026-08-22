@@ -18,6 +18,14 @@ const initialSnapshot: GameSnapshot = {
   completed: false,
   paused: false,
   activeTool: "Lente",
+  sector: "hub",
+  sectorTitle: "Doca / Hub",
+  fragmentsFound: [],
+  relationship: { mira: "protocol", ponto: "unknown", nix: "protocol" },
+  toolsUnlocked: ["Lente"],
+  checkpoint: "dock",
+  ending: null,
+  lastInteraction: null,
 };
 
 export function GameShell() {

@@ -4,9 +4,21 @@ import { Mesh } from "@babylonjs/core/Meshes/mesh";
 import { MeshBuilder } from "@babylonjs/core/Meshes/meshBuilder";
 import { StandardMaterial } from "@babylonjs/core/Materials/standardMaterial";
 import { Scene } from "@babylonjs/core/scene";
+import { TransformNode } from "@babylonjs/core/Meshes/transformNode";
 import { GameStateStore } from "./game-state";
 import { InputManager } from "../input/input-manager";
 import { Player } from "../entities/player";
+import {
+  archiveDialogue,
+  coreDialogue,
+  endings,
+  gardenDialogue,
+  openingDialogue,
+  sectorOrder,
+  sectors,
+  type EndingId,
+  type SectorId,
+} from "../data/narrative-content";
 
 interface SignalNode {
   mesh: Mesh;
@@ -14,46 +26,80 @@ interface SignalNode {
   restored: boolean;
 }
 
+interface InteractionTarget {
+  mesh: Mesh;
+  sector: SectorId;
+  radius: number;
+  hint: string;
+  onInteract: () => void;
+}
+
+interface DroneParts {
+  body: Mesh;
+  light: Mesh;
+  cone: Mesh;
+}
+
 const palette = {
   ink: "#171923",
+  inkSoft: "#252837",
   cream: "#E9D9B5",
+  creamSoft: "#C9B88F",
   mint: "#76F0C0",
+  mintDark: "#327E71",
   violet: "#A879FF",
+  violetDark: "#3B2368",
   amber: "#F3A65A",
   red: "#EE6A74",
+  paper: "#F7F4E7",
 };
 
-function material(scene: Scene, name: string, color: string, emissive = "#000000"): StandardMaterial {
-  const result = new StandardMaterial(name, scene);
-  result.diffuseColor = Color3.FromHexString(color);
-  result.emissiveColor = Color3.FromHexString(emissive);
-  result.specularColor = Color3.Black();
-  return result;
-}
+const bounds: Record<SectorId, { minX: number; maxX: number; minZ: number; maxZ: number }> = {
+  hub: { minX: -5, maxX: 5, minZ: -2.7, maxZ: 2.7 },
+  archive: { minX: -5, maxX: 5, minZ: -2.7, maxZ: 2.7 },
+  garden: { minX: -5, maxX: 5, minZ: -2.7, maxZ: 2.7 },
+  core: { minX: -5, maxX: 5, minZ: -2.7, maxZ: 2.7 },
+};
 
 export class GameWorld {
   readonly player: Player;
-  private readonly nodes: SignalNode[] = [];
   private readonly input: InputManager;
   private readonly store: GameStateStore;
+  private readonly nodes: SignalNode[] = [];
+  private readonly interactions: InteractionTarget[] = [];
+  private readonly sectorRoots = {} as Record<SectorId, TransformNode>;
+  private readonly materials = new Map<string, StandardMaterial>();
+  private readonly dialogueCursors = new Map<string, number>();
+  private readonly scheduledTimeouts = new Set<number>();
   private readonly drone: Mesh;
   private readonly droneLight: Mesh;
+  private readonly droneCone: Mesh;
+  private readonly portal: Mesh;
+  private activeSector: SectorId = "hub";
   private droneTime = 0;
   private messageCooldown = 0;
   private energyTick = 0;
-  private readonly scheduledTimeouts = new Set<number>();
+  private archiveSolved = false;
+  private gardenWitnessed = false;
 
   constructor(private readonly scene: Scene, store: GameStateStore, input: InputManager) {
     this.store = store;
     this.input = input;
-    this.createDiorama();
+    for (const sector of sectorOrder) this.sectorRoots[sector] = new TransformNode(`sector-root-${sector}`, scene);
+
+    this.createHub();
+    this.createArchive();
+    const gardenDrone = this.createGarden();
+    this.drone = gardenDrone.body;
+    this.droneLight = gardenDrone.light;
+    this.droneCone = gardenDrone.cone;
+    this.createCore();
+
     this.player = new Player(scene, input);
-    this.createMira();
-    this.createSignalNodes();
-    this.createPortal();
-    const droneParts = this.createDrone();
-    this.drone = droneParts.body;
-    this.droneLight = droneParts.light;
+    this.player.setBounds(bounds.hub);
+    this.portal = this.createPortal(this.sectorRoots.hub, new Vector3(3.9, 0.9, 1.55), "hub-memory-portal");
+    this.addInteraction(this.portal, "hub", 1.45, "O portal aguarda os três sinais.", () => this.handleHubPortal());
+    this.setActiveSector("hub", false);
   }
 
   dispose(): void {
@@ -64,14 +110,14 @@ export class GameWorld {
   update(delta: number): void {
     if (this.input.consume("pause")) {
       const paused = !this.store.getSnapshot().paused;
-      this.store.patch({ paused, message: paused ? "Jogo pausado. Pressione ESC para retomar." : "Jogo retomado." });
+      this.store.patch({ paused, message: paused ? "O sinal aguarda. Pressione ESC para retomar." : "A exploração continua." });
     }
-    if (this.store.getSnapshot().paused) return;
+    if (this.store.getSnapshot().paused || this.store.getSnapshot().completed) return;
 
     const result = this.player.update(delta);
     if (result.moved) this.messageCooldown = Math.max(0, this.messageCooldown - delta);
 
-    this.updateDrone(delta);
+    if (this.activeSector === "garden") this.updateDrone(delta);
     this.handleInteractions();
     this.handleTool();
 
@@ -87,125 +133,208 @@ export class GameWorld {
     }
   }
 
-  private createDiorama(): void {
-    const groundMaterial = material(this.scene, "hub-ground", "#292B38");
-    const ground = MeshBuilder.CreateBox("hub-ground", { width: 11.6, depth: 6.8, height: 0.28 }, this.scene);
+  private material(name: string, color: string, emissive = "#000000"): StandardMaterial {
+    const key = `${name}:${color}:${emissive}`;
+    const existing = this.materials.get(key);
+    if (existing) return existing;
+    const result = new StandardMaterial(name, this.scene);
+    result.diffuseColor = Color3.FromHexString(color);
+    result.emissiveColor = Color3.FromHexString(emissive);
+    result.specularColor = Color3.Black();
+    this.materials.set(key, result);
+    return result;
+  }
+
+  private addMesh(mesh: Mesh, root: TransformNode, material: StandardMaterial): Mesh {
+    mesh.parent = root;
+    mesh.material = material;
+    return mesh;
+  }
+
+  private addInteraction(mesh: Mesh, sector: SectorId, radius: number, hint: string, onInteract: () => void): void {
+    this.interactions.push({ mesh, sector, radius, hint, onInteract });
+  }
+
+  private createBase(root: TransformNode, name: string, accent: "mint" | "violet" | "amber"): void {
+    const ground = this.addMesh(MeshBuilder.CreateBox(`${name}-ground`, { width: 11.6, depth: 6.8, height: 0.28 }, this.scene), root, this.material(`${name}-ground-material`, palette.inkSoft));
     ground.position.y = -0.18;
-    ground.material = groundMaterial;
-
-    const borderMaterial = material(this.scene, "hub-border", palette.ink);
-    const mintMaterial = material(this.scene, "hub-mint-lines", palette.mint, palette.mint);
-    const violetMaterial = material(this.scene, "hub-violet-lines", palette.violet, palette.violet);
-
+    const edge = this.material(`${name}-edge-material`, palette.ink);
+    const signal = this.material(`${name}-signal-material`, palette[accent], palette[accent]);
     for (const [index, z] of [-2.65, -1.45, -0.25, 0.95, 2.15].entries()) {
-      const line = MeshBuilder.CreateBox(`floor-line-${index}`, { width: 10.8, depth: 0.035, height: 0.018 }, this.scene);
+      const line = this.addMesh(MeshBuilder.CreateBox(`${name}-line-${index}`, { width: 10.8, depth: 0.035, height: 0.018 }, this.scene), root, index === 2 ? signal : edge);
       line.position.set(0, 0.01, z);
-      line.material = index === 2 ? mintMaterial : borderMaterial;
     }
-
     for (const x of [-5.35, 5.35]) {
-      const rail = MeshBuilder.CreateBox(`hub-rail-${x}`, { width: 0.28, depth: 6.5, height: 0.55 }, this.scene);
+      const rail = this.addMesh(MeshBuilder.CreateBox(`${name}-rail-${x}`, { width: 0.28, depth: 6.5, height: 0.55 }, this.scene), root, edge);
       rail.position.set(x, 0.2, 0);
-      rail.material = borderMaterial;
     }
-
-    const backWall = MeshBuilder.CreateBox("hub-back-wall", { width: 10.5, depth: 0.3, height: 1.4 }, this.scene);
-    backWall.position.set(0, 0.55, 2.95);
-    backWall.material = borderMaterial;
-
+    const rear = this.addMesh(MeshBuilder.CreateBox(`${name}-rear-wall`, { width: 10.5, depth: 0.3, height: 1.35 }, this.scene), root, edge);
+    rear.position.set(0, 0.55, 2.95);
     for (const x of [-4.4, -3.2, 3.1, 4.2]) {
-      const light = MeshBuilder.CreateBox(`signal-stripe-${x}`, { width: 0.07, depth: 0.15, height: 0.5 }, this.scene);
-      light.position.set(x, 0.56, 2.76);
-      light.material = x < 0 ? mintMaterial : violetMaterial;
+      const stripe = this.addMesh(MeshBuilder.CreateBox(`${name}-stripe-${x}`, { width: 0.07, depth: 0.15, height: 0.5 }, this.scene), root, x < 0 ? signal : edge);
+      stripe.position.set(x, 0.56, 2.76);
     }
-
-    const starMaterial = material(this.scene, "star-material", "#F7F4E7", "#3C405C");
-    for (let index = 0; index < 18; index += 1) {
-      const star = MeshBuilder.CreateSphere(`star-${index}`, { diameter: 0.025 + (index % 3) * 0.018, segments: 4 }, this.scene);
+    const starMaterial = this.material(`${name}-star-material`, palette.paper, palette.violetDark);
+    for (let index = 0; index < 16; index += 1) {
+      const star = this.addMesh(MeshBuilder.CreateSphere(`${name}-star-${index}`, { diameter: 0.025 + (index % 3) * 0.018, segments: 4 }, this.scene), root, starMaterial);
       star.position.set(-5.5 + ((index * 2.7) % 11), 1.8 + (index % 3) * 0.48, -3.6 + (index % 5) * 1.7);
-      star.material = starMaterial;
     }
   }
 
-  private createMira(): void {
-    const base = MeshBuilder.CreateBox("mira-terminal", { width: 1.25, depth: 0.55, height: 0.85 }, this.scene);
-    base.position.set(-3.7, 0.48, 2.1);
-    base.material = material(this.scene, "mira-terminal-material", "#463D5B");
+  private createHub(): void {
+    const root = this.sectorRoots.hub;
+    this.createBase(root, "hub", "mint");
+    const panelMaterial = this.material("hub-panel-material", "#463D5B");
+    for (const x of [-4.4, -3.2, 3.1, 4.2]) {
+      const panel = this.addMesh(MeshBuilder.CreateBox(`hub-panel-${x}`, { width: 0.62, depth: 0.18, height: 0.88 }, this.scene), root, panelMaterial);
+      panel.position.set(x, 0.72, 2.45);
+      panel.rotation.y = x < 0 ? 0.08 : -0.08;
+    }
 
-    const screen = MeshBuilder.CreateBox("mira-terminal-screen", { width: 0.76, depth: 0.03, height: 0.35 }, this.scene);
-    screen.position.set(-3.7, 0.78, 1.78);
-    screen.material = material(this.scene, "mira-screen", palette.mint, palette.mint);
-
-    const badge = MeshBuilder.CreateTorus("mira-badge", { diameter: 0.38, thickness: 0.045, tessellation: 16 }, this.scene);
-    badge.position.set(-3.05, 0.72, 1.78);
+    const terminal = this.addMesh(MeshBuilder.CreateBox("mira-terminal", { width: 1.35, depth: 0.62, height: 0.92 }, this.scene), root, panelMaterial);
+    terminal.position.set(-3.7, 0.48, 2.02);
+    const screen = this.addMesh(MeshBuilder.CreateBox("mira-terminal-screen", { width: 0.82, depth: 0.035, height: 0.36 }, this.scene), root, this.material("mira-screen-material", palette.mint, palette.mint));
+    screen.position.set(-3.7, 0.82, 1.68);
+    const badge = this.addMesh(MeshBuilder.CreateTorus("mira-badge", { diameter: 0.38, thickness: 0.045, tessellation: 16 }, this.scene), root, this.material("mira-badge-material", palette.amber, palette.amber));
+    badge.position.set(-3.02, 0.74, 1.68);
     badge.rotation.x = Math.PI / 2;
-    badge.material = material(this.scene, "mira-badge-material", palette.amber, palette.amber);
-  }
+    this.addInteraction(terminal, "hub", 1.35, "MIRA aguarda no terminal.", () => this.speak("MIRA", openingDialogue));
 
-  private createSignalNodes(): void {
-    for (const [index, position] of [new Vector3(-1.45, 0.22, 0.15), new Vector3(0, 0.22, -0.95), new Vector3(1.45, 0.22, 0.15)].entries()) {
-      const mesh = MeshBuilder.CreateCylinder(`signal-node-${index}`, { diameter: 0.48, height: 0.22, tessellation: 8 }, this.scene);
+    const nodePositions = [new Vector3(-1.45, 0.22, 0.15), new Vector3(0, 0.22, -0.95), new Vector3(1.45, 0.22, 0.15)];
+    nodePositions.forEach((position, index) => {
+      const mesh = this.addMesh(MeshBuilder.CreateCylinder(`signal-node-${index}`, { diameter: 0.48, height: 0.22, tessellation: 8 }, this.scene), root, this.material(`signal-node-material-${index}`, "#414454"));
       mesh.position.copyFrom(position);
-      mesh.material = material(this.scene, `signal-node-material-${index}`, "#414454");
-
-      const ring = MeshBuilder.CreateTorus(`signal-ring-${index}`, { diameter: 0.9, thickness: 0.045, tessellation: 24 }, this.scene);
+      const ring = this.addMesh(MeshBuilder.CreateTorus(`signal-ring-${index}`, { diameter: 0.9, thickness: 0.045, tessellation: 24 }, this.scene), root, this.material(`signal-ring-material-${index}`, palette.violet, palette.violetDark));
       ring.position.set(position.x, 0.35, position.z);
       ring.rotation.x = Math.PI / 2;
-      ring.material = material(this.scene, `signal-ring-material-${index}`, palette.violet, "#241A41");
-      this.nodes.push({ mesh, ring, restored: false });
-    }
+      const node: SignalNode = { mesh, ring, restored: false };
+      this.nodes.push(node);
+      this.addInteraction(mesh, "hub", 1.05, "Um nó de sinal aguarda uma intervenção.", () => this.restoreNode(node));
+    });
   }
 
-  private createPortal(): void {
-    const frame = MeshBuilder.CreateTorus("memory-portal", { diameter: 1.75, thickness: 0.22, tessellation: 32 }, this.scene);
-    frame.position.set(3.9, 0.9, 1.55);
+  private createArchive(): void {
+    const root = this.sectorRoots.archive;
+    this.createBase(root, "archive", "violet");
+    const shelfMaterial = this.material("archive-shelf-material", "#5C4D78");
+    for (const x of [-4.3, -2.8, 2.7, 4.25]) {
+      const shelf = this.addMesh(MeshBuilder.CreateBox(`archive-shelf-${x}`, { width: 0.72, depth: 0.42, height: 1.8 }, this.scene), root, shelfMaterial);
+      shelf.position.set(x, 0.84, 1.92);
+      const shelfLine = this.addMesh(MeshBuilder.CreateBox(`archive-shelf-line-${x}`, { width: 0.82, depth: 0.06, height: 0.06 }, this.scene), root, this.material("archive-shelf-line", palette.creamSoft));
+      shelfLine.position.set(x, 1.18, 1.68);
+    }
+    const ponto = this.addMesh(MeshBuilder.CreateCylinder("ponto-archive-marker", { diameter: 0.6, height: 0.58, tessellation: 10 }, this.scene), root, this.material("ponto-marker-material", palette.cream, palette.violetDark));
+    ponto.position.set(-3.65, 0.42, 0.2);
+    const pontoSignal = this.addMesh(MeshBuilder.CreateTorus("ponto-archive-signal", { diameter: 0.82, thickness: 0.055, tessellation: 20 }, this.scene), root, this.material("ponto-signal-material", palette.violet, palette.violet));
+    pontoSignal.position.set(-3.65, 0.8, 0.2);
+    pontoSignal.rotation.x = Math.PI / 2;
+    this.addInteraction(ponto, "archive", 1.25, "PONTO segura uma caixa sem origem.", () => this.speak("PONTO", archiveDialogue));
+
+    const modulePositions = [new Vector3(-1.2, 0.38, -0.35), new Vector3(0, 0.38, -0.35), new Vector3(1.2, 0.38, -0.35)];
+    modulePositions.forEach((position, index) => {
+      const module = this.addMesh(MeshBuilder.CreateBox(`archive-memory-module-${index}`, { width: 0.62, depth: 0.62, height: 0.48 }, this.scene), root, this.material(`archive-module-${index}`, index === 0 ? palette.mintDark : palette.violetDark));
+      module.position.copyFrom(position);
+      const window = this.addMesh(MeshBuilder.CreateDisc(`archive-memory-window-${index}`, { radius: 0.2, tessellation: 16 }, this.scene), root, this.material(`archive-window-${index}`, index === 0 ? palette.mint : palette.violet, index === 0 ? palette.mint : palette.violet));
+      window.position.set(position.x, 0.66, position.z - 0.01);
+      window.rotation.x = Math.PI / 2;
+      if (index === 0) this.addInteraction(module, "archive", 1.1, "Três módulos repetem uma frequência incompleta.", () => this.solveArchive());
+    });
+    const returnBeacon = this.addMesh(MeshBuilder.CreateCylinder("archive-return-beacon", { diameter: 0.32, height: 0.5, tessellation: 8 }, this.scene), root, this.material("archive-return-beacon-material", palette.mint, palette.mint));
+    returnBeacon.position.set(-4.65, 0.35, -2.1);
+    this.addInteraction(returnBeacon, "archive", 1.0, "Uma linha mint aponta de volta ao Hub.", () => this.setActiveSector("hub"));
+  }
+
+  private createGarden(): DroneParts {
+    const root = this.sectorRoots.garden;
+    this.createBase(root, "garden", "amber");
+    const tubeMaterial = this.material("garden-tube-material", palette.mintDark, palette.mintDark);
+    for (const [index, x] of [-4.1, -2.3, -0.5, 1.3, 3.1].entries()) {
+      const tube = this.addMesh(MeshBuilder.CreateCylinder(`garden-tube-${index}`, { diameter: 0.18, height: 2.1, tessellation: 12 }, this.scene), root, tubeMaterial);
+      tube.position.set(x, 0.28, -0.65 + (index % 2) * 0.55);
+      tube.rotation.z = index % 2 === 0 ? 0.6 : -0.6;
+    }
+    const plantMaterial = this.material("garden-plant-material", "#6D997F", "#172D2A");
+    for (const [index, position] of [new Vector3(-3.25, 0.38, 1.35), new Vector3(-1.2, 0.38, 1.18), new Vector3(1.15, 0.38, 1.42), new Vector3(3.2, 0.38, 1.12)].entries()) {
+      const pot = this.addMesh(MeshBuilder.CreateCylinder(`garden-pot-${index}`, { diameter: 0.42, height: 0.26, tessellation: 8 }, this.scene), root, this.material(`garden-pot-${index}`, palette.creamSoft));
+      pot.position.copyFrom(position);
+      const plant = this.addMesh(MeshBuilder.CreateSphere(`garden-plant-${index}`, { diameter: 0.56, segments: 8 }, this.scene), root, plantMaterial);
+      plant.position.set(position.x, position.y + 0.38, position.z);
+      plant.scaling.y = 1.45;
+    }
+    const nix = this.addMesh(MeshBuilder.CreateBox("nix-observatory-marker", { width: 0.72, depth: 0.72, height: 0.95 }, this.scene), root, this.material("nix-marker-material", palette.ink));
+    nix.position.set(-3.7, 0.58, 2.02);
+    const nixLight = this.addMesh(MeshBuilder.CreateSphere("nix-observatory-light", { diameter: 0.2, segments: 12 }, this.scene), root, this.material("nix-light-material", palette.amber, palette.amber));
+    nixLight.position.set(-3.7, 0.82, 1.63);
+    this.addInteraction(nix, "garden", 1.35, "NIX observa a passagem.", () => this.speak("NIX", gardenDialogue));
+    const exitBeacon = this.addMesh(MeshBuilder.CreateCylinder("garden-core-beacon", { diameter: 0.4, height: 0.64, tessellation: 8 }, this.scene), root, this.material("garden-core-beacon-material", palette.violet, palette.violet));
+    exitBeacon.position.set(4.25, 0.42, 1.75);
+    this.addInteraction(exitBeacon, "garden", 1.1, "O caminho para o Núcleo exige uma testemunha.", () => this.handleGardenExit());
+
+    const body = this.addMesh(MeshBuilder.CreateBox("sentinel-drone", { width: 0.68, depth: 0.68, height: 0.34 }, this.scene), root, this.material("drone-material", "#373746"));
+    body.position.set(1.8, 1.18, -1.65);
+    const light = this.addMesh(MeshBuilder.CreateSphere("sentinel-drone-light", { diameter: 0.17, segments: 8 }, this.scene), root, this.material("drone-light-material", palette.amber, palette.amber));
+    light.position.set(1.8, 1.18, -2.02);
+    const cone = this.addMesh(MeshBuilder.CreateDisc("sentinel-scan-cone", { radius: 1.45, tessellation: 3 }, this.scene), root, this.material("drone-cone-material", palette.amber, palette.amber));
+    cone.position.set(1.8, 0.04, -2.05);
+    cone.rotation.x = Math.PI / 2;
+    cone.rotation.z = Math.PI / 2;
+    cone.visibility = 0.12;
+    return { body, light, cone };
+  }
+
+  private createCore(): void {
+    const root = this.sectorRoots.core;
+    this.createBase(root, "core", "violet");
+    const platformMaterial = this.material("core-platform-material", "#4B405F");
+    const modulePositions = [new Vector3(-2.45, 0.42, 0.35), new Vector3(0, 0.42, -0.9), new Vector3(2.45, 0.42, 0.35)];
+    const endingsForModules: EndingId[] = ["archive-alive", "new-constellation", "vigil-pact"];
+    modulePositions.forEach((position, index) => {
+      const platform = this.addMesh(MeshBuilder.CreateBox(`core-platform-${index}`, { width: 1.48, depth: 1.15, height: 0.25 }, this.scene), root, platformMaterial);
+      platform.position.copyFrom(position);
+      const module = this.addMesh(MeshBuilder.CreateCylinder(`core-memory-module-${index}`, { diameter: 0.72, height: 0.5, tessellation: 8 }, this.scene), root, this.material(`core-module-material-${index}`, index === 0 ? palette.mint : index === 1 ? palette.violet : palette.amber, index === 0 ? palette.mint : index === 1 ? palette.violet : palette.amber));
+      module.position.set(position.x, position.y + 0.38, position.z);
+      const ending = endingsForModules[index];
+      this.addInteraction(module, "core", 1.2, `Configuração: ${endings[ending].title}.`, () => this.confirmEnding(ending));
+    });
+    const frame = this.createPortal(root, new Vector3(0, 1.2, 1.9), "core-memory-frame");
+    frame.scaling.setAll(1.22);
+    const center = this.addMesh(MeshBuilder.CreateDisc("core-memory-center", { radius: 0.78, tessellation: 32 }, this.scene), root, this.material("core-memory-center-material", palette.ink, palette.violetDark));
+    center.position.set(0, 1.2, 1.91);
+    center.rotation.x = Math.PI / 2;
+  }
+
+  private createPortal(root: TransformNode, position: Vector3, name: string): Mesh {
+    const frame = this.addMesh(MeshBuilder.CreateTorus(name, { diameter: 1.75, thickness: 0.22, tessellation: 32 }, this.scene), root, this.material(`${name}-material`, palette.violet, palette.violetDark));
+    frame.position.copyFrom(position);
     frame.rotation.x = Math.PI / 2;
-    frame.material = material(this.scene, "portal-material", palette.violet, "#3B2368");
-
-    const core = MeshBuilder.CreateDisc("portal-core", { radius: 0.73, tessellation: 32 }, this.scene);
-    core.position.set(3.9, 0.9, 1.56);
-    core.rotation.x = Math.PI / 2;
-    core.material = material(this.scene, "portal-core-material", "#201A38", "#201A38");
+    return frame;
   }
 
-  private createDrone(): { body: Mesh; light: Mesh } {
-    const body = MeshBuilder.CreateBox("sentinel-drone", { width: 0.6, depth: 0.6, height: 0.32 }, this.scene);
-    body.position.set(2.2, 1.15, -1.9);
-    body.material = material(this.scene, "drone-material", "#373746");
-
-    const light = MeshBuilder.CreateSphere("sentinel-drone-light", { diameter: 0.16, segments: 8 }, this.scene);
-    light.position.set(2.2, 1.15, -2.22);
-    light.material = material(this.scene, "drone-light-material", palette.amber, palette.amber);
-    return { body, light };
+  private setActiveSector(sector: SectorId, announce = true): void {
+    const previous = this.activeSector;
+    for (const id of sectorOrder) this.sectorRoots[id].setEnabled(id === sector);
+    this.activeSector = sector;
+    this.player.setBounds(bounds[sector]);
+    if (sector === "hub") this.player.placeAt(new Vector3(-4.1, 0.5, 0.95));
+    if (sector === "archive") this.player.placeAt(new Vector3(-4.45, 0.5, -1.9));
+    if (sector === "garden") this.player.placeAt(new Vector3(-4.45, 0.5, -1.85));
+    if (sector === "core") this.player.placeAt(new Vector3(0, 0.5, -2.05));
+    this.store.patch({
+      sector,
+      sectorTitle: sectors[sector].title,
+      objective: this.objectiveForSector(sector),
+      message: announce ? sectors[sector].arrival : this.store.getSnapshot().message,
+      threatState: sector === "garden" ? "patrol" : "patrol",
+      lastInteraction: previous === sector ? null : `Entrada registrada: ${sectors[sector].title}`,
+    });
   }
 
-  private updateDrone(delta: number): void {
+  private objectiveForSector(sector: SectorId): string {
     const snapshot = this.store.getSnapshot();
-    if (snapshot.threatState === "disabled") {
-      this.drone.rotation.y += delta * 1.4;
-      this.droneLight.visibility = 0.28;
-      return;
-    }
-
-    this.droneTime += delta;
-    this.drone.position.x = 2.2 + Math.sin(this.droneTime * 0.8) * 1.4;
-    this.drone.position.z = -1.8 + Math.cos(this.droneTime * 0.8) * 0.55;
-    this.droneLight.position.x = this.drone.position.x;
-    this.droneLight.position.z = this.drone.position.z - 0.32;
-    this.drone.position.y = 1.15 + Math.sin(this.droneTime * 2.2) * 0.08;
-    this.droneLight.position.y = this.drone.position.y;
-
-    const close = this.player.distanceTo(this.drone.position) < 2.25;
-    if (close && snapshot.threatState !== "alert") {
-      this.store.patch({ threatState: "alert", message: "Sentinela em alerta — use o Pulso ou atravesse com um dash." });
-    } else if (!close && snapshot.threatState === "alert" && this.messageCooldown <= 0) {
-      this.store.patch({ threatState: "patrol" });
-    }
-    const droneMaterial = this.drone.material as StandardMaterial;
-    const lightMaterial = this.droneLight.material as StandardMaterial;
-    droneMaterial.emissiveColor = Color3.FromHexString(snapshot.threatState === "alert" ? "#4A202C" : "#000000");
-    lightMaterial.diffuseColor = Color3.FromHexString(snapshot.threatState === "alert" ? palette.red : palette.amber);
-    lightMaterial.emissiveColor = lightMaterial.diffuseColor;
+    if (sector === "hub") return snapshot.nodesRestored > 0 ? "Siga o sinal violeta até o Arquivo." : "Descubra por que a Orbe-9 reconheceu a Lumen.";
+    if (sector === "archive") return this.archiveSolved ? "Leve a frequência recuperada ao Jardim Orbital." : "Ajude PONTO a associar os três módulos de memória.";
+    if (sector === "garden") return this.gardenWitnessed ? "Atravesse a passagem que NIX deixou aberta." : "Atravesse a passarela sem repetir o medo de NIX.";
+    return "Decida o que a Orbe-9 deve lembrar.";
   }
 
   private handleInteractions(): void {
@@ -215,47 +344,123 @@ export class GameWorld {
       this.store.patch({ dialogue: null, message: "A estação aguardou a próxima ação." });
       return;
     }
-
-    const nearbyNode = this.nodes.find((node) => this.player.distanceTo(node.mesh.position) < 1.05 && !node.restored);
-    if (nearbyNode) {
-      nearbyNode.restored = true;
-      nearbyNode.mesh.material = material(this.scene, `restored-node-${nearbyNode.mesh.name}`, palette.mint, palette.mint);
-      nearbyNode.ring.material = material(this.scene, `restored-ring-${nearbyNode.ring.name}`, palette.mint, palette.mint);
-      const restored = snapshot.nodesRestored + 1;
-      this.store.patch({
-        nodesRestored: restored,
-        objective: restored === 3 ? "Atravesse o portal de memória" : "Reative os três nós de sinal",
-        message: restored === 3 ? "Os três sinais responderam. O portal de memória está aberto." : `Nó restaurado. ${3 - restored} ainda aguardando energia.`,
-      });
+    const target = this.interactions.find((candidate) => candidate.sector === this.activeSector && this.player.distanceTo(candidate.mesh.position) < candidate.radius);
+    if (target) {
+      target.onInteract();
       return;
     }
+    this.store.patch({ message: "A Lumen encontra apenas silêncio aqui. Procure um sinal, personagem ou passagem." });
+  }
 
-    if (this.player.distanceTo(new Vector3(-3.7, 0.5, 2.1)) < 1.35) {
-      this.store.patch({ dialogue: { speaker: "MIRA", text: "Você trouxe a Lumen. Se o núcleo ainda lembra de algo, os três sinais vão responder." }, message: "MIRA compartilhou uma pista sobre os nós." });
+  private speak(character: string, lines: Array<{ speaker: "MIRA" | "PONTO" | "NIX" | "CHARLLES" | "NÚCLEO"; text: string }>): void {
+    const cursor = this.dialogueCursors.get(character) ?? 0;
+    const line = lines[Math.min(cursor, lines.length - 1)];
+    this.dialogueCursors.set(character, cursor >= lines.length - 1 ? 0 : cursor + 1);
+    const patch: Parameters<GameStateStore["patch"]>[0] = {
+      dialogue: line,
+      message: `${character} deixou um sinal no registro.`,
+      lastInteraction: `Transmissão recebida: ${character}`,
+    };
+    if (character === "MIRA" && cursor >= 2) patch.relationship = { ...this.store.getSnapshot().relationship, mira: "doubt" };
+    if (character === "PONTO") patch.relationship = { ...this.store.getSnapshot().relationship, ponto: "listening" };
+    if (character === "NIX" && cursor >= 2) {
+      this.gardenWitnessed = true;
+      const fragmentsFound = this.store.getSnapshot().fragmentsFound.includes("damage") ? this.store.getSnapshot().fragmentsFound : [...this.store.getSnapshot().fragmentsFound, "damage"];
+      patch.relationship = { ...this.store.getSnapshot().relationship, nix: "recognition" };
+      patch.fragmentsFound = fragmentsFound;
+      patch.message = "NIX registrou a ação antes de registrar a ameaça.";
+      patch.lastInteraction = "Testemunho de dano recuperado";
+    }
+    this.store.patch(patch);
+  }
+
+  private restoreNode(node: SignalNode): void {
+    if (node.restored) {
+      this.store.patch({ message: "Este sinal já foi respondido. A estação espera os outros dois." });
       return;
     }
+    node.restored = true;
+    node.mesh.material = this.material(`restored-node-${node.mesh.name}`, palette.mint, palette.mint);
+    node.ring.material = this.material(`restored-ring-${node.ring.name}`, palette.mint, palette.mint);
+    const restored = this.store.getSnapshot().nodesRestored + 1;
+    const fragmentsFound = this.store.getSnapshot().fragmentsFound.includes("arrival") ? this.store.getSnapshot().fragmentsFound : [...this.store.getSnapshot().fragmentsFound, "arrival"];
+    this.store.patch({
+      nodesRestored: restored,
+      fragmentsFound,
+      objective: restored === 1 ? "Entre no Arquivo e descubra o que foi escondido." : restored === 3 ? "O portal de memória reconhece uma passagem." : "Reative os sinais restantes no Hub.",
+      message: restored === 3 ? "Os três sinais responderam. O portal de memória está aberto." : `Sinal ${String(restored).padStart(2, "0")} restaurado. A rota mudou.`,
+      lastInteraction: `Nó de sinal ${String(restored).padStart(2, "0")} restaurado`,
+    });
+  }
 
-    if (this.player.distanceTo(new Vector3(3.9, 0.9, 1.55)) < 1.45) {
-      if (snapshot.nodesRestored === 3) {
-        this.store.patch({ completed: true, objective: "Slice concluída — a estação voltou a respirar", message: "O núcleo reconheceu uma nova configuração de memória." });
-      } else {
-        this.store.patch({ message: "O portal ainda precisa dos três sinais restaurados." });
-      }
+  private handleHubPortal(): void {
+    const snapshot = this.store.getSnapshot();
+    if (snapshot.nodesRestored === 0) {
+      this.store.patch({ message: "O portal mostra uma memória sem entrada. Primeiro, responda a um nó." });
       return;
     }
+    this.setActiveSector("archive");
+  }
 
-    this.store.patch({ message: "Aproxime-se de um nó, de MIRA ou do portal para interagir." });
+  private solveArchive(): void {
+    if (this.archiveSolved) {
+      this.store.patch({ message: "PONTO já associou os módulos. O Jardim aguarda do outro lado." });
+      return;
+    }
+    this.archiveSolved = true;
+    const snapshot = this.store.getSnapshot();
+    const fragmentsFound = snapshot.fragmentsFound.includes("unowned") ? snapshot.fragmentsFound : [...snapshot.fragmentsFound, "unowned"];
+    this.store.patch({
+      fragmentsFound,
+      toolsUnlocked: ["Lente", "Pulso"],
+      objective: "Leve a frequência recuperada ao Jardim Orbital.",
+      message: "Os módulos não formavam uma ordem. Formavam uma relação.",
+      lastInteraction: "Fragmento associado: a caixa sem origem",
+      relationship: { ...snapshot.relationship, ponto: "association" },
+    });
+  }
+
+  private handleGardenExit(): void {
+    if (!this.archiveSolved) {
+      this.store.patch({ message: "O Jardim não responde a uma estação que ainda não escutou PONTO." });
+      return;
+    }
+    if (!this.gardenWitnessed) {
+      this.store.patch({ message: "NIX ainda observa. Converse com a sentinela ou atravesse o cone sem forçar passagem." });
+      return;
+    }
+    this.setActiveSector("core");
+  }
+
+  private confirmEnding(ending: EndingId): void {
+    if (this.store.getSnapshot().nodesRestored < 1 || !this.archiveSolved || !this.gardenWitnessed) {
+      this.store.patch({ message: "O Núcleo não aceita uma configuração sem as três testemunhas." });
+      return;
+    }
+    const definition = endings[ending];
+    this.store.patch({
+      completed: true,
+      ending,
+      objective: `Registro concluído: ${definition.title}`,
+      message: definition.visualChange,
+      lastInteraction: `Configuração confirmada: ${definition.title}`,
+      fragmentsFound: [...new Set([...this.store.getSnapshot().fragmentsFound, "choice"])],
+    });
   }
 
   private handleTool(): void {
     if (!this.input.consume("tool")) return;
     const snapshot = this.store.getSnapshot();
+    if (!snapshot.toolsUnlocked.includes("Pulso")) {
+      this.store.patch({ message: "A Lente encontrou o caminho. O Pulso ainda precisa de uma frequência associada." });
+      return;
+    }
     if (snapshot.energy < 12) {
       this.store.patch({ message: "A Lumen precisa de energia para emitir outro Pulso." });
       return;
     }
-    if (this.player.distanceTo(this.drone.position) < 1.85 && snapshot.threatState !== "disabled") {
-      this.store.patch({ energy: snapshot.energy - 12, threatState: "disabled", message: "Pulso Lumen emitido. O sentinela foi desativado por alguns segundos." });
+    if (this.activeSector === "garden" && this.player.distanceTo(this.drone.position) < 2.1 && snapshot.threatState !== "disabled") {
+      this.store.patch({ energy: snapshot.energy - 12, threatState: "disabled", message: "Pulso Lumen emitido. A sentinela abriu uma janela de passagem.", lastInteraction: "Drone estabilizado por 3,2 s" });
       this.messageCooldown = 2.2;
       const timeout = window.setTimeout(() => {
         this.scheduledTimeouts.delete(timeout);
@@ -265,6 +470,44 @@ export class GameWorld {
       this.scheduledTimeouts.add(timeout);
       return;
     }
-    this.store.patch({ energy: Math.max(0, snapshot.energy - 4), message: "A Lumen escaneou o setor. Há três sinais próximos." });
+    this.store.patch({ energy: Math.max(0, snapshot.energy - 4), message: `A Lente percorreu o setor ${sectors[this.activeSector].title}. Um sinal responde ao longe.` });
+  }
+
+  private updateDrone(delta: number): void {
+    const snapshot = this.store.getSnapshot();
+    if (snapshot.threatState === "disabled") {
+      this.drone.rotation.y += delta * 1.4;
+      this.droneLight.visibility = 0.28;
+      this.droneCone.visibility = 0.04;
+      return;
+    }
+    this.droneTime += delta;
+    this.drone.position.x = 1.8 + Math.sin(this.droneTime * 0.8) * 1.65;
+    this.drone.position.z = -1.6 + Math.cos(this.droneTime * 0.8) * 0.62;
+    this.droneLight.position.x = this.drone.position.x;
+    this.droneLight.position.z = this.drone.position.z - 0.37;
+    this.drone.position.y = 1.18 + Math.sin(this.droneTime * 2.2) * 0.08;
+    this.droneLight.position.y = this.drone.position.y;
+    this.droneCone.position.x = this.drone.position.x;
+    this.droneCone.position.z = this.drone.position.z - 0.35;
+
+    const distance = this.player.distanceTo(this.drone.position);
+    const nextThreat = distance < 1.55 ? "alert" : distance < 2.65 ? "suspicious" : "patrol";
+    if (nextThreat !== snapshot.threatState && this.messageCooldown <= 0) {
+      this.store.patch({ threatState: nextThreat, message: nextThreat === "alert" ? "NIX encontrou a assinatura. Use o Pulso ou recue." : nextThreat === "suspicious" ? "O cone de varredura procura um padrão conhecido." : "A sentinela voltou a patrulhar." });
+      this.messageCooldown = 0.8;
+    }
+    const droneMaterial = this.drone.material as StandardMaterial;
+    const lightMaterial = this.droneLight.material as StandardMaterial;
+    const coneMaterial = this.droneCone.material as StandardMaterial;
+    const isAlert = nextThreat === "alert";
+    const isSuspicious = nextThreat === "suspicious";
+    droneMaterial.emissiveColor = Color3.FromHexString(isAlert ? "#4A202C" : isSuspicious ? "#3D3020" : "#000000");
+    lightMaterial.diffuseColor = Color3.FromHexString(isAlert ? palette.red : isSuspicious ? palette.amber : palette.amber);
+    lightMaterial.emissiveColor = lightMaterial.diffuseColor;
+    coneMaterial.diffuseColor = Color3.FromHexString(isAlert ? palette.red : palette.amber);
+    coneMaterial.emissiveColor = coneMaterial.diffuseColor;
+    this.droneCone.visibility = isAlert ? 0.22 : isSuspicious ? 0.14 : 0.08;
+
   }
 }
