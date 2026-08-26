@@ -25,9 +25,13 @@ describe("localized portfolio narrative", () => {
     renderHome();
 
     expect(screen.getByRole("heading", { level: 1, name: /Engenharia por baixo\. Experiência por inteiro/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Trabalhos" })).toHaveAttribute("href", "#work");
-    expect(screen.getByRole("link", { name: "Sobre" })).toHaveAttribute("href", "#about");
-    expect(screen.getByRole("link", { name: "Contato" })).toHaveAttribute("href", "#contact");
+    expect(screen.queryByRole("link", { name: "Trabalhos" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Sobre" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Contato" })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Charlles.dev" })).toHaveAttribute("href", "/pt-BR");
+    expect(screen.getByRole("link", { name: "Português" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("link", { name: "English" })).toHaveAttribute("href", "/en");
+    expect(screen.getByRole("link", { name: "Español" })).toHaveAttribute("href", "/es");
     expect(screen.queryByRole("link", { name: "Agora" })).not.toBeInTheDocument();
     expect(document.querySelector(".reference-video-scrub")).toHaveAttribute("poster", "/reference/charlles-hero-two-state-poster.webp");
     expect(screen.getAllByRole("link", { name: "Email" })[0]).toHaveAttribute("href", "mailto:hello@charlles.dev");
@@ -116,24 +120,18 @@ describe("localized portfolio narrative", () => {
   it("renders localized English copy with the same structure", () => {
     renderHome("en");
     expect(screen.getByRole("heading", { level: 1, name: /Engineering underneath/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Work" })).toHaveAttribute("href", "#work");
+    expect(screen.queryByRole("link", { name: "Work" })).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: /charlles\.dev/i })).toHaveAttribute("href", "/en");
   });
 });
 
 describe("navigation and hero behavior", () => {
-  it("opens the compact menu, supports arrows and restores focus", async () => {
+  it("keeps the hero chrome limited to the brand and language links", () => {
     renderHome();
-    const trigger = screen.getByRole("button", { name: /Abrir menu/i });
-    trigger.focus();
-    fireEvent.click(trigger);
-    const first = screen.getByRole("menuitem", { name: "Trabalhos" });
-    await waitFor(() => expect(document.activeElement).toBe(first));
-    fireEvent.keyDown(first, { key: "ArrowDown" });
-    await waitFor(() => expect(document.activeElement).toBe(screen.getByRole("menuitem", { name: "Sobre" })));
-    fireEvent.keyDown(document, { key: "Escape" });
-    expect(screen.queryByRole("menu")).not.toBeInTheDocument();
-    expect(document.activeElement).toBe(trigger);
+    const header = document.querySelector(".reference-header") as HTMLElement;
+    expect(within(header).getAllByRole("link")).toHaveLength(4);
+    expect(within(header).queryByRole("button")).not.toBeInTheDocument();
+    expect(within(header).queryByRole("link", { name: "Trabalhos" })).not.toBeInTheDocument();
   });
 
   it("scrubs the hero video after metadata loads", async () => {
