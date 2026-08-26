@@ -109,7 +109,7 @@ export const profile: Profile = {
     "Meu foco é entregar produtos digitais simples de entender, bem documentados e úteis para fluxos reais. A página mostra projetos, decisões técnicas, ferramentas e credenciais que sustentam meu trabalho como desenvolvedor.",
   tagline: "interface / código / automação",
   location: "Campina Grande-PB, Brazil",
-  email: "charllesgst@gmail.com"
+  email: "hello@charlles.dev"
 };
 
 export const navItems: NavItem[] = [
@@ -143,7 +143,7 @@ export const socialLinks: SocialLink[] = [
   },
   {
     label: "Email",
-    href: "mailto:charllesgst@gmail.com",
+    href: "mailto:hello@charlles.dev",
     kind: "email"
   }
 ];

@@ -30,7 +30,7 @@ describe("localized portfolio narrative", () => {
     expect(screen.getByRole("link", { name: "Contato" })).toHaveAttribute("href", "#contact");
     expect(screen.queryByRole("link", { name: "Agora" })).not.toBeInTheDocument();
     expect(document.querySelector(".reference-video-scrub")).toHaveAttribute("poster", "/reference/charlles-hero-two-state-poster.webp");
-    expect(screen.getAllByRole("link", { name: "Email" })[0]).toHaveAttribute("href", "mailto:charllesgst@gmail.com");
+    expect(screen.getAllByRole("link", { name: "Email" })[0]).toHaveAttribute("href", "mailto:hello@charlles.dev");
   });
 
   it("renders selected public work, inline about and the full journey", () => {
@@ -55,7 +55,7 @@ describe("localized portfolio narrative", () => {
 
     expect(within(contact).getByRole("link", { name: /Chamar no WhatsApp/i })).toHaveAttribute("href", "https://wa.me/5583991141561");
     expect(within(contact).getByRole("link", { name: /Agendar uma call/i })).toHaveAttribute("href", "https://cal.com/charlles-dev/call");
-    expect(within(contact).getByRole("link", { name: "Email" })).toHaveAttribute("href", expect.stringMatching(/^mailto:charllesgst@gmail\.com\?subject=.+&body=.+/));
+    expect(within(contact).getByRole("link", { name: "Email" })).toHaveAttribute("href", expect.stringMatching(/^mailto:hello@charlles\.dev\?subject=.+&body=.+/));
     expect(within(contact).getByRole("link", { name: "Discord" })).toHaveAttribute("href", "https://discord.com/users/472347892728987658");
     expect(contact.querySelector('video[src="/reference/contact/charlles-whatsapp.mp4"]')).toBeInTheDocument();
     expect(contact.querySelector('video[src="/reference/contact/charlles-call.mp4"]')).toBeInTheDocument();

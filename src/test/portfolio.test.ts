@@ -24,7 +24,7 @@ describe("portfolio content", () => {
     expect(profile.tagline).not.toMatch(/cyber e IA/i);
     expect(profile.tagline).not.toMatch(/Campina Grande/i);
     expect(profile.location).toBe("Campina Grande-PB, Brazil");
-    expect(profile.email).toBe("charllesgst@gmail.com");
+    expect(profile.email).toBe("hello@charlles.dev");
   });
 
   it("defines the premium-controlled now signals contract", () => {
