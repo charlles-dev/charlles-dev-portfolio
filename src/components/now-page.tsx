@@ -46,6 +46,7 @@ export function NowPage({ locale, dictionary }: { locale: Locale; dictionary: Po
           <p className="reference-eyebrow">{copy.eyebrow}</p>
           <h1 id="now-title">{copy.title}</h1>
           <p className="engineering-description">{copy.description}</p>
+          <time className="now-updated" dateTime={copy.updatedDate}>{copy.updatedLabel}</time>
           <div className="engineering-intro-line" aria-hidden="true"><span /><span /><span /></div>
         </section>
 

@@ -18,8 +18,8 @@ describe("not found page", () => {
     expect(screen.getByRole("link", { name: dictionary.notFound.work })).toHaveAttribute("href", `/${locale}#work`);
     expect(screen.getByRole("link", { name: dictionary.notFound.about })).toHaveAttribute("href", `/${locale}#about`);
     expect(screen.getByRole("link", { name: dictionary.notFound.contact })).toHaveAttribute("href", `/${locale}#contact`);
-    expect(screen.getByRole("link", { name: dictionary.notFound.processCta })).toHaveAttribute("href", `/${locale}/process`);
-    expect(screen.getByRole("link", { name: dictionary.notFound.engineeringCta })).toHaveAttribute("href", `/${locale}/engineering`);
+    expect(screen.queryByRole("link", { name: dictionary.notFound.processCta })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: dictionary.notFound.engineeringCta })).not.toBeInTheDocument();
     expect(screen.getByText(dictionary.notFound.routeStatus)).toBeInTheDocument();
   });
 

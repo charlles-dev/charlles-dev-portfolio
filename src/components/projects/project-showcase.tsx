@@ -32,7 +32,7 @@ function matchesQuery(project: PortfolioProject, query: string) {
 
 function FeaturedProjectCard({ project, dictionary, index }: { project: PortfolioProject; dictionary: PortfolioDictionary; index: number }) {
   return (
-    <a className="featured-project" href={project.htmlUrl} target="_blank" rel="noreferrer" aria-label={`${project.displayName} — ${dictionary.work.openProject}`}>
+    <a className="featured-project" href={project.htmlUrl} target="_blank" rel="noreferrer" aria-label={`${project.displayName}: ${dictionary.work.openProject}`}>
       <div className="project-index">0{index + 1}</div>
       <div className="project-topline">
         <span className="project-type">{dictionary.work.featuredLabel}</span>

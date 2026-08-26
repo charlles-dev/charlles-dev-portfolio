@@ -4,11 +4,9 @@ import { notFound } from "next/navigation";
 import { PortfolioHome } from "@/components/portfolio-home";
 import { fallbackProjectsPayload } from "@/lib/projects/fallback";
 import { getDictionary, isLocale, localePath, locales, type Locale } from "@/lib/i18n";
-import { profile, projects, socialLinks } from "@/lib/portfolio";
+import { profile, socialLinks } from "@/lib/portfolio";
 
 const siteUrl = "https://www.charlles.dev";
-const ogImagePath = "/reference/charlles-og-image.png";
-
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
@@ -19,12 +17,14 @@ export async function generateMetadata({ params }: PageProps<"/[locale]">): Prom
   const dictionary = getDictionary(rawLocale);
   const canonicalPath = localePath(rawLocale);
   const canonicalUrl = `${siteUrl}${canonicalPath}`;
+  const ogImagePath = `${canonicalPath}/opengraph-image`;
   const alternateLocales = { "pt-BR": `${siteUrl}/pt-BR`, en: `${siteUrl}/en`, es: `${siteUrl}/es` };
 
   return {
     title: dictionary.meta.title,
     description: dictionary.meta.description,
     keywords: dictionary.meta.keywords,
+    referrer: "origin-when-cross-origin",
     alternates: {
       canonical: canonicalUrl,
       languages: { ...alternateLocales, "x-default": `${siteUrl}/pt-BR` },
@@ -44,6 +44,7 @@ export async function generateMetadata({ params }: PageProps<"/[locale]">): Prom
       title: dictionary.meta.title,
       description: dictionary.meta.description,
       images: [ogImagePath],
+      creator: "@charlles_dev",
     },
   };
 }
@@ -55,16 +56,18 @@ export default async function LocalePage({ params }: PageProps<"/[locale]">) {
   const dictionary = getDictionary(locale);
   const canonicalUrl = `${siteUrl}${localePath(locale)}`;
   const sameAs = socialLinks.filter((link) => link.kind !== "email").map((link) => link.href);
-  const projectItems = projects.map((project) => {
-    const copy = dictionary.projects[project.name];
+  const projectItems = fallbackProjectsPayload.projects.map((project) => {
+    const copy = dictionary.projects[project.displayName];
     return {
-      "@type": "CreativeWork",
+      "@type": "SoftwareSourceCode",
       name: project.name,
-      url: project.href,
-      description: copy?.summary ?? project.description,
+      url: project.htmlUrl,
+      codeRepository: project.htmlUrl,
+      programmingLanguage: project.language || undefined,
+      description: copy?.summary ?? project.summary,
       inLanguage: locale,
       creator: { "@id": `${siteUrl}/#person` },
-      keywords: [project.language, copy?.category ?? project.categoryLabel].filter(Boolean),
+      keywords: [project.language, dictionary.work.filters[project.category], ...project.tags].filter(Boolean),
     };
   });
   const jsonLd = {
@@ -79,6 +82,17 @@ export default async function LocalePage({ params }: PageProps<"/[locale]">) {
         publisher: { "@id": `${siteUrl}/#person` },
       },
       {
+        "@type": "WebPage",
+        "@id": canonicalUrl,
+        name: dictionary.meta.title,
+        description: dictionary.meta.description,
+        url: canonicalUrl,
+        inLanguage: locale,
+        isPartOf: { "@id": `${siteUrl}/#website` },
+        primaryImageOfPage: { "@type": "ImageObject", url: `${siteUrl}${localePath(locale)}/opengraph-image`, width: 1200, height: 630 },
+        mainEntity: { "@id": `${siteUrl}/#person` },
+      },
+      {
         "@type": "Person",
         "@id": `${siteUrl}/#person`,
         name: profile.name,
@@ -89,7 +103,7 @@ export default async function LocalePage({ params }: PageProps<"/[locale]">) {
         description: dictionary.meta.description,
         address: { "@type": "PostalAddress", addressLocality: "Campina Grande", addressCountry: "BR" },
         sameAs,
-        knowsAbout: ["Web development", "Software engineering", "TypeScript", "React", "Next.js", "Automation", "Applied security"],
+        knowsAbout: ["Full-stack software engineering", "TypeScript", "React", "Next.js", "Go", "Process automation", "Computer networks", "Applied cybersecurity", "Embedded systems"],
       },
       {
         "@type": "ProfilePage",

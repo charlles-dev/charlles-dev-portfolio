@@ -9,22 +9,16 @@ import { localeLabels, localePath, type Locale, type PortfolioDictionary } from 
 export function SiteHeader({
   locale,
   dictionary,
-  onOpenWork,
-  onOpenAbout,
-  onOpenContact,
-  activePanel,
+  contextHash,
 }: {
   locale: Locale;
   dictionary: PortfolioDictionary;
-  onOpenWork: () => void;
-  onOpenAbout: () => void;
-  onOpenContact: () => void;
-  activePanel: "work" | "about" | "contact" | null;
+  contextHash?: string;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
-  const firstMenuItemRef = useRef<HTMLButtonElement>(null);
+  const firstMenuItemRef = useRef<HTMLAnchorElement>(null);
   const menuItemsRef = useRef<Array<HTMLElement | null>>([]);
   const closeMenu = () => setMenuOpen(false);
 
@@ -55,15 +49,10 @@ export function SiteHeader({
     const key = event.key;
     if (!["ArrowDown", "ArrowRight", "ArrowUp", "ArrowLeft", "Home", "End"].includes(key)) return;
     event.preventDefault();
-    const menuItemCount = 4;
+    const menuItemCount = 3;
     const nextIndex = key === "Home" ? 0 : key === "End" ? menuItemCount - 1 : key === "ArrowUp" || key === "ArrowLeft" ? (index + menuItemCount - 1) % menuItemCount : (index + 1) % menuItemCount;
     menuItemsRef.current[nextIndex]?.focus();
   };
-  const open = (action: () => void) => {
-    action();
-    closeMenu();
-  };
-
   return (
     <header className="reference-header">
       <div className="reference-header-inner">
@@ -71,21 +60,19 @@ export function SiteHeader({
 
           <Image className="reference-brand-mark" src="/assets/charlles-dev.svg" alt="Charlles.dev" width={34} height={34} priority />
         </a>
-          <nav className="reference-nav" aria-label={dictionary.nav.main}>
-          <button type="button" className={activePanel === "work" ? "is-active" : undefined} aria-haspopup="dialog" aria-expanded={activePanel === "work"} aria-controls={activePanel === "work" ? "reference-work-panel" : undefined} onClick={onOpenWork}>{dictionary.nav.work}</button>
-          <button type="button" className={activePanel === "about" ? "is-active" : undefined} aria-haspopup="dialog" aria-expanded={activePanel === "about"} aria-controls={activePanel === "about" ? "reference-about-panel" : undefined} onClick={onOpenAbout}>{dictionary.nav.about}</button>
-          <button type="button" className={activePanel === "contact" ? "is-active" : undefined} aria-haspopup="dialog" aria-expanded={activePanel === "contact"} aria-controls={activePanel === "contact" ? "reference-contact-panel" : undefined} onClick={onOpenContact}>{dictionary.nav.contact}</button>
-          <a className="reference-nav-now" href={`${localePath(locale)}/now`}>{dictionary.nav.now}</a>
-          <LanguageSwitcher currentLocale={locale} label={dictionary.nav.language} contextHash={activePanel ?? undefined} />
+        <nav className="reference-nav" aria-label={dictionary.nav.main}>
+          <a href="#work">{dictionary.nav.work}</a>
+          <a href="#about">{dictionary.nav.about}</a>
+          <a href="#contact">{dictionary.nav.contact}</a>
+          <LanguageSwitcher currentLocale={locale} label={dictionary.nav.language} contextHash={contextHash} />
           <div className="reference-mobile-menu-wrap" ref={menuRef}>
             <button ref={menuButtonRef} type="button" className="reference-mobile-menu-button" aria-label={dictionary.nav.menu} aria-expanded={menuOpen} aria-controls="reference-mobile-menu" onClick={() => setMenuOpen((value) => !value)}><span aria-hidden="true">☰</span></button>
             {menuOpen && <div className="reference-mobile-menu" id="reference-mobile-menu" role="menu" aria-label={dictionary.nav.menu}>
-              <button ref={(node) => { firstMenuItemRef.current = node; menuItemsRef.current[0] = node; }} type="button" role="menuitem" className={activePanel === "work" ? "is-active" : undefined} aria-current={activePanel === "work" ? "true" : undefined} onKeyDown={(event) => handleMenuKeyDown(event, 0)} onClick={() => open(onOpenWork)}>{dictionary.nav.work}</button>
-              <button ref={(node) => { menuItemsRef.current[1] = node; }} type="button" role="menuitem" className={activePanel === "about" ? "is-active" : undefined} aria-current={activePanel === "about" ? "true" : undefined} onKeyDown={(event) => handleMenuKeyDown(event, 1)} onClick={() => open(onOpenAbout)}>{dictionary.nav.about}</button>
-              <button ref={(node) => { menuItemsRef.current[2] = node; }} type="button" role="menuitem" className={activePanel === "contact" ? "is-active" : undefined} aria-current={activePanel === "contact" ? "true" : undefined} onKeyDown={(event) => handleMenuKeyDown(event, 2)} onClick={() => open(onOpenContact)}>{dictionary.nav.contact}</button>
-              <a ref={(node) => { menuItemsRef.current[3] = node; }} href={`${localePath(locale)}/now`} role="menuitem" onKeyDown={(event) => handleMenuKeyDown(event, 3)}>{dictionary.nav.now}</a>
+              <a ref={(node) => { firstMenuItemRef.current = node; menuItemsRef.current[0] = node; }} href="#work" role="menuitem" onKeyDown={(event) => handleMenuKeyDown(event, 0)} onClick={closeMenu}>{dictionary.nav.work}</a>
+              <a ref={(node) => { menuItemsRef.current[1] = node; }} href="#about" role="menuitem" onKeyDown={(event) => handleMenuKeyDown(event, 1)} onClick={closeMenu}>{dictionary.nav.about}</a>
+              <a ref={(node) => { menuItemsRef.current[2] = node; }} href="#contact" role="menuitem" onKeyDown={(event) => handleMenuKeyDown(event, 2)} onClick={closeMenu}>{dictionary.nav.contact}</a>
               <div className="reference-mobile-languages" role="group" aria-label={dictionary.nav.language}>
-                {(Object.keys(localeLabels) as Locale[]).map((option) => <a key={option} href={`${localePath(option)}${activePanel ? `#${activePanel}` : ""}`} hrefLang={option} lang={option} aria-current={option === locale ? "page" : undefined}>{localeLabels[option].name}</a>)}
+                {(Object.keys(localeLabels) as Locale[]).map((option) => <a key={option} href={`${localePath(option)}${contextHash ? `#${contextHash}` : ""}`} hrefLang={option} lang={option} aria-current={option === locale ? "page" : undefined}>{localeLabels[option].name}</a>)}
               </div>
             </div>}
           </div>

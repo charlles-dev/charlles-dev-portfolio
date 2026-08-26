@@ -1,13 +1,26 @@
 import type { Metadata, Viewport } from "next";
+import localFont from "next/font/local";
 import { notFound } from "next/navigation";
-import { JetBrains_Mono, Space_Grotesk } from "next/font/google";
 
 import "../globals.css";
 import { Intro } from "@/components/intro";
 import { isLocale, locales } from "@/lib/i18n";
 
-const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-sans" });
-const jetBrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
+const spaceGrotesk = localFont({
+  src: "../../assets/fonts/space-grotesk-latin-variable.woff2",
+  variable: "--font-sans",
+  weight: "300 700",
+  style: "normal",
+  display: "swap",
+});
+
+const jetBrainsMono = localFont({
+  src: "../../assets/fonts/jetbrains-mono-latin-variable.woff2",
+  variable: "--font-mono",
+  weight: "100 800",
+  style: "normal",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.charlles.dev"),
@@ -48,7 +61,6 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   return (
     <html lang={rawLocale} className={`${spaceGrotesk.variable} ${jetBrainsMono.variable}`}>
       <body>
-        <script dangerouslySetInnerHTML={{ __html: 'history.scrollRestoration="manual"; addEventListener("pageshow",function(){scrollTo(0,0)});' }} />
         <Intro />
         <a className="skip-link" href="#conteudo">{rawLocale === "pt-BR" ? "Pular para o conteúdo" : rawLocale === "en" ? "Skip to content" : "Saltar al contenido"}</a>
         {children}

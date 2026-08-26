@@ -13,6 +13,7 @@ import copyIcon from "@iconify-icons/tabler/copy";
 import databaseIcon from "@iconify-icons/tabler/database";
 import deviceLaptopIcon from "@iconify-icons/tabler/device-laptop";
 import externalLinkIcon from "@iconify-icons/tabler/external-link";
+import brandDiscordIcon from "@iconify-icons/tabler/brand-discord";
 import brandGithubIcon from "@iconify-icons/tabler/brand-github";
 import brandLinkedinIcon from "@iconify-icons/tabler/brand-linkedin";
 import mailIcon from "@iconify-icons/tabler/mail";
@@ -59,6 +60,7 @@ const icons = {
   database: databaseIcon,
   "device-laptop": deviceLaptopIcon,
   "external-link": externalLinkIcon,
+  discord: brandDiscordIcon,
   github: brandGithubIcon,
   linkedin: brandLinkedinIcon,
   mail: mailIcon,

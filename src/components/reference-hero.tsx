@@ -45,9 +45,8 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
   const github = socialLinks.find((link) => link.kind === "github");
   const linkedIn = socialLinks.find((link) => link.kind === "linkedin");
   const discord = socialLinks.find((link) => link.kind === "discord");
-  const whatsapp = socialLinks.find((link) => link.kind === "whatsapp");
   const email = socialLinks.find((link) => link.kind === "email");
-  const heroLines = dictionary.hero.headline.replace(". ", ".\n");
+  const heroLines = dictionary.hero.headline.match(/[^.]+\.?/g)?.map((line) => line.trim()).filter(Boolean) ?? [dictionary.hero.headline];
   const isScrolled = scrollProgress > 0.08;
   const loopState: LoopState = scrollProgress <= SCROLL_VIDEO_START ? "idle" : scrollProgress >= SCROLL_VIDEO_END ? "awake" : "transition";
   const isLooping = loopState !== "transition";
@@ -244,7 +243,9 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
         <div className="reference-hero-content">
           <div className="reference-hero-copy">
             <p className="reference-eyebrow">{dictionary.hero.eyebrow}</p>
-            <h1 id="reference-hero-title">{heroLines}</h1>
+            <h1 id="reference-hero-title" aria-label={dictionary.hero.headline}>
+              {heroLines.map((line) => <span className="reference-hero-line" aria-hidden="true" key={line}><span>{line}</span></span>)}
+            </h1>
             <p className="reference-hero-description">{dictionary.hero.description}</p>
             <button type="button" className="reference-primary-button" onClick={onOpenWork}>
               {dictionary.hero.primaryCta}<IconGlyph name="arrow-right" className="size-4" />
@@ -256,7 +257,6 @@ export function ReferenceHero({ dictionary, onOpenWork }: { dictionary: Portfoli
           {github && <a href={github.href} target="_blank" rel="noreferrer" aria-label="GitHub"><SocialGlyph kind="github" /><span>GitHub</span></a>}
           {linkedIn && <a href={linkedIn.href} target="_blank" rel="noreferrer" aria-label="LinkedIn"><SocialGlyph kind="linkedin" /><span>LinkedIn</span></a>}
           {discord && <a href={discord.href} target="_blank" rel="noreferrer" aria-label="Discord"><SocialGlyph kind="discord" /><span>Discord</span></a>}
-          {whatsapp && <a href={whatsapp.href} target="_blank" rel="noreferrer" aria-label="WhatsApp"><SocialGlyph kind="whatsapp" /><span>WhatsApp</span></a>}
           {email && <a href={email.href} aria-label="Email"><SocialGlyph kind="email" /><span>Email</span></a>}
         </aside>
 

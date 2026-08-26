@@ -52,6 +52,8 @@ export type PortfolioDictionary = {
     title: string;
     body: string;
     link: string;
+    mediaAlt: string;
+    mediaCaption: string;
     socialLabel: string;
     values: Array<{ title: string; description: string; icon: IconName }>;
   };
@@ -78,6 +80,10 @@ export type PortfolioDictionary = {
     updated: string;
     noResults: string;
     noResultsDescription: string;
+    publicOnly: string;
+    loadingProjects: string;
+    liveSource: string;
+    fallbackSource: string;
     copyWorkLink: string;
     workLinkCopied: string;
     copyCaseLink: string;
@@ -90,6 +96,20 @@ export type PortfolioDictionary = {
     description: string;
     items: Array<{ title: string; description: string; tools: string[]; icon: IconName }>;
   };
+  journey: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    sections: Array<{
+      id: "education" | "certifications" | "stack";
+      eyebrow: string;
+      title: string;
+      description: string;
+      mediaLabel: string;
+      mediaCaption: string;
+      items: Array<{ label: string; title: string; description: string; tags: string[] }>;
+    }>;
+  };
   now: {
     eyebrow: string;
     title: string;
@@ -99,6 +119,8 @@ export type PortfolioDictionary = {
     breadcrumbHome: string;
     breadcrumbCurrent: string;
     openProject: string;
+    updatedLabel: string;
+    updatedDate: string;
     items: Array<{
       label: string;
       title: string;
@@ -118,25 +140,11 @@ export type PortfolioDictionary = {
     specialty: string;
     availability: string;
     cardTitle: string;
-    stats: {
-      projects: string;
-      projectsLabel: string;
-      experience: string;
-      experienceLabel: string;
-      response: string;
-      responseLabel: string;
-    };
+    cardBody: string;
     callCta: string;
     callMeta: string;
-    linkedinCta: string;
     emailSubject: string;
     emailBody: string;
-    copyEmail: string;
-    copyEmailSuccess: string;
-    copyWhatsApp: string;
-    whatsappCopied: string;
-    briefingTitle: string;
-    briefingBody: string;
   };
   notFound: {
     eyebrow: string;
@@ -196,11 +204,11 @@ export type PortfolioDictionary = {
 
 const portuguese: PortfolioDictionary = {
   meta: {
-    title: "Charlles Augusto | Desenvolvedor web e software",
+    title: "Charlles Augusto | Engenheiro de Software Full Stack",
     description:
-      "Portfólio de Charlles Augusto, desenvolvedor web e de software em Campina Grande. Interfaces, sistemas, Next.js, TypeScript e automação.",
-    keywords: ["Charlles Augusto", "desenvolvedor web", "desenvolvedor de software", "Next.js", "TypeScript", "React", "automação de processos", "interfaces digitais", "Campina Grande"],
-    ogAlt: "Charlles Augusto — desenvolvedor web, interfaces e automação",
+      "Projetos públicos de Charlles Augusto em Next.js, TypeScript, Go, automação e sistemas conectados, com decisões técnicas e código no GitHub.",
+    keywords: ["Charlles Augusto", "engenheiro de software full stack", "desenvolvedor Next.js", "desenvolvedor TypeScript", "Go", "React", "automação de processos", "GitHub", "Campina Grande"],
+    ogAlt: "Personagem 3D de Charlles Augusto na cena escura que abre o portfólio",
   },
   nav: {
     work: "Trabalhos",
@@ -213,14 +221,14 @@ const portuguese: PortfolioDictionary = {
   },
   hero: {
     eyebrow: "Software · interfaces · sistemas",
-    headline: "Construo experiências digitais que fazem sentido.",
+    headline: "Engenharia por baixo. Experiência por inteiro.",
     description:
-      "Sou Charlles Augusto, desenvolvedor de software de Campina Grande. Trabalho entre interface, lógica e automação para transformar ideias em experiências claras, funcionais e bem acabadas.",
-    primaryCta: "Conheça meu trabalho",
+      "No charlles.dev, Next.js conversa com GitHub, o vídeo responde ao scroll e cada projeto expõe problema, decisão e código. Sou Charlles Augusto, engenheiro de software full stack em Campina Grande.",
+    primaryCta: "Ver decisões no código",
     secondaryCta: "Conectar no LinkedIn",
     scrollLabel: "Role para explorar",
     tagline: "interface / código / automação",
-    role: "Desenvolvedor de software",
+    role: "Engenheiro de software full stack",
     status: "Construindo com intenção",
     facts: [
       { label: "Base", value: "Campina Grande, Brasil" },
@@ -230,34 +238,36 @@ const portuguese: PortfolioDictionary = {
   },
   about: {
     eyebrow: "Sobre o meu trabalho",
-    title: "Eu gosto de transformar complexidade em clareza.",
+    title: "Eu começo pelo que precisa funcionar. O visual vem junto.",
     body:
-      "Meu trabalho nasce da curiosidade de entender como as coisas funcionam — e da vontade de torná-las melhores. Misturo front-end, back-end e automação para criar experiências claras, rápidas e fáceis de continuar. Gosto do detalhe visual, mas também do código que sustenta cada decisão.",
+      "Transito entre interface, backend e automação. Aqui isso aparece em dados do GitHub, conteúdo em três idiomas, estados acessíveis e mídia que não bloqueia a leitura. O detalhe visual não encobre o código; ele explica o que o sistema está fazendo.",
     link: "Ver perfil no LinkedIn",
+    mediaAlt: "Charlles seguindo com uma lanterna um cabo interrompido no escuro",
+    mediaCaption: "Primeiro descubro onde quebrou",
     socialLabel: "Links sociais",
     values: [
       {
-        title: "Interfaces que orientam",
-        description: "Detalhe visual, ritmo e hierarquia para transformar interação em entendimento.",
+        title: "A interface dá pistas",
+        description: "Hierarquia, estados e movimento mostram o que aconteceu e para onde seguir.",
         icon: "device-laptop",
       },
       {
-        title: "Código que conecta",
-        description: "APIs, dados e automações que fazem diferentes partes de um sistema trabalharem juntas.",
+        title: "As pontas precisam conversar",
+        description: "APIs, dados e automações só entram quando reduzem uma passagem manual ou uma dúvida do usuário.",
         icon: "api",
       },
       {
-        title: "Base que sustenta",
-        description: "Performance, acessibilidade e segurança presentes desde as primeiras decisões.",
+        title: "O caso ruim também é projeto",
+        description: "Carregamento, falha, teclado, conexão lenta e movimento reduzido entram antes da publicação.",
         icon: "shield",
       },
     ],
   },
   work: {
     eyebrow: "Trabalho público, contexto real",
-    title: "Projetos que mostram como eu penso e construo.",
+    title: "Código aberto. Decisões à vista.",
     description:
-      "Uma seleção de projetos públicos com problema, decisão técnica e próximo passo. Menos vitrine genérica; mais evidência do processo.",
+      "Aqui nenhum projeto aparece só pela stack. Cada recorte mostra o problema, a decisão técnica, o próximo passo e o repositório onde tudo pode ser conferido.",
     panelTitle: "Trabalhos",
     panelClose: "Fechar",
     tabs: { product: "UI/UX & Front-end", visual: "Visual design", motion: "Motion" },
@@ -284,11 +294,15 @@ const portuguese: PortfolioDictionary = {
     updated: "Atualizado em",
     noResults: "Nenhum repositório encontrado",
     noResultsDescription: "Ajuste a busca ou escolha outra categoria para continuar explorando.",
+    publicOnly: "Somente repositórios públicos",
+    loadingProjects: "Buscando repositórios públicos…",
+    liveSource: "Sincronizado com o GitHub",
+    fallbackSource: "Cópia local segura",
     copyWorkLink: "Copiar link dos trabalhos",
     workLinkCopied: "Link copiado",
     copyCaseLink: "Copiar link do case",
     caseLinkCopied: "Link do case copiado",
-    quickLabel: "Em 30 segundos",
+    quickLabel: "Resumo técnico",
   },
   expertise: {
     eyebrow: "Áreas de atuação",
@@ -313,15 +327,64 @@ const portuguese: PortfolioDictionary = {
       },
     ],
   },
+  journey: {
+    eyebrow: "Fora do GitHub",
+    title: "O código mostra o que construí. Aqui entra o que fui estudar.",
+    description: "Cibersegurança no Hackers do Bem, fundamentos de IA na IBM SkillsBuild e visão computacional na Geração Caldeira. Certificados e ferramentas entram como contexto, não como substitutos da prática.",
+    sections: [
+      {
+        id: "education",
+        eyebrow: "Educação",
+        title: "Estudar, testar, quebrar, entender. A ordem varia.",
+        description: "Uso essas trilhas para fechar lacunas que aparecem nos projetos: redes e risco, fundamentos de IA e análise de imagens.",
+        mediaLabel: "Charlles estudando um diagrama de sistemas ao lado de livros",
+        mediaCaption: "aprendizado em andamento",
+        items: [
+          { label: "Segurança", title: "Hackers do Bem", description: "Formação voltada a fundamentos de cibersegurança e à leitura mais crítica de sistemas, redes e riscos.", tags: ["Cibersegurança", "Redes", "Fundamentos"] },
+          { label: "Inteligência artificial", title: "IBM SkillsBuild", description: "Estudo dos fundamentos de IA, seus usos e os cuidados necessários para aplicar a tecnologia com contexto.", tags: ["IA", "Dados", "Aplicação"] },
+          { label: "Visão computacional", title: "Geração Caldeira", description: "Trilha prática sobre imagens, modelos e formas de transformar percepção computacional em solução.", tags: ["Computer Vision", "Python", "Modelos"] },
+        ],
+      },
+      {
+        id: "certifications",
+        eyebrow: "Certificações",
+        title: "Certificados ajudam. Saber onde aplicar ajuda mais.",
+        description: "Eles registram partes da jornada. O valor aparece quando o conteúdo melhora uma decisão técnica, uma revisão ou a próxima pergunta.",
+        mediaLabel: "Charlles fixando um selo verde em um painel de credenciais",
+        mediaCaption: "conhecimento validado",
+        items: [
+          { label: "Geração Caldeira", title: "Visão computacional", description: "Fundamentos e prática de soluções baseadas em análise de imagens.", tags: ["Computer Vision", "IA"] },
+          { label: "IBM SkillsBuild", title: "AI Fundamentals", description: "Conceitos essenciais, aplicações e implicações da inteligência artificial.", tags: ["AI", "Fundamentos"] },
+          { label: "Cisco", title: "Endpoint Security", description: "Proteção de dispositivos, vetores de ameaça e princípios de defesa.", tags: ["Endpoint", "Segurança"] },
+          { label: "RNP / Softex", title: "Hackers do Bem", description: "Formação introdutória e nivelamento em cibersegurança.", tags: ["Cybersecurity", "Redes"] },
+        ],
+      },
+      {
+        id: "stack",
+        eyebrow: "Tech Stack",
+        title: "Ferramentas mudam. O critério fica.",
+        description: "Escolho tecnologia pelo problema, pela manutenção e por quem vai continuar o trabalho. Ainda assim, estas são as peças que mais aparecem na bancada.",
+        mediaLabel: "Charlles conectando módulos de software em um sistema",
+        mediaCaption: "módulos em sintonia",
+        items: [
+          { label: "Interface", title: "Web que explica o que está fazendo", description: "Componentes, rotas e estados construídos com hierarquia, acessibilidade e resposta rápida.", tags: ["React", "Next.js", "TypeScript"] },
+          { label: "Backend", title: "Lógica que não aparece, mas sustenta", description: "APIs, serviços e automações com limites claros e espaço para crescer sem drama.", tags: ["Python", "Go", "Node.js"] },
+          { label: "Infra e prática", title: "Do pacote à rede", description: "Ferramentas para investigar, integrar e operar sistemas além da camada visual.", tags: ["Networking", "Cybersecurity", "Automação"] },
+        ],
+      },
+    ],
+  },
   now: {
     eyebrow: "Agora",
     title: "O que estou desenvolvendo e aprofundando.",
-    description: "Três focos atuais, mantidos como sinais de direção — não como um feed de atualizações.",
+    description: "Três focos atuais, mantidos como sinais de direção, não como um feed de atualizações.",
     routeLabel: "Agora em foco",
     breadcrumbLabel: "Navegação estrutural",
     breadcrumbHome: "Início",
     breadcrumbCurrent: "Agora",
     openProject: "Abrir projeto",
+    updatedLabel: "Atualizado em 25 ago 2026",
+    updatedDate: "2026-08-25",
     items: [
       {
         label: "Projeto em foco",
@@ -349,35 +412,28 @@ const portuguese: PortfolioDictionary = {
   },
   contact: {
     eyebrow: "Vamos conversar",
-    title: "Se existe algo interessante para construir, vamos conversar.",
+    title: "Um bom projeto costuma começar com um problema bem explicado.",
     description:
-      "Gosto de conhecer pessoas, trocar ideias e colaborar em projetos que valorizem clareza, curiosidade e trabalho bem feito.",
+      "Se você já sabe o que precisa construir ou só consegue apontar onde está doendo, mande o contexto. Eu leio antes de responder.",
     primaryCta: "Chamar no WhatsApp",
     secondaryCta: "Enviar um e-mail",
     direct: "Canais diretos",
-    specialty: "UI/UX Designer & Front-end",
-    availability: "Disponível",
-    cardTitle: "Vamos tirar sua ideia do papel?",
-    stats: { projects: "+20", projectsLabel: "Projetos", experience: "+5 anos", experienceLabel: "Experiência", response: "12h", responseLabel: "Resposta" },
+    specialty: "Engenheiro de software full stack",
+    availability: "Mensagem direta",
+    cardTitle: "Onde o sistema está travando?",
+    cardBody: "Mande o contexto pelo WhatsApp ou reserve 15 ou 30 minutos no calendário. Sem formulário e sem discurso pronto.",
     callCta: "Agendar uma call",
-    callMeta: "30 min · Google Meet",
-    linkedinCta: "Conectar no LinkedIn",
+    callMeta: "15 ou 30 min · chamada online",
     emailSubject: "Conversa sobre um projeto",
     emailBody: "Olá, Charlles!\n\nQuero conversar sobre um projeto.\n\nContexto:\nPróximo marco:\n",
-    copyEmail: "Copiar e-mail",
-    copyEmailSuccess: "E-mail copiado",
-    copyWhatsApp: "Copiar WhatsApp",
-    whatsappCopied: "WhatsApp copiado",
-    briefingTitle: "Para começar",
-    briefingBody: "Envie o contexto do problema, o que precisa ser construído ou melhorado e o próximo marco importante.",
   },
   notFound: {
     eyebrow: "Rota não encontrada",
-    title: "O avatar está procurando esse caminho.",
-    description: "A página saiu do mapa, mas os próximos caminhos continuam disponíveis.",
+    title: "Iluminei o caminho. A página não apareceu.",
+    description: "Essa rota se perdeu no escuro. Os caminhos úteis continuam logo ao lado.",
     routeLabel: "404 / rota ausente",
     routeStatus: "status: rota não localizada",
-    avatarAlt: "Avatar Charlles procurando a rota perdida",
+    avatarAlt: "Charlles iluminando possíveis caminhos com uma lanterna",
     signTitle: "Escolha um caminho",
     work: "Ver trabalhos",
     about: "Conhecer o perfil",
@@ -451,6 +507,24 @@ const portuguese: PortfolioDictionary = {
     note: "Estas notas descrevem decisões já presentes no código. Elas não são métricas de performance nem uma promessa de disponibilidade.",
   },
   projects: {
+    "charlles-dev-portfolio": {
+      summary: "Portfólio em Next.js com dados públicos do GitHub, três idiomas e vídeo controlado pelo scroll.",
+      problem: "Mostrar trabalho full stack sem reduzir cada projeto a uma imagem bonita e uma lista de tecnologias.",
+      decision: "Buscar dados públicos do GitHub no servidor, localizar a narrativa em três idiomas e sincronizar vídeo, conteúdo e scroll sem bloquear a leitura.",
+      next: "Publicar métricas reais de desempenho e documentar a evolução visual como um estudo de caso aberto.",
+      category: "Web",
+      metric: "Next.js · GitHub",
+      reason: "O próprio portfólio como prova técnica",
+    },
+    trakr: {
+      summary: "Maleta inteligente que identifica ferramentas por RFID/NFC e conecta um ESP32 a uma interface em Kotlin.",
+      problem: "Perceber uma ferramenta ausente antes de a equipe fechar a maleta e deixar o local de trabalho.",
+      decision: "Distribuir a leitura dos identificadores no ESP32 e concentrar inventário, estados e alertas na aplicação Kotlin.",
+      next: "Validar leituras simultâneas, falso-positivos e uso offline com a maleta física montada.",
+      category: "Sistema conectado",
+      metric: "Kotlin · ESP32",
+      reason: "Software conversando com o mundo físico",
+    },
     astrolink: {
       summary: "Infraestrutura e software para vender e gerenciar acesso Wi-Fi em redes locais com Starlink.",
       problem: "Como levar uma operação de conectividade de baixo custo a comunidades e áreas remotas.",
@@ -484,24 +558,24 @@ const portuguese: PortfolioDictionary = {
 const english: PortfolioDictionary = {
   ...portuguese,
   meta: {
-    title: "Charlles Augusto | Web and software developer",
+    title: "Charlles Augusto | Full-Stack Software Engineer",
     description:
-      "Portfolio of Charlles Augusto, a web and software developer in Brazil building interfaces, systems, Next.js, TypeScript and automation.",
-    keywords: ["Charlles Augusto", "web developer", "software developer", "Next.js", "TypeScript", "React", "process automation", "digital interfaces", "Brazil"],
-    ogAlt: "Charlles Augusto — web development, interfaces and automation",
+      "Public projects by Charlles Augusto in Next.js, TypeScript, Go, automation and connected systems, with technical decisions and code on GitHub.",
+    keywords: ["Charlles Augusto", "full-stack software engineer", "Next.js developer", "TypeScript developer", "Go", "React", "process automation", "GitHub", "Brazil"],
+    ogAlt: "Charlles Augusto's 3D character in the dark scene that opens the portfolio",
   },
   nav: { work: "Work", about: "About", now: "Now", contact: "Contact", menu: "Open menu", main: "Main navigation", language: "Language" },
   hero: {
     ...portuguese.hero,
     eyebrow: "Software · interfaces · systems",
-    headline: "I build digital experiences that make sense.",
+    headline: "Engineering underneath. A complete experience on top.",
     description:
-      "I’m Charlles Augusto, a software developer based in Campina Grande, Brazil. I work across interfaces, logic and automation to turn ideas into clear, useful and well-crafted experiences.",
-    primaryCta: "See my work",
+      "On charlles.dev, Next.js talks to GitHub, video responds to scroll and every project exposes the problem, decision and code. I’m Charlles Augusto, a full-stack software engineer in Campina Grande, Brazil.",
+    primaryCta: "See the decisions in code",
     secondaryCta: "Connect on LinkedIn",
     scrollLabel: "Scroll to explore",
     tagline: "interface / code / automation",
-    role: "Software developer",
+    role: "Full-stack software engineer",
     status: "Building with intention",
     facts: [
       { label: "Based in", value: "Campina Grande, Brazil" },
@@ -512,22 +586,24 @@ const english: PortfolioDictionary = {
   about: {
     ...portuguese.about,
     eyebrow: "About my work",
-    title: "I like turning complexity into clarity.",
+    title: "I start with what must work. The visual layer comes with it.",
     body:
-      "My work starts with curiosity about how things work — and the desire to make them better. I move between front-end, back-end and automation to create experiences that feel clear, fast and easy to evolve. I care about visual detail, but also about the code behind every decision.",
+      "I move between interfaces, backend and automation. Here that means GitHub data, three languages, accessible states and media that never blocks the reading. Visual detail does not hide the code; it explains what the system is doing.",
     link: "View my LinkedIn profile",
+    mediaAlt: "Charlles following a broken cable through the dark with a flashlight",
+    mediaCaption: "First, find where it broke",
     socialLabel: "Social links",
     values: [
-      { title: "Interfaces that guide", description: "Visual detail, rhythm and hierarchy that turn interaction into understanding.", icon: "device-laptop" },
-      { title: "Connected code", description: "APIs, data and automation that help different parts of a system work together.", icon: "api" },
-      { title: "A solid foundation", description: "Performance, accessibility and security considered from the first decision.", icon: "shield" },
+      { title: "The interface leaves clues", description: "Hierarchy, states and motion show what happened and where to go next.", icon: "device-laptop" },
+      { title: "The ends must talk", description: "APIs, data and automation belong where they remove a manual handoff or a user doubt.", icon: "api" },
+      { title: "Failure is part of the build", description: "Loading, errors, keyboard use, slow connections and reduced motion are handled before release.", icon: "shield" },
     ],
   },
   work: {
     ...portuguese.work,
     eyebrow: "Public work, real context",
-    title: "Projects that show how I think and build.",
-    description: "A selection of public work with the problem, technical decision and next step made visible. Less generic showcase; more evidence of process.",
+    title: "Open code. Visible decisions.",
+    description: "No project appears here as a stack alone. Each one names the problem, technical decision, next step and the repository where the work can be checked.",
     panelTitle: "Work",
     panelClose: "Close",
     tabs: { product: "UI/UX & Front-end", visual: "Visual design", motion: "Motion" },
@@ -547,11 +623,15 @@ const english: PortfolioDictionary = {
     updated: "Updated",
     noResults: "No repository found",
     noResultsDescription: "Adjust your search or choose another category to keep exploring.",
+    publicOnly: "Public repositories only",
+    loadingProjects: "Loading public repositories…",
+    liveSource: "Synced with GitHub",
+    fallbackSource: "Safe local copy",
     copyWorkLink: "Copy work link",
     workLinkCopied: "Link copied",
     copyCaseLink: "Copy case link",
     caseLinkCopied: "Case link copied",
-    quickLabel: "In 30 seconds",
+    quickLabel: "Technical brief",
   },
   expertise: {
     ...portuguese.expertise,
@@ -564,16 +644,65 @@ const english: PortfolioDictionary = {
       { title: "A dependable foundation", description: "Performance, observability and security treated as part of the product, not a patch.", tools: ["Networking", "Cisco", "Labs"], icon: "shield" },
     ],
   },
+  journey: {
+    eyebrow: "Outside GitHub",
+    title: "The code shows what I built. This is what I studied to get there.",
+    description: "Cybersecurity with Hackers do Bem, AI foundations through IBM SkillsBuild and computer vision at Geração Caldeira. Certificates and tools provide context; they do not replace practice.",
+    sections: [
+      {
+        id: "education",
+        eyebrow: "Education",
+        title: "Study, test, break, understand. The order varies.",
+        description: "I use these learning paths to close gaps that surface in projects: networks and risk, AI foundations and image analysis.",
+        mediaLabel: "Charlles studying a systems diagram beside books",
+        mediaCaption: "learning in progress",
+        items: [
+          { label: "Security", title: "Hackers do Bem", description: "Training focused on cybersecurity fundamentals and a more critical reading of systems, networks and risk.", tags: ["Cybersecurity", "Networks", "Foundations"] },
+          { label: "Artificial intelligence", title: "IBM SkillsBuild", description: "Study of AI fundamentals, its uses and the care required to apply the technology with context.", tags: ["AI", "Data", "Application"] },
+          { label: "Computer vision", title: "Geração Caldeira", description: "A practical path through images, models and ways to turn computer perception into a solution.", tags: ["Computer Vision", "Python", "Models"] },
+        ],
+      },
+      {
+        id: "certifications",
+        eyebrow: "Certifications",
+        title: "Certificates help. Knowing where to apply them helps more.",
+        description: "They record parts of the journey. Their value appears when the content improves a technical decision, a review or the next question.",
+        mediaLabel: "Charlles pinning a green badge to a credentials board",
+        mediaCaption: "validated knowledge",
+        items: [
+          { label: "Geração Caldeira", title: "Computer Vision", description: "Foundations and practice for image-analysis solutions.", tags: ["Computer Vision", "AI"] },
+          { label: "IBM SkillsBuild", title: "AI Fundamentals", description: "Core concepts, applications and implications of artificial intelligence.", tags: ["AI", "Foundations"] },
+          { label: "Cisco", title: "Endpoint Security", description: "Device protection, threat vectors and defense principles.", tags: ["Endpoint", "Security"] },
+          { label: "RNP / Softex", title: "Hackers do Bem", description: "Introductory training and foundation building in cybersecurity.", tags: ["Cybersecurity", "Networks"] },
+        ],
+      },
+      {
+        id: "stack",
+        eyebrow: "Tech Stack",
+        title: "Tools change. Judgment stays.",
+        description: "I choose technology based on the problem, maintenance and who will continue the work. Still, these are the pieces that appear most often on the bench.",
+        mediaLabel: "Charlles connecting software modules into a system",
+        mediaCaption: "modules in sync",
+        items: [
+          { label: "Interface", title: "A web that explains what it is doing", description: "Components, routes and states built with hierarchy, accessibility and fast feedback.", tags: ["React", "Next.js", "TypeScript"] },
+          { label: "Backend", title: "Logic you do not see, but rely on", description: "APIs, services and automation with clear boundaries and room to grow without drama.", tags: ["Python", "Go", "Node.js"] },
+          { label: "Infrastructure and practice", title: "From package to network", description: "Tools for investigating, integrating and operating systems beyond the visual layer.", tags: ["Networking", "Cybersecurity", "Automation"] },
+        ],
+      },
+    ],
+  },
   now: {
     ...portuguese.now,
     eyebrow: "Now",
     title: "What I’m building and deepening.",
-    description: "Three current focuses, maintained as signals of direction — not as an update feed.",
+    description: "Three current focuses, maintained as signals of direction, not as an update feed.",
     routeLabel: "Now in focus",
     breadcrumbLabel: "Breadcrumb",
     breadcrumbHome: "Home",
     breadcrumbCurrent: "Now",
     openProject: "Open project",
+    updatedLabel: "Updated Aug 25, 2026",
+    updatedDate: "2026-08-25",
     items: [
       { label: "Project in focus", title: "Astrolink in progress", description: "Structuring a low-cost solution to sell and manage Wi-Fi access on local networks using Starlink, OpenWrt, PIX and vouchers.", proof: "Go · SvelteKit · OpenWrt", icon: "network", href: "https://github.com/charlles-dev/Astrolink" },
       { label: "Recent improvement", title: "Portfolio as a product", description: "Refining the narrative, performance and presentation so the portfolio communicates real work across languages.", proof: "Next.js · TypeScript · i18n", icon: "sparkles" },
@@ -583,34 +712,27 @@ const english: PortfolioDictionary = {
   contact: {
     ...portuguese.contact,
     eyebrow: "Let’s talk",
-    title: "If there is something interesting to build, let’s talk.",
-    description: "I like meeting people, exchanging ideas and collaborating on work that values clarity, curiosity and care.",
+    title: "A good project usually starts with a well-explained problem.",
+    description: "If you know what must be built, or can only point to where it hurts, send the context. I read it before replying.",
     primaryCta: "Chat on WhatsApp",
     secondaryCta: "Send an email",
     direct: "Direct channels",
-    specialty: "UI/UX Designer & Front-end",
-    availability: "Available",
-    cardTitle: "Let’s take your idea off the page?",
-    stats: { projects: "+20", projectsLabel: "Projects", experience: "+5 years", experienceLabel: "Experience", response: "12h", responseLabel: "Response" },
+    specialty: "Full-stack software engineer",
+    availability: "Direct message",
+    cardTitle: "Where is the system getting stuck?",
+    cardBody: "Send the context on WhatsApp or book 15 or 30 minutes on the calendar. No form and no canned pitch.",
     callCta: "Schedule a call",
-    callMeta: "30 min · Google Meet",
-    linkedinCta: "Connect on LinkedIn",
+    callMeta: "15 or 30 min · online call",
     emailSubject: "Project conversation",
     emailBody: "Hi, Charlles!\n\nI would like to talk about a project.\n\nContext:\nNext milestone:\n",
-    copyEmail: "Copy email",
-    copyEmailSuccess: "Email copied",
-    copyWhatsApp: "Copy WhatsApp",
-    whatsappCopied: "WhatsApp copied",
-    briefingTitle: "To get started",
-    briefingBody: "Share the problem context, what needs to be built or improved, and the next important milestone.",
   },
   notFound: {
     eyebrow: "Route not found",
-    title: "The avatar is looking for this path.",
-    description: "This page slipped off the map, but the next paths are still open.",
+    title: "I lit the path. The page still did not show up.",
+    description: "This route got lost in the dark. The useful paths are still right beside it.",
     routeLabel: "404 / route missing",
     routeStatus: "status: route not found",
-    avatarAlt: "Charlles avatar looking for the missing route",
+    avatarAlt: "Charlles lighting possible paths with a flashlight",
     signTitle: "Pick a direction",
     work: "View work",
     about: "About me",
@@ -680,6 +802,8 @@ const english: PortfolioDictionary = {
     note: "These notes describe decisions already present in the code. They are not performance metrics or a promise of availability.",
   },
   projects: {
+    "charlles-dev-portfolio": { summary: "A Next.js portfolio with public GitHub data, three languages and video controlled by scroll.", problem: "Show full-stack work without reducing every project to a polished image and a technology list.", decision: "Fetch public GitHub data on the server, localize the narrative in three languages and synchronize video, content and scroll without blocking reading.", next: "Publish real performance metrics and document the visual evolution as an open case study.", category: "Web", metric: "Next.js · GitHub", reason: "The portfolio itself as technical evidence" },
+    trakr: { summary: "A smart tool case that identifies equipment through RFID/NFC and connects an ESP32 to a Kotlin interface.", problem: "Detect a missing tool before the team closes the case and leaves the worksite.", decision: "Distribute identifier reading to the ESP32 and centralize inventory, states and alerts in the Kotlin application.", next: "Validate simultaneous reads, false positives and offline use with the physical case assembled.", category: "Connected system", metric: "Kotlin · ESP32", reason: "Software meeting the physical world" },
     astrolink: { summary: "Infrastructure and software to sell and manage Wi-Fi access on local networks with Starlink.", problem: "How to bring a low-cost connectivity operation to remote areas and communities.", decision: "Separate a Go backend, a SvelteKit captive portal and integrations for payments, vouchers and OpenWrt.", next: "Validate the operation on real hardware and expand deployment documentation.", category: "Infrastructure", metric: "Go · connectivity", reason: "Connectivity in remote areas" },
     "laudos-proxxima": { summary: "A corporate web system to standardize, manage and speed up technical maintenance reports.", problem: "Turn field notes into consistent reports without slowing down the operation.", decision: "Combine dashboard, authentication, assisted generation, history and export in one flow.", next: "Deepen usage metrics and keep refining review and sharing workflows.", category: "Automation", metric: "TypeScript · interface", reason: "Less friction in internal operations" },
     "3035-teach": { summary: "A fullstack portfolio organizing practical training in Java, Spring Boot, React and TypeScript.", problem: "Document an extensive technical journey in a way that stays searchable, practical and reusable.", decision: "Organize modules, exercises, documentation and examples around fullstack fundamentals.", next: "Complete the advanced modules and make the documentation an even more navigable reference.", category: "Technical base", metric: "Java · learning path", reason: "Practical fullstack training" },
@@ -689,43 +813,45 @@ const english: PortfolioDictionary = {
 const spanish: PortfolioDictionary = {
   ...english,
   meta: {
-    title: "Charlles Augusto | Desarrollador web y de software",
-    description: "Portafolio de Charlles Augusto, desarrollador web y de software en Brasil: interfaces, sistemas, Next.js, TypeScript y automatización.",
-    keywords: ["Charlles Augusto", "desarrollador web", "desarrollador de software", "Next.js", "TypeScript", "React", "automatización de procesos", "interfaces digitales", "Brasil"],
-    ogAlt: "Charlles Augusto — desarrollo web, interfaces y automatización",
+    title: "Charlles Augusto | Ingeniero de Software Full Stack",
+    description: "Proyectos públicos de Charlles Augusto en Next.js, TypeScript, Go, automatización y sistemas conectados, con decisiones técnicas y código en GitHub.",
+    keywords: ["Charlles Augusto", "ingeniero de software full stack", "desarrollador Next.js", "desarrollador TypeScript", "Go", "React", "automatización de procesos", "GitHub", "Brasil"],
+    ogAlt: "Personaje 3D de Charlles Augusto en la escena oscura que abre el portafolio",
   },
   nav: { work: "Trabajos", about: "Sobre mí", now: "Ahora", contact: "Contacto", menu: "Abrir menú", main: "Navegación principal", language: "Idioma" },
   hero: {
     ...english.hero,
     eyebrow: "Software · interfaces · sistemas",
-    headline: "Construyo experiencias digitales que tienen sentido.",
-    description: "Soy Charlles Augusto, desarrollador de software en Campina Grande, Brasil. Trabajo entre interfaz, lógica y automatización para convertir ideas en experiencias claras, útiles y bien terminadas.",
-    primaryCta: "Conoce mi trabajo",
+    headline: "Ingeniería por debajo. Experiencia completa por encima.",
+    description: "En charlles.dev, Next.js conversa con GitHub, el video responde al scroll y cada proyecto expone el problema, la decisión y el código. Soy Charlles Augusto, ingeniero de software full stack en Campina Grande, Brasil.",
+    primaryCta: "Ver las decisiones en el código",
     secondaryCta: "Conectar en LinkedIn",
     scrollLabel: "Desplázate para explorar",
     tagline: "interfaz / código / automatización",
-    role: "Desarrollador de software",
+    role: "Ingeniero de software full stack",
     status: "Construyendo con intención",
     facts: [{ label: "Ubicación", value: "Campina Grande, Brasil" }, { label: "Enfoque", value: "Interfaces, sistemas y automatización" }, { label: "Método", value: "Público y documentado" }],
   },
   about: {
     ...english.about,
     eyebrow: "Sobre mi trabajo",
-    title: "Me gusta transformar la complejidad en claridad.",
-    body: "Mi trabajo nace de la curiosidad por entender cómo funcionan las cosas y del deseo de mejorarlas. Me muevo entre front-end, back-end y automatización para crear experiencias claras, rápidas y fáciles de evolucionar. Me importa el detalle visual, pero también el código que sostiene cada decisión.",
+    title: "Empiezo por lo que debe funcionar. La capa visual viene con ello.",
+    body: "Me muevo entre interfaz, backend y automatización. Aquí eso significa datos de GitHub, tres idiomas, estados accesibles y medios que nunca bloquean la lectura. El detalle visual no oculta el código; explica lo que está haciendo el sistema.",
     link: "Ver mi perfil en LinkedIn",
+    mediaAlt: "Charlles siguiendo con una linterna un cable interrumpido en la oscuridad",
+    mediaCaption: "Primero encuentro dónde se rompió",
     socialLabel: "Enlaces sociales",
     values: [
-      { title: "Interfaces que guían", description: "Detalle visual, ritmo y jerarquía para convertir la interacción en comprensión.", icon: "device-laptop" },
-      { title: "Código conectado", description: "APIs, datos y automatización para que las distintas partes de un sistema trabajen juntas.", icon: "api" },
-      { title: "Una base sólida", description: "Rendimiento, accesibilidad y seguridad considerados desde la primera decisión.", icon: "shield" },
+      { title: "La interfaz deja pistas", description: "Jerarquía, estados y movimiento muestran qué ocurrió y cuál es el siguiente paso.", icon: "device-laptop" },
+      { title: "Los extremos deben conversar", description: "APIs, datos y automatización entran cuando eliminan un paso manual o una duda del usuario.", icon: "api" },
+      { title: "El fallo también forma parte", description: "Carga, errores, teclado, conexión lenta y movimiento reducido se resuelven antes de publicar.", icon: "shield" },
     ],
   },
   work: {
     ...english.work,
     eyebrow: "Trabajo público, contexto real",
-    title: "Proyectos que muestran cómo pienso y construyo.",
-    description: "Una selección de trabajos públicos con problema, decisión técnica y próximo paso visibles. Menos vitrina genérica; más evidencia del proceso.",
+    title: "Código abierto. Decisiones a la vista.",
+    description: "Aquí ningún proyecto aparece solo por su stack. Cada recorte muestra el problema, la decisión técnica, el siguiente paso y el repositorio donde puede comprobarse.",
     panelTitle: "Trabajos",
     panelClose: "Cerrar",
     tabs: { product: "UI/UX & Front-end", visual: "Visual design", motion: "Motion" },
@@ -745,11 +871,15 @@ const spanish: PortfolioDictionary = {
     updated: "Actualizado el",
     noResults: "No se encontró ningún repositorio",
     noResultsDescription: "Ajusta la búsqueda o elige otra categoría para seguir explorando.",
+    publicOnly: "Solo repositorios públicos",
+    loadingProjects: "Buscando repositorios públicos…",
+    liveSource: "Sincronizado con GitHub",
+    fallbackSource: "Copia local segura",
     copyWorkLink: "Copiar enlace de trabajos",
     workLinkCopied: "Enlace copiado",
     copyCaseLink: "Copiar enlace del caso",
     caseLinkCopied: "Enlace del caso copiado",
-    quickLabel: "En 30 segundos",
+    quickLabel: "Resumen técnico",
   },
   expertise: {
     ...english.expertise,
@@ -762,6 +892,53 @@ const spanish: PortfolioDictionary = {
       { title: "Una base confiable", description: "Rendimiento, observabilidad y seguridad tratados como parte del producto, no como un parche.", tools: ["Networking", "Cisco", "Labs"], icon: "shield" },
     ],
   },
+  journey: {
+    eyebrow: "Fuera de GitHub",
+    title: "El código muestra lo que construí. Aquí está lo que estudié para llegar.",
+    description: "Ciberseguridad en Hackers do Bem, fundamentos de IA con IBM SkillsBuild y visión computacional en Geração Caldeira. Certificados y herramientas aportan contexto; no sustituyen la práctica.",
+    sections: [
+      {
+        id: "education",
+        eyebrow: "Educación",
+        title: "Estudiar, probar, romper, entender. El orden cambia.",
+        description: "Uso estas rutas para cerrar vacíos que aparecen en los proyectos: redes y riesgo, fundamentos de IA y análisis de imágenes.",
+        mediaLabel: "Charlles estudiando un diagrama de sistemas junto a libros",
+        mediaCaption: "aprendizaje en marcha",
+        items: [
+          { label: "Seguridad", title: "Hackers do Bem", description: "Formación centrada en fundamentos de ciberseguridad y una lectura más crítica de sistemas, redes y riesgos.", tags: ["Ciberseguridad", "Redes", "Fundamentos"] },
+          { label: "Inteligencia artificial", title: "IBM SkillsBuild", description: "Estudio de los fundamentos de IA, sus usos y los cuidados necesarios para aplicarla con contexto.", tags: ["IA", "Datos", "Aplicación"] },
+          { label: "Visión computacional", title: "Geração Caldeira", description: "Una ruta práctica por imágenes, modelos y formas de transformar percepción computacional en solución.", tags: ["Computer Vision", "Python", "Modelos"] },
+        ],
+      },
+      {
+        id: "certifications",
+        eyebrow: "Certificaciones",
+        title: "Los certificados ayudan. Saber dónde aplicarlos ayuda más.",
+        description: "Registran partes del camino. Su valor aparece cuando el contenido mejora una decisión técnica, una revisión o la siguiente pregunta.",
+        mediaLabel: "Charlles fijando una insignia verde en un panel de credenciales",
+        mediaCaption: "conocimiento validado",
+        items: [
+          { label: "Geração Caldeira", title: "Visión computacional", description: "Fundamentos y práctica de soluciones basadas en análisis de imágenes.", tags: ["Computer Vision", "IA"] },
+          { label: "IBM SkillsBuild", title: "AI Fundamentals", description: "Conceptos esenciales, aplicaciones e implicaciones de la inteligencia artificial.", tags: ["AI", "Fundamentos"] },
+          { label: "Cisco", title: "Endpoint Security", description: "Protección de dispositivos, vectores de amenaza y principios de defensa.", tags: ["Endpoint", "Seguridad"] },
+          { label: "RNP / Softex", title: "Hackers do Bem", description: "Formación introductoria y nivelación en ciberseguridad.", tags: ["Cybersecurity", "Redes"] },
+        ],
+      },
+      {
+        id: "stack",
+        eyebrow: "Tech Stack",
+        title: "Las herramientas cambian. El criterio permanece.",
+        description: "Elijo la tecnología según el problema, el mantenimiento y quien continuará el trabajo. Aun así, estas son las piezas que más aparecen en la mesa.",
+        mediaLabel: "Charlles conectando módulos de software en un sistema",
+        mediaCaption: "módulos en sintonía",
+        items: [
+          { label: "Interfaz", title: "Una web que explica lo que hace", description: "Componentes, rutas y estados construidos con jerarquía, accesibilidad y respuesta rápida.", tags: ["React", "Next.js", "TypeScript"] },
+          { label: "Backend", title: "Lógica que no se ve, pero sostiene", description: "APIs, servicios y automatizaciones con límites claros y espacio para crecer sin drama.", tags: ["Python", "Go", "Node.js"] },
+          { label: "Infraestructura y práctica", title: "Del paquete a la red", description: "Herramientas para investigar, integrar y operar sistemas más allá de la capa visual.", tags: ["Networking", "Cybersecurity", "Automatización"] },
+        ],
+      },
+    ],
+  },
   now: {
     ...english.now,
     eyebrow: "Ahora",
@@ -772,6 +949,8 @@ const spanish: PortfolioDictionary = {
     breadcrumbHome: "Inicio",
     breadcrumbCurrent: "Ahora",
     openProject: "Abrir proyecto",
+    updatedLabel: "Actualizado el 25 ago 2026",
+    updatedDate: "2026-08-25",
     items: [
       { label: "Proyecto en foco", title: "Astrolink en evolución", description: "Estructurando una solución de bajo costo para vender y gestionar acceso Wi-Fi en redes locales con Starlink, OpenWrt, PIX y vouchers.", proof: "Go · SvelteKit · OpenWrt", icon: "network", href: "https://github.com/charlles-dev/Astrolink" },
       { label: "Mejora reciente", title: "Portafolio como producto", description: "Refinando narrativa, rendimiento y presentación para comunicar trabajo real en diferentes idiomas.", proof: "Next.js · TypeScript · i18n", icon: "sparkles" },
@@ -781,34 +960,27 @@ const spanish: PortfolioDictionary = {
   contact: {
     ...english.contact,
     eyebrow: "Hablemos",
-    title: "Si hay algo interesante que construir, hablemos.",
-    description: "Me gusta conocer personas, intercambiar ideas y colaborar en trabajos que valoren la claridad, la curiosidad y el cuidado.",
+    title: "Un buen proyecto suele empezar con un problema bien explicado.",
+    description: "Si ya sabes qué hay que construir, o solo puedes señalar dónde duele, envía el contexto. Lo leo antes de responder.",
     primaryCta: "Hablar por WhatsApp",
     secondaryCta: "Enviar un email",
     direct: "Canales directos",
-    specialty: "UI/UX Designer & Front-end",
-    availability: "Disponible",
-    cardTitle: "¿Sacamos tu idea del papel?",
-    stats: { projects: "+20", projectsLabel: "Proyectos", experience: "+5 años", experienceLabel: "Experiencia", response: "12h", responseLabel: "Respuesta" },
+    specialty: "Ingeniero de software full stack",
+    availability: "Mensaje directo",
+    cardTitle: "¿Dónde se está atascando el sistema?",
+    cardBody: "Envía el contexto por WhatsApp o reserva 15 o 30 minutos en el calendario. Sin formulario y sin discurso preparado.",
     callCta: "Agendar una llamada",
-    callMeta: "30 min · Google Meet",
-    linkedinCta: "Conectar en LinkedIn",
+    callMeta: "15 o 30 min · llamada online",
     emailSubject: "Conversación sobre un proyecto",
     emailBody: "¡Hola, Charlles!\n\nQuiero conversar sobre un proyecto.\n\nContexto:\nPróximo hito:\n",
-    copyEmail: "Copiar email",
-    copyEmailSuccess: "Email copiado",
-    copyWhatsApp: "Copiar WhatsApp",
-    whatsappCopied: "WhatsApp copiado",
-    briefingTitle: "Para comenzar",
-    briefingBody: "Comparte el contexto del problema, qué necesita construirse o mejorarse y el próximo hito importante.",
   },
   notFound: {
     eyebrow: "Ruta no encontrada",
-    title: "El avatar está buscando este camino.",
-    description: "Esta página salió del mapa, pero los siguientes caminos siguen disponibles.",
+    title: "Iluminé el camino. La página no apareció.",
+    description: "Esta ruta se perdió en la oscuridad. Los caminos útiles siguen justo al lado.",
     routeLabel: "404 / ruta ausente",
     routeStatus: "estado: ruta no localizada",
-    avatarAlt: "Avatar de Charlles buscando la ruta perdida",
+    avatarAlt: "Charlles iluminando posibles caminos con una linterna",
     signTitle: "Elige un camino",
     work: "Ver trabajos",
     about: "Conocer el perfil",
@@ -878,6 +1050,8 @@ const spanish: PortfolioDictionary = {
     note: "Estas notas describen decisiones ya presentes en el código. No son métricas de rendimiento ni una promesa de disponibilidad.",
   },
   projects: {
+    "charlles-dev-portfolio": { summary: "Portafolio en Next.js con datos públicos de GitHub, tres idiomas y video controlado por el scroll.", problem: "Mostrar trabajo full stack sin reducir cada proyecto a una imagen bonita y una lista de tecnologías.", decision: "Consultar datos públicos de GitHub en el servidor, localizar la narrativa en tres idiomas y sincronizar video, contenido y scroll sin bloquear la lectura.", next: "Publicar métricas reales de rendimiento y documentar la evolución visual como un caso de estudio abierto.", category: "Web", metric: "Next.js · GitHub", reason: "El propio portafolio como evidencia técnica" },
+    trakr: { summary: "Maleta inteligente que identifica herramientas mediante RFID/NFC y conecta un ESP32 con una interfaz en Kotlin.", problem: "Detectar una herramienta ausente antes de que el equipo cierre la maleta y abandone el lugar de trabajo.", decision: "Distribuir la lectura de identificadores en el ESP32 y concentrar inventario, estados y alertas en la aplicación Kotlin.", next: "Validar lecturas simultáneas, falsos positivos y uso sin conexión con la maleta física montada.", category: "Sistema conectado", metric: "Kotlin · ESP32", reason: "Software conectado con el mundo físico" },
     astrolink: { summary: "Infraestructura y software para vender y gestionar acceso Wi-Fi en redes locales con Starlink.", problem: "Cómo llevar una operación de conectividad de bajo costo a comunidades y áreas remotas.", decision: "Separar un backend en Go, un portal cautivo en SvelteKit e integraciones para pagos, vouchers y OpenWrt.", next: "Validar la operación en hardware real y ampliar la documentación de despliegue.", category: "Infraestructura", metric: "Go · conectividad", reason: "Conectividad en áreas remotas" },
     "laudos-proxxima": { summary: "Sistema web corporativo para estandarizar, gestionar y agilizar informes técnicos de mantenimiento.", problem: "Convertir notas de campo en informes consistentes sin perder velocidad operativa.", decision: "Combinar dashboard, autenticación, generación asistida, historial y exportación en un solo flujo.", next: "Profundizar las métricas de uso y seguir refinando la revisión y el uso compartido.", category: "Automatización", metric: "TypeScript · interfaz", reason: "Menos fricción en la operación interna" },
     "3035-teach": { summary: "Portafolio fullstack que organiza una formación práctica en Java, Spring Boot, React y TypeScript.", problem: "Documentar una evolución técnica extensa de forma consultable, práctica y reutilizable.", decision: "Organizar módulos, ejercicios, documentación y ejemplos alrededor de fundamentos fullstack.", next: "Completar los módulos avanzados y hacer de la documentación una referencia más navegable.", category: "Base técnica", metric: "Java · ruta técnica", reason: "Formación práctica fullstack" },
@@ -900,6 +1074,8 @@ export function localePath(locale: Locale, hash = "") {
 
 export function projectKey(value: string) {
   const normalized = value.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  if (normalized.includes("charlles-dev-portfolio")) return "charlles-dev-portfolio";
+  if (normalized === "trakr" || normalized.endsWith("-trakr")) return "trakr";
   if (normalized.includes("astrolink")) return "astrolink";
   if (normalized.includes("laudos") || normalized.includes("proxxima")) return "laudos-proxxima";
   if (normalized.includes("3035") || normalized.includes("teach")) return "3035-teach";

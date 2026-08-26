@@ -148,7 +148,7 @@ export const socialLinks: SocialLink[] = [
   }
 ];
 
-export const bookingUrl = "https://call.com/charles-dev";
+export const bookingUrl = "https://cal.com/charlles-dev/call";
 
 export const projects: Project[] = [
   {

@@ -3,9 +3,9 @@ import type { MetadataRoute } from "next";
 export default function manifest(): MetadataRoute.Manifest {
   return {
     id: "/pt-BR",
-    name: "Charlles.dev — Portfólio de desenvolvimento web",
+    name: "Charlles.dev: Engenharia de software full stack",
     short_name: "Charlles.dev",
-    description: "Portfólio de Charlles Augusto — desenvolvimento web, sistemas, automação e interfaces digitais.",
+    description: "Projetos públicos em Next.js, TypeScript, Go, automação e sistemas conectados, com decisões técnicas e código no GitHub.",
     start_url: "/pt-BR",
     scope: "/",
     display: "standalone",

@@ -2,6 +2,11 @@
 
 import { useCallback, useEffect, useRef, useSyncExternalStore } from "react";
 
+import { PortfolioAbout } from "@/components/portfolio-about";
+import { PortfolioContact } from "@/components/portfolio-contact";
+import { PortfolioJourney } from "@/components/portfolio-journey";
+import { PortfolioMotion } from "@/components/portfolio-motion";
+import { PortfolioWork } from "@/components/portfolio-work";
 import { ReferenceHero } from "@/components/reference-hero";
 import { ReferencePanels } from "@/components/reference-panels";
 import { SiteHeader } from "@/components/site-header";
@@ -9,12 +14,12 @@ import type { Locale, PortfolioDictionary } from "@/lib/i18n";
 import type { ProjectsPayload } from "@/lib/projects/types";
 import { trackTelemetry } from "@/lib/telemetry";
 
-type Panel = "work" | "about" | "contact" | null;
+type Panel = "work" | null;
 
 function getPanelFromHash(): Panel {
   if (typeof window === "undefined") return null;
   const value = window.location.hash.slice(1);
-  return value === "work" || value === "about" || value === "contact" ? value : null;
+  return value === "repositories" ? "work" : null;
 }
 
 function subscribeToPanel(listener: () => void) {
@@ -27,15 +32,16 @@ function subscribeToPanel(listener: () => void) {
   };
 }
 
-export function PortfolioHome({ locale, dictionary }: { locale: Locale; dictionary: PortfolioDictionary; initialPayload?: ProjectsPayload }) {
+export function PortfolioHome({ locale, dictionary, initialPayload }: { locale: Locale; dictionary: PortfolioDictionary; initialPayload?: ProjectsPayload }) {
   const panel = useSyncExternalStore(subscribeToPanel, getPanelFromHash, () => null);
   const backgroundRef = useRef<HTMLDivElement>(null);
 
   const notifyPanelChange = () => window.dispatchEvent(new PopStateEvent("popstate"));
-  const openPanel = useCallback((nextPanel: Exclude<Panel, null>) => {
-    if (typeof window !== "undefined" && window.location.hash !== `#${nextPanel}`) {
+  const openPanel = useCallback(() => {
+    if (typeof window !== "undefined" && window.location.hash !== "#repositories") {
+      const nextPanel = "work" as const;
       trackTelemetry({ name: "panel_open", panel: nextPanel });
-      window.history.pushState({ panel: nextPanel }, "", `${window.location.pathname}${window.location.search}#${nextPanel}`);
+      window.history.pushState({ panel: nextPanel }, "", `${window.location.pathname}${window.location.search}#repositories`);
       notifyPanelChange();
     }
   }, []);
@@ -62,12 +68,17 @@ export function PortfolioHome({ locale, dictionary }: { locale: Locale; dictiona
   return (
     <div className="reference-app" id="conteudo">
       <div ref={backgroundRef}>
-        <SiteHeader locale={locale} dictionary={dictionary} activePanel={panel} onOpenWork={() => openPanel("work")} onOpenAbout={() => openPanel("about")} onOpenContact={() => openPanel("contact")} />
+        <SiteHeader locale={locale} dictionary={dictionary} contextHash={panel ? "repositories" : undefined} />
         <main>
-          <ReferenceHero dictionary={dictionary} onOpenWork={() => openPanel("work")} />
+          <ReferenceHero dictionary={dictionary} onOpenWork={openPanel} />
+          {initialPayload && <PortfolioWork locale={locale} dictionary={dictionary} payload={initialPayload} onOpenExplorer={openPanel} />}
+          <PortfolioAbout dictionary={dictionary} />
+          <PortfolioJourney dictionary={dictionary} />
+          <PortfolioContact dictionary={dictionary} />
         </main>
       </div>
-      <ReferencePanels panel={panel} locale={locale} dictionary={dictionary} onClose={closePanel} />
+      <ReferencePanels panel={panel} locale={locale} dictionary={dictionary} initialPayload={initialPayload} onClose={closePanel} />
+      <PortfolioMotion />
     </div>
   );
 }

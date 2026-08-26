@@ -45,19 +45,16 @@ export function NotFoundPage({ locale, dictionary }: { locale: Locale; dictionar
           <p className={styles.status}><span aria-hidden="true">›</span> {copy.routeStatus}</p>
           <div className={styles.actions}>
             <a className={styles.primary} href={homePath}>{copy.homeCta}<IconGlyph name="arrow-right" className={styles.icon} /></a>
-            <a className={styles.secondary} href={`${homePath}/process`}>{copy.processCta}</a>
           </div>
         </section>
 
         <section className={styles.scene} aria-labelledby="route-scene-title">
-          <div className={styles.glow} aria-hidden="true" />
-          <div className={styles.skyline} aria-hidden="true"><span /><span /><span /><span /></div>
-          <div className={styles.avatar}>
-            <Image src="/reference/charlles-contact-avatar.webp" alt={copy.avatarAlt} width={640} height={640} priority sizes="(max-width: 700px) 70vw, 38vw" />
+          <div className={styles.media}>
+            <Image src="/reference/states/charlles-flashlight.jpeg" alt={copy.avatarAlt} fill priority sizes="(max-width: 900px) 100vw, 52vw" />
+            <video src="/reference/states/charlles-flashlight.mp4" poster="/reference/states/charlles-flashlight.jpeg" muted autoPlay playsInline preload="metadata" aria-hidden="true" />
           </div>
-          <div className={styles.sign} aria-labelledby="route-scene-title">
+          <div className={styles.sign}>
             <p className={styles.signTitle} id="route-scene-title">{copy.signTitle}</p>
-            <div className={styles.signPost} aria-hidden="true" />
             <div className={styles.directions}>
               {directions.map((direction) => (
                 <a key={direction.href} href={direction.href} className={styles.direction}>
@@ -74,7 +71,6 @@ export function NotFoundPage({ locale, dictionary }: { locale: Locale; dictionar
       <footer className={styles.footer}>
         <span>{dictionary.footer.rights}</span>
         <span>{dictionary.footer.built}</span>
-        <a className={styles.footerLink} href={`${homePath}/engineering`}>{copy.engineeringCta}<IconGlyph name="arrow-right" className={styles.icon} /></a>
       </footer>
     </main>
   );
