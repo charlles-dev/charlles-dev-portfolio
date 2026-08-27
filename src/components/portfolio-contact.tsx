@@ -14,10 +14,7 @@ function ContactMedia({ video, videoRef }: { video: string; videoRef: RefObject<
 
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) element.play().catch(() => undefined);
-      else {
-        element.pause();
-        element.currentTime = 0;
-      }
+      else element.pause();
     }, { threshold: .45 });
 
     observer.observe(element);
@@ -45,7 +42,6 @@ export function PortfolioContact({ dictionary }: { dictionary: PortfolioDictiona
     const video = ref.current;
     if (!video) return;
     video.pause();
-    video.currentTime = 0;
   };
 
   return (

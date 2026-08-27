@@ -174,15 +174,6 @@ export function PortfolioMotion() {
             ease: "power4.out",
             scrollTrigger: { trigger: "#contact", start: "top 78%", once: true },
           });
-          gsap.from(".portfolio-contact-action", {
-            autoAlpha: 0,
-            x: (index) => (isDesktop ? (index === 0 ? -86 : 86) : 0),
-            y: isDesktop ? 0 : 42,
-            duration: 1.05,
-            stagger: 0.1,
-            ease: "power4.out",
-            scrollTrigger: { trigger: ".portfolio-contact-actions", start: "top 82%", once: true },
-          });
           gsap.from(".portfolio-contact-direct, .portfolio-footer", {
             autoAlpha: 0,
             y: 24,

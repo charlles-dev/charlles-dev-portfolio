@@ -66,6 +66,19 @@ describe("localized portfolio narrative", () => {
     expect(contact).not.toHaveTextContent(/Campina Grande|PT · EN · ES|Casos públicos/i);
   });
 
+  it("pauses contact motion without seeking back to a lower-quality frame", () => {
+    renderHome();
+    const call = screen.getByRole("link", { name: /Agendar uma call/i });
+    const video = call.querySelector("video") as HTMLVideoElement;
+    const pause = vi.spyOn(video, "pause").mockImplementation(() => undefined);
+    video.currentTime = 1.4;
+
+    fireEvent.pointerLeave(call);
+
+    expect(pause).toHaveBeenCalledOnce();
+    expect(video.currentTime).toBe(1.4);
+  });
+
   it("opens the repository explorer from its explicit action", () => {
     renderHome();
     fireEvent.click(screen.getByRole("button", { name: "Repositórios públicos" }));

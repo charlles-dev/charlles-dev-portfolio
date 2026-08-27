@@ -1032,8 +1032,7 @@ body[data-mobile-menu-open="true"] { overflow: hidden; }
 .portfolio-work-scene img,
 .portfolio-about-media img,
 .journey-media-poster,
-.journey-media-video,
-.portfolio-contact-media video { transform-origin: 50% 50%; }
+.journey-media-video { transform-origin: 50% 50%; }
 .portfolio-selected-projects a,
 .portfolio-contact-action,
 .portfolio-contact-direct a,
@@ -1050,9 +1049,6 @@ body[data-mobile-menu-open="true"] { overflow: hidden; }
   .portfolio-selected-projects a:hover { padding-left: 1rem; background: rgba(255,255,255,.018); }
   .portfolio-selected-projects a:hover .portfolio-project-open svg { transform: translateX(.35rem); }
   .portfolio-contact-action { transition: background-color var(--motion-hover) ease; }
-  .portfolio-contact-media video { transition: transform 900ms cubic-bezier(.22,1,.36,1); }
-  .portfolio-contact-action:hover .portfolio-contact-media video,
-  .portfolio-contact-action:focus-visible .portfolio-contact-media video { transform: scale(1.035); }
   .portfolio-contact-action:hover > svg,
   .portfolio-contact-action:focus-visible > svg { transform: translate(.2rem, -.2rem); color: #72e79c; }
   .portfolio-contact-direct a:hover svg { transform: translateY(-.15rem); }
