@@ -69,7 +69,7 @@ describe("portfolio content", () => {
   it("showcases the selected public projects with their source links", () => {
     expect(projects.map((project) => project.name)).toEqual([
       "Astrolink",
-      "Laudos Proxxima",
+      "Trakr",
       "3035 Teach"
     ]);
     expect(projects.every((project) => project.href.startsWith("https://github.com/charlles-dev/"))).toBe(true);

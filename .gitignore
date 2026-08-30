@@ -22,6 +22,21 @@ playwright-report/
 # cache
 .turbo/
 .cache/
+.vite/
+.vitest/
+.eslintcache
+.pnpm-store/
+.character-lab/
+/package-lock.json
+
+# local agent notes and working material
+.agents/
+.codex/
+/docs/
+/design/
+/scripts/
+/AGENTS.md
+/CLAUDE.md
 
 # local env
 .env
@@ -31,6 +46,7 @@ playwright-report/
 
 # logs
 *.log
+*.pid
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -43,6 +59,16 @@ output/
 Thumbs.db
 Desktop.ini
 *.pem
+
+# editor and temporary files
+.idea/
+.vscode/
+*.tmp
+*.temp
+*.bak
+*.blend1
+*.blend2
+~$*
 
 # typescript
 *.tsbuildinfo

@@ -3,7 +3,8 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
-import type { PortfolioDictionary } from "@/lib/i18n";
+import { ExperienceTimeline, StackEvidence } from "@/components/professional-sections";
+import type { Locale, PortfolioDictionary } from "@/lib/i18n";
 
 type JourneySection = PortfolioDictionary["journey"]["sections"][number];
 
@@ -123,8 +124,10 @@ function JourneyMedia({ section }: { section: JourneySection }) {
   );
 }
 
-export function PortfolioJourney({ dictionary }: { dictionary: PortfolioDictionary }) {
+export function PortfolioJourney({ locale, dictionary }: { locale: Locale; dictionary: PortfolioDictionary }) {
   return (
+    <>
+    <ExperienceTimeline locale={locale} />
     <section className="portfolio-journey" aria-labelledby="portfolio-journey-title">
       <header className="journey-intro">
         <p className="reference-eyebrow">{dictionary.journey.eyebrow}</p>
@@ -133,7 +136,7 @@ export function PortfolioJourney({ dictionary }: { dictionary: PortfolioDictiona
       </header>
 
       <div className="journey-sections">
-        {dictionary.journey.sections.map((section) => (
+        {dictionary.journey.sections.filter((section) => section.id !== "stack").map((section) => (
           <article className={`journey-section journey-section-${section.id}`} key={section.id}>
             <JourneyMedia section={section} />
             <div className="journey-copy">
@@ -162,5 +165,7 @@ export function PortfolioJourney({ dictionary }: { dictionary: PortfolioDictiona
         ))}
       </div>
     </section>
+    <StackEvidence locale={locale} />
+    </>
   );
 }

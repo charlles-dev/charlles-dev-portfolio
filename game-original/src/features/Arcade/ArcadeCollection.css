@@ -1,0 +1,31 @@
+@reference "../../styles/globals.css";
+
+.arcade-hub,.arcade-play{@apply fixed inset-0 z-9999 overflow-y-auto bg-(--dark-800) text-(--gray-300) font-(--font-tiny) p-4 sm:p-8;image-rendering:pixelated;background-image:radial-gradient(circle at 80% 0%,rgba(185,255,46,.08),transparent 36%),linear-gradient(#0a0b0a,#11140e)}
+.arcade-hub--embedded{position:absolute;min-height:100%;z-index:1;}
+.arcade-hub__header{@apply max-w-7xl mx-auto flex flex-col-reverse sm:flex-row sm:items-start sm:justify-between gap-6 border-b-2 border-(--gray-300)/20 pb-6}
+.arcade-hub__header h1,.arcade-play__header h1{@apply text-4xl sm:text-6xl font-medium tracking-tight text-(--gray-300)}
+.arcade-hub__header p,.arcade-play__header p{@apply text-base max-w-[58ch] text-(--gray-300)/70}
+.arcade-kicker{@apply font-mono tracking-[.18em] text-(--green-500)! text-sm!}
+.arcade-back,.arcade-restart{@apply min-h-12 px-3 border-2 border-(--gray-300)/40 bg-transparent text-(--gray-300) font-mono text-base cursor-pointer focus-visible:outline-2 focus-visible:outline-(--green-500) focus-visible:outline-offset-2}
+.arcade-library{@apply max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 mt-6 border-t border-l border-(--gray-300)/20}
+.arcade-game{@apply border-r border-b border-(--gray-300)/20 min-w-0}
+.arcade-game button{@apply relative min-h-44 w-full text-left p-5 grid grid-cols-[auto_1fr] gap-x-4 gap-y-3 bg-transparent text-(--gray-300) cursor-pointer focus-visible:outline-2 focus-visible:outline-(--green-500) focus-visible:-outline-offset-4}
+.arcade-game__number{@apply font-mono text-sm text-(--gray-300)/45}
+.arcade-game__icon{@apply row-span-2 text-5xl text-(--green-500) self-center}
+.arcade-game__copy{@apply min-w-0 flex flex-col gap-2}.arcade-game__copy strong{@apply text-2xl font-medium}.arcade-game__copy small{@apply text-base text-(--gray-300)/65 max-w-[42ch]}
+.arcade-game__action{@apply col-start-2 font-mono text-sm text-(--green-500)}
+@media(hover:hover) and (pointer:fine){.arcade-game button:hover{@apply bg-(--gray-300)/5}.arcade-back:hover,.arcade-restart:hover{@apply border-(--green-500) text-(--green-500)}}
+.arcade-play__header{@apply max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-[auto_1fr_auto] gap-5 items-start border-b-2 border-(--gray-300)/20 pb-5}
+.arcade-score{@apply flex gap-5 font-mono}.arcade-score div{@apply flex flex-col}.arcade-score dt{@apply text-sm text-(--gray-300)/50}.arcade-score dd{@apply text-2xl text-(--green-500) tabular-nums}
+.arcade-meta{@apply font-mono text-sm! text-(--green-500)! mt-2}
+.arcade-stage{@apply max-w-4xl mx-auto min-h-[60dvh] py-8 flex flex-col items-center justify-center gap-5}
+.cache-grid{@apply grid grid-cols-3 sm:grid-cols-4 gap-2 w-full max-w-2xl}.cache-card{@apply aspect-square border-2 border-(--gray-300)/30 bg-(--dark-600) text-(--green-500) font-mono text-xl sm:text-2xl cursor-pointer}
+.cache-grid--level-1{@apply max-w-md grid-cols-2}.cache-grid--level-2{@apply max-w-lg grid-cols-3}.cache-grid--level-3{@apply grid-cols-4}
+.pixel-board{@apply grid w-full max-w-3xl border-2 border-(--gray-300)/30 bg-black}.pixel-board--snake{grid-template-columns:repeat(14,1fr)}.pixel{@apply aspect-square border border-(--gray-300)/5}.pixel--player{@apply bg-(--green-500)}.pixel--target{@apply bg-(--warm-300)}
+.arcade-dpad{@apply grid grid-cols-4 gap-2}.arcade-dpad button,.arcade-inline-controls button{@apply size-12 bg-(--gray-300)/10 border-2 border-(--gray-300)/30 text-(--gray-300) text-xl cursor-pointer touch-manipulation}
+.pong-board{@apply relative w-full max-w-3xl aspect-[16/9] border-2 border-(--gray-300)/30 bg-black overflow-hidden [container-type:inline-size]}.pong-paddle{@apply absolute top-0 left-[3%] w-[2%] h-[18%] bg-(--green-500)}.pong-paddle--ai{@apply left-auto right-[3%] bg-(--gray-300)}.pong-ball{@apply absolute top-0 left-0 size-3 bg-(--warm-300)}.arcade-inline-controls{@apply flex gap-2}
+.arcade-hint{@apply text-base text-(--gray-300)/60}
+.mine-grid{@apply grid grid-cols-9 w-full max-w-xl}.mine-cell{@apply aspect-square border border-black/60 bg-(--gray-500) text-(--dark-800) font-mono cursor-pointer}.mine-cell--open{@apply bg-(--gray-300)}.mine-cell--mine{@apply bg-(--rose-500) text-(--gray-300)}
+.arcade-result{@apply flex flex-col sm:flex-row items-center justify-center gap-3 font-mono text-xl text-(--green-500)}
+.word-bomb{@apply w-full max-w-3xl min-h-[380px] bg-black border-2 border-(--gray-300)/30 p-5 sm:p-8 font-mono text-center flex flex-col items-center justify-center gap-5}.word-bomb__timer{@apply w-full h-3 bg-(--gray-300)/15 overflow-hidden}.word-bomb__timer span{@apply block size-full origin-left bg-(--green-500)}.word-bomb--armed .word-bomb__timer span{@apply bg-(--rose-500)}.word-bomb__fragment{@apply text-7xl sm:text-9xl text-(--warm-300) tracking-[.12em] tabular-nums}.word-bomb__message{@apply min-h-6 text-base text-(--gray-300)/70}.word-bomb form{@apply w-full flex flex-col sm:flex-row gap-3}.word-bomb label{@apply sr-only}.word-bomb input{@apply min-w-0 flex-1 bg-(--dark-800) border-2 border-(--gray-300)/30 px-3 py-3 text-base text-(--gray-300) outline-none focus:border-(--green-500)}.word-bomb form button{@apply min-h-12 px-4 bg-(--green-500) text-(--dark-800) border-0 font-mono cursor-pointer}.word-bomb__used{@apply text-sm text-(--gray-300)/50 break-words}
+@media(prefers-reduced-motion:reduce){.arcade-hub *, .arcade-play *{animation:none!important;scroll-behavior:auto!important}}

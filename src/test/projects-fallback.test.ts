@@ -21,7 +21,6 @@ describe("fallback projects payload", () => {
       true,
     );
     expect(fallbackProjectsPayload.projects.every((project) => project.private === false)).toBe(true);
-    expect(JSON.stringify(fallbackProjectsPayload)).not.toContain("Laudos-Proxxima");
     expect(JSON.stringify(fallbackProjectsPayload)).not.toContain("GROQ_API_KEY");
   });
 });

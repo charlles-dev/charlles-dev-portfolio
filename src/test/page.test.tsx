@@ -28,7 +28,7 @@ describe("localized portfolio narrative", () => {
     expect(screen.queryByRole("link", { name: "Trabalhos" })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Sobre" })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Contato" })).not.toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Charlles.dev" })).toHaveAttribute("href", "/pt-BR");
+    expect(document.querySelector(".reference-brand")).toHaveAttribute("href", "/pt-BR");
     expect(screen.getByRole("link", { name: "Português" })).toHaveAttribute("aria-current", "page");
     expect(screen.getByRole("link", { name: "English" })).toHaveAttribute("href", "/en");
     expect(screen.getByRole("link", { name: "Español" })).toHaveAttribute("href", "/es");
@@ -44,7 +44,6 @@ describe("localized portfolio narrative", () => {
     expect(within(work).getByRole("heading", { name: "charlles-dev-portfolio" })).toBeInTheDocument();
     expect(within(work).getByRole("heading", { name: "Astrolink" })).toBeInTheDocument();
     expect(within(work).getByRole("heading", { name: "trakr" })).toBeInTheDocument();
-    expect(within(work).queryByRole("heading", { name: "Laudos Proxxima" })).not.toBeInTheDocument();
     expect(screen.getByRole("region", { name: /Eu começo pelo que precisa funcionar/i })).toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 2, name: "O código mostra o que construí. Aqui entra o que fui estudar." })).toBeInTheDocument();
     expect(document.querySelector(".portfolio-work-scene img")).toHaveAttribute("src", expect.stringContaining("charlles-blocks.jpeg"));
@@ -57,8 +56,8 @@ describe("localized portfolio narrative", () => {
     renderHome();
     const contact = screen.getByRole("region", { name: "Onde o sistema está travando?" });
 
-    expect(within(contact).getByRole("link", { name: /Chamar no WhatsApp/i })).toHaveAttribute("href", "https://wa.me/5583991141561");
-    expect(within(contact).getByRole("link", { name: /Agendar uma call/i })).toHaveAttribute("href", "https://cal.com/charlles-dev/call");
+    expect(within(contact).getByRole("link", { name: /Chamar no WhatsApp/i })).toHaveAttribute("href", expect.stringMatching(/^https:\/\/wa\.me\/5583991141561\?text=.+/));
+    expect(within(contact).getByRole("link", { name: /Agendar uma call/i })).toHaveAttribute("href", expect.stringMatching(/^https:\/\/cal\.com\/charlles-dev\/call\?notes=.+/));
     expect(within(contact).getByRole("link", { name: "Email" })).toHaveAttribute("href", expect.stringMatching(/^mailto:hello@charlles\.dev\?subject=.+&body=.+/));
     expect(within(contact).getByRole("link", { name: "Discord" })).toHaveAttribute("href", "https://discord.com/users/472347892728987658");
     expect(contact.querySelector('video[src="/reference/contact/charlles-whatsapp.mp4"]')).toBeInTheDocument();
@@ -134,7 +133,7 @@ describe("localized portfolio narrative", () => {
     renderHome("en");
     expect(screen.getByRole("heading", { level: 1, name: /Engineering underneath/i })).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Work" })).not.toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /charlles\.dev/i })).toHaveAttribute("href", "/en");
+    expect(document.querySelector(".reference-brand")).toHaveAttribute("href", "/en");
   });
 });
 

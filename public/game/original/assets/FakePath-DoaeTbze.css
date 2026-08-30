@@ -1,0 +1,1 @@
+.fakepath{width:100%;height:100%;padding:calc(var(--spacing,.25rem)*2);font-size:var(--text-lg,1.125rem);line-height:var(--tw-leading,var(--text-lg--line-height,calc(1.75/1.125)));-webkit-user-select:none;user-select:none;background-color:var(--dark-700);color:var(--green-500);overflow:hidden}.fakepath__line{display:block}

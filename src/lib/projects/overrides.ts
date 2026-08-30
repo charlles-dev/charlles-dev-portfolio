@@ -19,21 +19,9 @@ export const projectOverrides: Partial<Record<string, ProjectOverride>> = {
     nextStep:
       "Documentar arquitetura, premissas de rede e etapas de validacao tecnica.",
   },
-  "laudos-proxxima": {
-    featured: true,
-    order: 2,
-    category: "automation",
-    maturity: "prototype",
-    summary: "Ferramenta para padronizar e agilizar laudos tecnicos de manutencao.",
-    problem:
-      "Laudos repetitivos perdem padrao, contexto e velocidade em rotinas operacionais.",
-    technicalDecision:
-      "Usa interface em TypeScript para reduzir retrabalho e organizar preenchimento.",
-    nextStep: "Refinar exportacao, validacoes e experiencia de uso em campo.",
-  },
   "3035-teach": {
     featured: true,
-    order: 3,
+    order: 2,
     category: "technical-base",
     maturity: "study",
     summary: "Repositorio de pratica tecnica em Java com exercicios e estruturas organizadas.",

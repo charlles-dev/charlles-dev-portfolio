@@ -169,21 +169,21 @@ export const projects: Project[] = [
     next: "Evoluir documentação, simulações e etapas de validação técnica."
   },
   {
-    name: "Laudos Proxxima",
-    language: "TypeScript",
+    name: "Trakr",
+    language: "Kotlin",
     description:
-      "Ferramenta interna para padronizar e agilizar laudos técnicos de manutenção.",
-    href: "https://github.com/charlles-dev/Laudos-Proxxima",
+      "Maleta inteligente com detecção RFID/NFC, ESP32 e uma interface em Kotlin.",
+    href: "https://github.com/charlles-dev/trakr",
     scene: "02",
     category: "automation",
-    categoryLabel: "Automação",
-    focus: "Operação interna com menos fricção",
+    categoryLabel: "Sistema conectado",
+    focus: "Software ligado ao mundo físico",
     icon: "device-laptop",
-    signal: "Fluxo operacional",
-    metric: "TypeScript / UI",
-    problem: "Laudos técnicos repetitivos podem perder padrão, contexto e velocidade na rotina.",
-    built: "Interface em TypeScript para padronizar informações e reduzir retrabalho operacional.",
-    next: "Refinar fluxo de exportação, validações e experiência de preenchimento."
+    signal: "Inventário físico",
+    metric: "Kotlin / ESP32",
+    problem: "Como perceber uma ferramenta ausente antes de fechar a maleta e deixar o local de trabalho.",
+    built: "Leitura por RFID/NFC no ESP32 e interface em Kotlin para organizar inventário, estados e alertas.",
+    next: "Validar leituras simultâneas, falsos positivos e o fluxo offline com o protótipo físico."
   },
   {
     name: "3035 Teach",

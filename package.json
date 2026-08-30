@@ -12,12 +12,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "quality": "node scripts/quality-gate.mjs",
-    "links:check": "node scripts/verify-external-links.mjs",
+    "quality": "pnpm lint && pnpm test && pnpm build",
+    "qa:visual": "playwright test",
+    "qa:visual:update": "playwright test --update-snapshots",
     "test": "vitest run",
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@babylonjs/core": "^9.22.2",
+    "@babylonjs/loaders": "^9.22.2",
     "@iconify-icons/solar": "1.2.4",
     "@iconify-icons/tabler": "1.2.96",
     "@iconify/react": "6.0.2",
@@ -29,6 +32,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "3.3.6",
+    "@playwright/test": "^1.62.1",
     "@testing-library/jest-dom": "7.0.1",
     "@testing-library/react": "16.3.2",
     "@types/node": "26.2.0",

@@ -1,0 +1,7 @@
+@reference "../../../styles/globals.css";
+
+
+
+.game {
+    @apply antialiased bg-(--dark-800) h-[100dvh] pb-[env(safe-area-inset-bottom)];
+}

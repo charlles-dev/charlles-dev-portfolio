@@ -25,12 +25,12 @@ describe("project overrides", () => {
       order: 1,
       category: "infra",
     });
-    expect(getProjectOverride("Laudos-Proxxima")).toMatchObject({
+    expect(getProjectOverride("3035-TEACH")).toMatchObject({
       featured: true,
       order: 2,
-      category: "automation",
+      category: "technical-base",
     });
-    expect(Object.keys(projectOverrides).length).toBeGreaterThanOrEqual(3);
+    expect(Object.keys(projectOverrides).length).toBeGreaterThanOrEqual(2);
   });
 
   it("normalizes repo names when looking up overrides", () => {

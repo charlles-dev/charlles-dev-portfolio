@@ -1,0 +1,112 @@
+@custom-media --h-small (max-height: 700px);
+
+:root {
+
+  --dark-800: rgb(10, 11, 9);
+  --dark-700: rgb(20, 22, 18);
+  --dark-600: rgb(31, 35, 26);
+  --dark-500: rgb(50, 58, 37);
+
+
+  --blue-900: rgb(82, 102, 29);
+  --blue-700: rgb(158, 191, 46);
+  --blue-500: rgb(215, 244, 91);
+  --blue-300: rgb(239, 255, 154);
+
+
+  --green-700: rgb(84, 126, 72);
+  --green-500: rgb(127, 169, 91);
+  --green-300: rgb(182, 211, 137);
+
+
+  --gray-700: rgb(102, 104, 95);
+  --gray-500: rgb(171, 174, 159);
+  --gray-300: rgb(230, 230, 216);
+
+
+  --rose-900: rgb(97, 45, 29);
+  --rose-700: rgb(143, 67, 43);
+  --rose-500: rgb(202, 102, 65);
+  --rose-300: rgb(235, 166, 126);
+
+
+  --warm-700: rgb(112, 74, 47);
+  --warm-500: rgb(161, 111, 68);
+  --warm-300: rgb(211, 174, 119);
+  --warm-100: rgb(246, 244, 225);
+
+
+  --font-tiny: "Pixelify Sans", sans-serif;
+
+
+  --text-xs: 0.75rem;
+
+  --text-lg: 0.875rem;
+
+  --text-base: 1rem;
+
+  --text-md: 1.125rem;
+
+  --text-lg: 1.25rem;
+
+  --text-xl: 1.5rem;
+
+  --text-2xl: 1.875rem;
+
+  --text-3xl: 2.25rem;
+
+
+
+
+  --space-0: 0;
+  --space-1: 0.25rem;
+
+  --space-2: 0.5rem;
+
+  --space-3: 0.75rem;
+
+  --space-4: 1rem;
+
+  --space-5: 1.25rem;
+
+  --space-6: 1.5rem;
+
+  --space-8: 2rem;
+
+  --space-10: 2.5rem;
+
+  --space-12: 3rem;
+
+  --space-16: 4rem;
+
+
+
+  --duration-instant: 0ms;
+  --duration-fast: 100ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+  --duration-slower: 500ms;
+
+
+  --ease-default: ease;
+  --ease-in: ease-in;
+  --ease-out: ease-out;
+  --ease-in-out: ease-in-out;
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+
+  --border-thin: 1px;
+  --border-medium: 2px;
+  --border-thick: 4px;
+
+
+  --z-base: 0;
+  --z-desktop-icons: 10;
+  --z-window: 20;
+  --z-window-active: 30;
+  --z-taskbar: 40;
+  --z-overlay: 50;
+  --z-modal: 100;
+  --z-cursor: 9999;
+  --z-crt: 10000;
+}

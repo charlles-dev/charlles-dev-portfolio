@@ -11,7 +11,10 @@ export function Intro() {
   const isPortfolioHome = /^\/(pt-BR|en|es)\/?$/.test(pathname);
 
   useEffect(() => {
-    if (!isPortfolioHome) return;
+    if (!isPortfolioHome) {
+      document.documentElement.setAttribute("data-ready", "");
+      return;
+    }
     const alreadyPlayed = window.sessionStorage.getItem("charlles-intro-played") === "true";
     if (alreadyPlayed) {
       document.documentElement.setAttribute("data-ready", "");

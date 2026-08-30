@@ -534,15 +534,6 @@ const portuguese: PortfolioDictionary = {
       metric: "Go · conectividade",
       reason: "Conectividade em áreas remotas",
     },
-    "laudos-proxxima": {
-      summary: "Sistema web corporativo para padronizar, gerenciar e agilizar laudos técnicos de manutenção.",
-      problem: "Transformar anotações de campo em laudos consistentes sem perder velocidade na operação.",
-      decision: "Combinar dashboard, autenticação, geração assistida, histórico e exportação em um fluxo único.",
-      next: "Aprofundar métricas de uso e continuar refinando o fluxo de revisão e compartilhamento.",
-      category: "Automação",
-      metric: "TypeScript · interface",
-      reason: "Operação interna com menos fricção",
-    },
     "3035-teach": {
       summary: "Portfólio fullstack que organiza uma formação prática em Java, Spring Boot, React e TypeScript.",
       problem: "Registrar uma evolução técnica extensa de forma consultável, prática e reutilizável.",
@@ -805,7 +796,6 @@ const english: PortfolioDictionary = {
     "charlles-dev-portfolio": { summary: "A Next.js portfolio with public GitHub data, three languages and video controlled by scroll.", problem: "Show full-stack work without reducing every project to a polished image and a technology list.", decision: "Fetch public GitHub data on the server, localize the narrative in three languages and synchronize video, content and scroll without blocking reading.", next: "Publish real performance metrics and document the visual evolution as an open case study.", category: "Web", metric: "Next.js · GitHub", reason: "The portfolio itself as technical evidence" },
     trakr: { summary: "A smart tool case that identifies equipment through RFID/NFC and connects an ESP32 to a Kotlin interface.", problem: "Detect a missing tool before the team closes the case and leaves the worksite.", decision: "Distribute identifier reading to the ESP32 and centralize inventory, states and alerts in the Kotlin application.", next: "Validate simultaneous reads, false positives and offline use with the physical case assembled.", category: "Connected system", metric: "Kotlin · ESP32", reason: "Software meeting the physical world" },
     astrolink: { summary: "Infrastructure and software to sell and manage Wi-Fi access on local networks with Starlink.", problem: "How to bring a low-cost connectivity operation to remote areas and communities.", decision: "Separate a Go backend, a SvelteKit captive portal and integrations for payments, vouchers and OpenWrt.", next: "Validate the operation on real hardware and expand deployment documentation.", category: "Infrastructure", metric: "Go · connectivity", reason: "Connectivity in remote areas" },
-    "laudos-proxxima": { summary: "A corporate web system to standardize, manage and speed up technical maintenance reports.", problem: "Turn field notes into consistent reports without slowing down the operation.", decision: "Combine dashboard, authentication, assisted generation, history and export in one flow.", next: "Deepen usage metrics and keep refining review and sharing workflows.", category: "Automation", metric: "TypeScript · interface", reason: "Less friction in internal operations" },
     "3035-teach": { summary: "A fullstack portfolio organizing practical training in Java, Spring Boot, React and TypeScript.", problem: "Document an extensive technical journey in a way that stays searchable, practical and reusable.", decision: "Organize modules, exercises, documentation and examples around fullstack fundamentals.", next: "Complete the advanced modules and make the documentation an even more navigable reference.", category: "Technical base", metric: "Java · learning path", reason: "Practical fullstack training" },
   },
 };
@@ -1053,7 +1043,6 @@ const spanish: PortfolioDictionary = {
     "charlles-dev-portfolio": { summary: "Portafolio en Next.js con datos públicos de GitHub, tres idiomas y video controlado por el scroll.", problem: "Mostrar trabajo full stack sin reducir cada proyecto a una imagen bonita y una lista de tecnologías.", decision: "Consultar datos públicos de GitHub en el servidor, localizar la narrativa en tres idiomas y sincronizar video, contenido y scroll sin bloquear la lectura.", next: "Publicar métricas reales de rendimiento y documentar la evolución visual como un caso de estudio abierto.", category: "Web", metric: "Next.js · GitHub", reason: "El propio portafolio como evidencia técnica" },
     trakr: { summary: "Maleta inteligente que identifica herramientas mediante RFID/NFC y conecta un ESP32 con una interfaz en Kotlin.", problem: "Detectar una herramienta ausente antes de que el equipo cierre la maleta y abandone el lugar de trabajo.", decision: "Distribuir la lectura de identificadores en el ESP32 y concentrar inventario, estados y alertas en la aplicación Kotlin.", next: "Validar lecturas simultáneas, falsos positivos y uso sin conexión con la maleta física montada.", category: "Sistema conectado", metric: "Kotlin · ESP32", reason: "Software conectado con el mundo físico" },
     astrolink: { summary: "Infraestructura y software para vender y gestionar acceso Wi-Fi en redes locales con Starlink.", problem: "Cómo llevar una operación de conectividad de bajo costo a comunidades y áreas remotas.", decision: "Separar un backend en Go, un portal cautivo en SvelteKit e integraciones para pagos, vouchers y OpenWrt.", next: "Validar la operación en hardware real y ampliar la documentación de despliegue.", category: "Infraestructura", metric: "Go · conectividad", reason: "Conectividad en áreas remotas" },
-    "laudos-proxxima": { summary: "Sistema web corporativo para estandarizar, gestionar y agilizar informes técnicos de mantenimiento.", problem: "Convertir notas de campo en informes consistentes sin perder velocidad operativa.", decision: "Combinar dashboard, autenticación, generación asistida, historial y exportación en un solo flujo.", next: "Profundizar las métricas de uso y seguir refinando la revisión y el uso compartido.", category: "Automatización", metric: "TypeScript · interfaz", reason: "Menos fricción en la operación interna" },
     "3035-teach": { summary: "Portafolio fullstack que organiza una formación práctica en Java, Spring Boot, React y TypeScript.", problem: "Documentar una evolución técnica extensa de forma consultable, práctica y reutilizable.", decision: "Organizar módulos, ejercicios, documentación y ejemplos alrededor de fundamentos fullstack.", next: "Completar los módulos avanzados y hacer de la documentación una referencia más navegable.", category: "Base técnica", metric: "Java · ruta técnica", reason: "Formación práctica fullstack" },
   },
 };
@@ -1077,7 +1066,6 @@ export function projectKey(value: string) {
   if (normalized.includes("charlles-dev-portfolio")) return "charlles-dev-portfolio";
   if (normalized === "trakr" || normalized.endsWith("-trakr")) return "trakr";
   if (normalized.includes("astrolink")) return "astrolink";
-  if (normalized.includes("laudos") || normalized.includes("proxxima")) return "laudos-proxxima";
   if (normalized.includes("3035") || normalized.includes("teach")) return "3035-teach";
   return null;
 }

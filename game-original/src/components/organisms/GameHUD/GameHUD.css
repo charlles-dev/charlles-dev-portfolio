@@ -1,0 +1,37 @@
+@reference "../../../styles/globals.css";
+
+
+
+.game-hud {
+    @apply fixed top-0 inset-x-0 z-50 flex items-center justify-center px-4 py-3 pointer-events-none;
+}
+
+
+
+
+.game-hud__coords {
+    @apply flex items-center px-3 py-1.5 text-lg text-(--gray-300) bg-(--dark-800)/50 backdrop-blur-md select-none pointer-events-none;
+}
+
+
+
+.game-hud__controls {
+    @apply flex items-center gap-2 pointer-events-auto;
+}
+
+
+
+.game-hud__control-btn {
+    @apply flex size-12 items-center justify-center bg-(--blue-500) pointer-events-auto focus-visible:outline-2 focus-visible:outline-dotted focus-visible:outline-(--gray-300) sm:size-10;
+
+}
+
+.game-hud__control-btn.is-disabled {
+    @apply opacity-40;
+}
+
+
+
+.game-hud svg {
+    @apply text-(--gray-300) scale-125;
+}

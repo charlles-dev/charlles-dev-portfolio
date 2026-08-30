@@ -21,17 +21,21 @@ describe("SEO and discovery metadata", () => {
     }
   });
 
-  it("exposes only the portfolio landing pages to crawlers", () => {
+  it("exposes landing, résumé and evidence pages to crawlers", () => {
     expect(manifest().start_url).toBe("/pt-BR");
     expect(manifest().icons).toEqual(expect.arrayContaining([
       expect.objectContaining({ src: "/assets/icon-192.png", sizes: "192x192" }),
       expect.objectContaining({ src: "/assets/icon-512.png", sizes: "512x512" }),
     ]));
     expect(robots()).toMatchObject({ sitemap: "https://www.charlles.dev/sitemap.xml", host: "https://www.charlles.dev" });
-    expect(sitemap().map((entry) => entry.url)).toEqual([
+    expect(sitemap().map((entry) => entry.url)).toEqual(expect.arrayContaining([
       "https://www.charlles.dev/pt-BR",
       "https://www.charlles.dev/en",
       "https://www.charlles.dev/es",
-    ]);
+      "https://www.charlles.dev/pt-BR/cv",
+      "https://www.charlles.dev/en/projects/astrolink",
+      "https://www.charlles.dev/es/projects/trakr",
+    ]));
+    expect(sitemap().map((entry) => entry.url).some((url) => url.endsWith("/game"))).toBe(false);
   });
 });

@@ -1,8 +1,0 @@
-interface:
-  display_name: "Portfolio Experience Director"
-  short_description: "Guia visual, UX, conteúdo e movimento do portfólio"
-  brand_color: "#B9FF4B"
-  default_prompt: "Use $portfolio-experience-director para revisar e melhorar este portfólio sem diluir sua identidade."
-
-policy:
-  allow_implicit_invocation: true

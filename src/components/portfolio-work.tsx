@@ -1,9 +1,11 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import { IconGlyph } from "@/components/icon-glyph";
 import type { Locale, PortfolioDictionary } from "@/lib/i18n";
 import { localizeProjects } from "@/lib/projects/localize";
 import type { PortfolioProject, ProjectsPayload } from "@/lib/projects/types";
+import { getProfessionalContent } from "@/lib/professional-content";
 
 const selectedProjectNames = ["charlles-dev-portfolio", "Astrolink", "trakr"];
 
@@ -30,6 +32,7 @@ export function PortfolioWork({
   onOpenExplorer: () => void;
 }) {
   const projects = selectProjects(payload, locale);
+  const caseLabel = getProfessionalContent(locale).caseUi.demo;
 
   return (
     <section className="portfolio-work-section" id="work" aria-labelledby="portfolio-work-title">
@@ -53,7 +56,7 @@ export function PortfolioWork({
       <ol className="portfolio-selected-projects">
         {projects.map((project) => (
           <li key={project.fullName}>
-            <a href={project.htmlUrl} target="_blank" rel="noreferrer">
+            <Link href={`/${locale}/projects/${project.name.toLowerCase()}`}>
               <div className="portfolio-project-line">
                 <span>{dictionary.work.filters[project.category]}</span>
                 <span>{project.language || dictionary.work.repository}</span>
@@ -71,10 +74,10 @@ export function PortfolioWork({
                 </div>
               </dl>
               <span className="portfolio-project-open">
-                {dictionary.work.openProject}
+                {caseLabel}
                 <IconGlyph name="arrow-right" className="size-4" />
               </span>
-            </a>
+            </Link>
           </li>
         ))}
       </ol>

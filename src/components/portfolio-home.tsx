@@ -6,6 +6,7 @@ import { PortfolioAbout } from "@/components/portfolio-about";
 import { PortfolioContact } from "@/components/portfolio-contact";
 import { PortfolioJourney } from "@/components/portfolio-journey";
 import { PortfolioMotion } from "@/components/portfolio-motion";
+import { PortfolioShortcuts } from "@/components/portfolio-shortcuts";
 import { PortfolioWork } from "@/components/portfolio-work";
 import { ReferenceHero } from "@/components/reference-hero";
 import { ReferencePanels } from "@/components/reference-panels";
@@ -73,12 +74,13 @@ export function PortfolioHome({ locale, dictionary, initialPayload }: { locale: 
           <ReferenceHero dictionary={dictionary} onOpenWork={openPanel} />
           {initialPayload && <PortfolioWork locale={locale} dictionary={dictionary} payload={initialPayload} onOpenExplorer={openPanel} />}
           <PortfolioAbout dictionary={dictionary} />
-          <PortfolioJourney dictionary={dictionary} />
-          <PortfolioContact dictionary={dictionary} />
+          <PortfolioJourney locale={locale} dictionary={dictionary} />
+          <PortfolioContact locale={locale} dictionary={dictionary} />
         </main>
       </div>
       <ReferencePanels panel={panel} locale={locale} dictionary={dictionary} initialPayload={initialPayload} onClose={closePanel} />
       <PortfolioMotion />
+      <PortfolioShortcuts locale={locale} onOpenWork={openPanel} />
     </div>
   );
 }

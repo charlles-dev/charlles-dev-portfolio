@@ -9,6 +9,8 @@ const eslintConfig = [
       "node_modules/**",
       ".next/**",
       ".worktrees/**",
+      "game-original/**",
+      "public/game/original/**",
       "out/**",
       "build/**",
       "next-env.d.ts"

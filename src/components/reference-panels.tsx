@@ -72,6 +72,18 @@ function formatProjectDate(value: string, locale: Locale) {
   return new Intl.DateTimeFormat(locale, { month: "short", year: "numeric", timeZone: "UTC" }).format(date);
 }
 
+function formatMaturity(project: PortfolioProject, locale: Locale) {
+  if (project.archived || project.maturity === "archived") return locale === "pt-BR" ? "Arquivado" : locale === "en" ? "Archived" : "Archivado";
+  const labels = {
+    "production-minded": { "pt-BR": "Estruturado", en: "Production-minded", es: "Estructurado" },
+    prototype: { "pt-BR": "Protótipo", en: "Prototype", es: "Prototipo" },
+    study: { "pt-BR": "Estudo", en: "Study", es: "Estudio" },
+    experiment: { "pt-BR": "Experimento", en: "Experiment", es: "Experimento" },
+    archived: { "pt-BR": "Arquivado", en: "Archived", es: "Archivado" },
+  } as const;
+  return labels[project.maturity][locale];
+}
+
 function ProjectEntry({ dictionary, locale, project, index }: { dictionary: PortfolioDictionary; locale: Locale; project: PortfolioProject; index: number }) {
   const category = dictionary.work.filters[project.category];
   const tags = Array.from(new Set([project.language, ...project.tags, ...project.topics].filter(Boolean))).slice(0, 5);
@@ -90,7 +102,7 @@ function ProjectEntry({ dictionary, locale, project, index }: { dictionary: Port
         <div className="works-project-copy">
           <div className="works-project-kicker">
             <span>{category}</span>
-            <span>{project.enrichmentStatus === "ai" ? "AI / GitHub" : "GitHub"}</span>
+            <span>{formatMaturity(project, locale)} / GitHub</span>
           </div>
           <h3>{project.displayName}</h3>
           <p className="works-project-summary">{project.summary}</p>
@@ -111,6 +123,9 @@ function ProjectEntry({ dictionary, locale, project, index }: { dictionary: Port
             <a className="link-underline" href={project.htmlUrl} target="_blank" rel="noreferrer">
               {dictionary.work.openProject}
               <IconGlyph name="arrow-right" className="size-4" />
+            </a>
+            <a className="link-underline works-commits-link" href={`${project.htmlUrl}/commits`} target="_blank" rel="noreferrer">
+              {locale === "pt-BR" ? "Commits recentes" : locale === "en" ? "Recent commits" : "Commits recientes"}
             </a>
             <span className="works-project-index" aria-hidden="true">/{projectNumber}</span>
           </div>

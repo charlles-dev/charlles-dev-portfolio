@@ -1,0 +1,7 @@
+@reference "../../../styles/globals.css";
+
+
+
+.clock {
+    @apply h-full flex items-center justify-center min-h-20 text-lg;
+}

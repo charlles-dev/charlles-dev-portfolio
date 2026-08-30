@@ -10,9 +10,11 @@ export default defineConfig({
       "**/node_modules/**",
       "**/.next/**",
       "**/.worktrees/**",
+      "**/game-original/**",
       "**/dist/**",
       "**/out/**",
-      "**/build/**"
+      "**/build/**",
+      "**/tests/visual/**"
     ]
   },
   resolve: {
