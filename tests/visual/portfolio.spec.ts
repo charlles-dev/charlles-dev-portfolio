@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 const locales = ["pt-BR", "en", "es"] as const;
-const routes = ["", "/cv", "/projects/charlles-dev-portfolio", "/projects/astrolink", "/projects/trakr", "/game"] as const;
+const routes = ["", "/cv", "/projects/charlles-dev-portfolio", "/projects/astrolink", "/projects/trakr"] as const;
 
 for (const locale of locales) {
   for (const route of routes) {
@@ -33,24 +33,17 @@ test("context menu and logo easter egg remain optional shortcuts", async ({ page
   await expect(page.getByText("DEV MODE // 5 cliques confirmados")).toBeVisible();
 });
 
-test("Bytebound has a complete keyboard-playable quest", async ({ page }) => {
-  await page.goto("/pt-BR/game", { waitUntil: "networkidle" });
-  await page.getByRole("button", { name: "Começar jogo" }).click();
-  await page.keyboard.press("ArrowUp");
-  await page.keyboard.press("ArrowUp");
-  await page.keyboard.press("e");
-  await page.keyboard.press("ArrowRight");
-  await page.keyboard.press("ArrowRight");
-  await page.keyboard.press("ArrowUp");
-  await page.keyboard.press("ArrowRight");
-  await page.keyboard.press("ArrowRight");
-  await page.keyboard.press("e");
-  await page.keyboard.press("ArrowDown");
-  await page.keyboard.press("ArrowDown");
-  await page.keyboard.press("ArrowDown");
-  await page.keyboard.press("ArrowDown");
-  await page.keyboard.press("e");
-  await page.keyboard.press("ArrowRight");
-  await page.keyboard.press("e");
-  await expect(page.locator(".game-victory strong")).toHaveText("Circuito restaurado. O deploy sobreviveu à madrugada.");
+test("the public game route exposes only the localized Entre Camadas experience", async ({ page }) => {
+  const localizedTitles = {
+    "pt-BR": ["ENTRE", "CAMADAS"],
+    en: ["BETWEEN", "LAYERS"],
+    es: ["ENTRE", "CAPAS"],
+  } as const;
+
+  for (const locale of locales) {
+    await page.goto(`/${locale}/game`, { waitUntil: "networkidle" });
+    await expect(page).toHaveURL(new RegExp(`/${locale}/game/world/?$`));
+    const game = page.frameLocator('iframe[title]');
+    await expect(game.locator("#game-title span")).toHaveText([...localizedTitles[locale]]);
+  }
 });

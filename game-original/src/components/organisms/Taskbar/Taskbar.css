@@ -26,6 +26,14 @@
   @apply text-lg tracking-wide text-(--dark-800) uppercase;
 }
 
+.taskbar__return-btn {
+  @apply flex items-center justify-center gap-1 px-2 h-12.5 whitespace-nowrap;
+}
+
+.taskbar__return-text {
+  @apply text-base text-(--dark-800);
+}
+
 
 .taskbar__divider {
   @apply w-1 h-12.5 border-2 border-(--gray-700);
@@ -72,8 +80,13 @@
   }
 
   .taskbar__start-btn,
-  .taskbar__window-btn {
+  .taskbar__window-btn,
+  .taskbar__return-btn {
     @apply h-16 w-16 px-0 justify-center;
+  }
+
+  .taskbar__return-text {
+    @apply sr-only;
   }
 }
 

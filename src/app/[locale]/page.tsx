@@ -18,6 +18,7 @@ export async function generateMetadata({ params }: PageProps<"/[locale]">): Prom
   const canonicalPath = localePath(rawLocale);
   const canonicalUrl = `${siteUrl}${canonicalPath}`;
   const ogImagePath = `${canonicalPath}/opengraph-image`;
+  const searchImagePath = "/reference/charlles-search-avatar-v1.webp";
   const alternateLocales = { "pt-BR": `${siteUrl}/pt-BR`, en: `${siteUrl}/en`, es: `${siteUrl}/es` };
 
   return {
@@ -37,7 +38,7 @@ export async function generateMetadata({ params }: PageProps<"/[locale]">): Prom
       locale: rawLocale === "pt-BR" ? "pt_BR" : rawLocale === "en" ? "en_US" : "es_ES",
       alternateLocale: ["pt_BR", "en_US", "es_ES"].filter((value) => value !== (rawLocale === "pt-BR" ? "pt_BR" : rawLocale === "en" ? "en_US" : "es_ES")),
       type: "website",
-      images: [{ url: ogImagePath, width: 1200, height: 630, type: "image/png", alt: dictionary.meta.ogAlt }],
+      images: [{ url: searchImagePath, width: 1024, height: 1024, type: "image/webp", alt: dictionary.meta.ogAlt }],
     },
     twitter: {
       card: "summary_large_image",
@@ -55,6 +56,7 @@ export default async function LocalePage({ params }: PageProps<"/[locale]">) {
   const locale = rawLocale as Locale;
   const dictionary = getDictionary(locale);
   const canonicalUrl = `${siteUrl}${localePath(locale)}`;
+  const searchPreviewUrl = `${siteUrl}/reference/charlles-search-avatar-v1.webp`;
   const sameAs = socialLinks.filter((link) => link.kind !== "email").map((link) => link.href);
   const projectItems = fallbackProjectsPayload.projects.map((project) => {
     const copy = dictionary.projects[project.displayName];
@@ -89,7 +91,15 @@ export default async function LocalePage({ params }: PageProps<"/[locale]">) {
         url: canonicalUrl,
         inLanguage: locale,
         isPartOf: { "@id": `${siteUrl}/#website` },
-        primaryImageOfPage: { "@type": "ImageObject", url: `${siteUrl}${localePath(locale)}/opengraph-image`, width: 1200, height: 630 },
+        primaryImageOfPage: {
+          "@type": "ImageObject",
+          url: searchPreviewUrl,
+          contentUrl: searchPreviewUrl,
+          width: 1024,
+          height: 1024,
+          representativeOfPage: true,
+          caption: `Charlles Augusto — ${dictionary.hero.role}`,
+        },
         mainEntity: { "@id": `${siteUrl}/#person` },
       },
       {
@@ -98,7 +108,7 @@ export default async function LocalePage({ params }: PageProps<"/[locale]">) {
         name: profile.name,
         alternateName: profile.handle,
         url: siteUrl,
-        image: [`${siteUrl}/reference/charlles-contact-avatar.webp`, `${siteUrl}/reference/charlles-hero-poster.webp`],
+        image: [searchPreviewUrl, `${siteUrl}/reference/charlles-hero-poster.webp`],
         jobTitle: dictionary.hero.role,
         description: dictionary.meta.description,
         address: { "@type": "PostalAddress", addressLocality: "Campina Grande", addressCountry: "BR" },
@@ -113,6 +123,7 @@ export default async function LocalePage({ params }: PageProps<"/[locale]">) {
         inLanguage: locale,
         isPartOf: { "@id": `${siteUrl}/#website` },
         mainEntity: { "@id": `${siteUrl}/#person` },
+        primaryImageOfPage: searchPreviewUrl,
       },
       {
         "@type": "ItemList",

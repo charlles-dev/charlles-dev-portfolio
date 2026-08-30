@@ -13,7 +13,7 @@ export default async function OpenGraphImage({ params }: { params: Promise<{ loc
   const { locale: rawLocale } = await params;
   const locale = isLocale(rawLocale) ? rawLocale : "pt-BR";
   const dictionary = getDictionary(locale);
-  const heroFrame = await readFile(join(process.cwd(), "public", "reference", "charlles-social-preview.jpg"));
+  const heroFrame = await readFile(join(process.cwd(), "public", "reference", "charlles-og-image-v2.jpeg"));
   const heroDataUrl = `data:image/jpeg;base64,${heroFrame.toString("base64")}`;
   const headline = dictionary.hero.headline.split(". ");
 

@@ -149,7 +149,7 @@ const pt: ProfessionalContent = {
     { id: "opportunity", label: "Uma oportunidade", whatsapp: "Olá, Charlles! Vi seu portfólio e queria conversar sobre uma oportunidade profissional.", emailSubject: "Oportunidade — contato pelo Charlles.dev", emailBody: "Olá, Charlles!\n\nVi seu portfólio e queria conversar sobre uma oportunidade profissional.\n\nEmpresa/time:\nPapel:\nContexto:" },
     { id: "technical", label: "Uma ideia técnica", whatsapp: "Olá, Charlles! Vi seu portfólio e queria trocar uma ideia técnica com você.", emailSubject: "Conversa técnica — Charlles.dev", emailBody: "Olá, Charlles!\n\nVi seu portfólio e queria trocar uma ideia técnica sobre:\n\nContexto:\nLink ou referência:" },
   ] },
-  contextMenu: { label: "Atalhos do Charlles.dev", home: "Voltar ao início", projects: "Explorar trabalhos", cv: "Abrir currículo", game: "Jogar Bytebound", email: "Copiar e-mail", copied: "E-mail copiado" },
+  contextMenu: { label: "Atalhos do Charlles.dev", home: "Voltar ao início", projects: "Explorar trabalhos", cv: "Abrir currículo", game: "Jogar Entre Camadas", email: "Copiar e-mail", copied: "E-mail copiado" },
   game: { eyebrow: "Experimento jogável", title: "Bytebound: o bug no circuito", description: "Um micro-RPG do Charlles.dev. Explore o laboratório, recupere três módulos e restaure o sistema antes do deploy.", start: "Começar jogo", continue: "Continuar", reset: "Reiniciar progresso", back: "Voltar ao portfólio", objective: "Objetivo", controls: "Use WASD, setas ou o direcional. Pressione E ou Espaço para interagir.", interact: "Interagir", inventory: "Módulos", complete: "Circuito restaurado. O deploy sobreviveu à madrugada." },
 };
 
@@ -176,7 +176,7 @@ function translate(base: ProfessionalContent, locale: "en" | "es"): Professional
       { id: "opportunity", label: "An opportunity", whatsapp: "Hi Charlles! I saw your portfolio and would like to discuss a professional opportunity.", emailSubject: "Opportunity — Charlles.dev contact", emailBody: "Hi Charlles!\n\nI saw your portfolio and would like to discuss a professional opportunity.\n\nCompany/team:\nRole:\nContext:" },
       { id: "technical", label: "A technical idea", whatsapp: "Hi Charlles! I saw your portfolio and would like to talk about a technical idea.", emailSubject: "Technical conversation — Charlles.dev", emailBody: "Hi Charlles!\n\nI saw your portfolio and would like to discuss:\n\nContext:\nLink or reference:" },
     ] },
-    contextMenu: { label: "Charlles.dev shortcuts", home: "Back to top", projects: "Explore work", cv: "Open résumé", game: "Play Bytebound", email: "Copy email", copied: "Email copied" },
+    contextMenu: { label: "Charlles.dev shortcuts", home: "Back to top", projects: "Explore work", cv: "Open résumé", game: "Play Between Layers", email: "Copy email", copied: "Email copied" },
     game: { eyebrow: "Playable experiment", title: "Bytebound: the circuit bug", description: "A Charlles.dev micro-RPG. Explore the lab, recover three modules and restore the system before deploy.", start: "Start game", continue: "Continue", reset: "Reset progress", back: "Back to portfolio", objective: "Objective", controls: "Use WASD, arrow keys or the directional pad. Press E or Space to interact.", interact: "Interact", inventory: "Modules", complete: "Circuit restored. The deploy survived the night." },
   };
   return {
@@ -199,7 +199,7 @@ function translate(base: ProfessionalContent, locale: "en" | "es"): Professional
       { id: "opportunity", label: "Una oportunidad", whatsapp: "¡Hola, Charlles! Vi tu portafolio y me gustaría hablar de una oportunidad profesional.", emailSubject: "Oportunidad — contacto por Charlles.dev", emailBody: "¡Hola, Charlles!\n\nVi tu portafolio y me gustaría hablar de una oportunidad profesional.\n\nEmpresa/equipo:\nRol:\nContexto:" },
       { id: "technical", label: "Una idea técnica", whatsapp: "¡Hola, Charlles! Vi tu portafolio y me gustaría conversar sobre una idea técnica.", emailSubject: "Conversación técnica — Charlles.dev", emailBody: "¡Hola, Charlles!\n\nVi tu portafolio y me gustaría conversar sobre:\n\nContexto:\nEnlace o referencia:" },
     ] },
-    contextMenu: { label: "Atajos de Charlles.dev", home: "Volver al inicio", projects: "Explorar trabajos", cv: "Abrir currículum", game: "Jugar Bytebound", email: "Copiar correo", copied: "Correo copiado" },
+    contextMenu: { label: "Atajos de Charlles.dev", home: "Volver al inicio", projects: "Explorar trabajos", cv: "Abrir currículum", game: "Jugar Entre Capas", email: "Copiar correo", copied: "Correo copiado" },
     game: { eyebrow: "Experimento jugable", title: "Bytebound: el bug del circuito", description: "Un micro-RPG de Charlles.dev. Explora el laboratorio, recupera tres módulos y restaura el sistema antes del deploy.", start: "Empezar juego", continue: "Continuar", reset: "Reiniciar progreso", back: "Volver al portafolio", objective: "Objetivo", controls: "Usa WASD, las flechas o el control direccional. Pulsa E o Espacio para interactuar.", interact: "Interactuar", inventory: "Módulos", complete: "Circuito restaurado. El deploy sobrevivió a la madrugada." },
   };
 }

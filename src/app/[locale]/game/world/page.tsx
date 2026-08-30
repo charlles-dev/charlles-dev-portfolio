@@ -7,15 +7,15 @@ import { isLocale, locales, type Locale } from "@/lib/i18n";
 const siteUrl = "https://www.charlles.dev";
 const metadataCopy: Record<Locale, { title: string; description: string }> = {
   "pt-BR": {
-    title: "Casa interativa | Charlles.dev",
+    title: "Entre Camadas | Charlles.dev",
     description: "Explore o portfólio de Charlles Augusto como uma casa jogável, com projetos públicos, experimentos web, currículo e um desktop retrô funcional.",
   },
   en: {
-    title: "Interactive house | Charlles.dev",
+    title: "Between Layers | Charlles.dev",
     description: "Explore Charlles Augusto's portfolio as a playable house with public projects, web experiments, a résumé and a functional retro desktop.",
   },
   es: {
-    title: "Casa interactiva | Charlles.dev",
+    title: "Entre Capas | Charlles.dev",
     description: "Explora el portafolio de Charlles Augusto como una casa jugable con proyectos públicos, experimentos web, currículum y un escritorio retro funcional.",
   },
 };

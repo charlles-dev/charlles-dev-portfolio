@@ -72,7 +72,7 @@ const VideoGame: React.FC<VideoGameProps> = ({ onBack }) => {
       clearTimeout(timer);
       clearTimeout(titleSoundTimer);
     };
-  }, []);
+  }, [playSfx]);
 
   const animateRef = React.useRef<(time: number) => void>(null);
 
@@ -139,7 +139,14 @@ const VideoGame: React.FC<VideoGameProps> = ({ onBack }) => {
     <main className="videogame-screen">
       <style>{dynamicStyles}</style>
 
-
+      <button
+        type="button"
+        className="videogame-back-btn"
+        onClick={onBack}
+        aria-label={t('videogame_back_aria')}
+      >
+        {t('videogame_back')}
+      </button>
 
       {/* Content Overlay */}
       <header className="videogame-content">

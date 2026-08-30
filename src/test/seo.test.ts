@@ -16,9 +16,21 @@ describe("SEO and discovery metadata", () => {
       const metadata = await generateMetadata({ params: Promise.resolve({ locale }) } as never);
       expect(metadata.alternates?.canonical).toBe(`https://www.charlles.dev/${locale}`);
       expect(metadata.openGraph).toMatchObject({ type: "website", url: `https://www.charlles.dev/${locale}` });
-      expect(JSON.stringify(metadata.openGraph)).toContain(`/${locale}/opengraph-image`);
+      expect(JSON.stringify(metadata.openGraph)).toContain("/reference/charlles-search-avatar-v1.webp");
       expect(metadata.twitter).toMatchObject({ card: "summary_large_image", creator: "@charlles_dev" });
+      expect(JSON.stringify(metadata.twitter)).toContain(`/${locale}/opengraph-image`);
     }
+  });
+
+  it("uses the cinematic social card and a square character preview for search engines", async () => {
+    const source = await import("node:fs/promises");
+    const ogRoute = await source.readFile("src/app/[locale]/opengraph-image.tsx", "utf8");
+    const landing = await source.readFile("src/app/[locale]/page.tsx", "utf8");
+
+    expect(ogRoute).toContain("charlles-og-image-v2.jpeg");
+    expect(landing).toContain("charlles-search-avatar-v1.webp");
+    expect(landing).toContain("width: 1024");
+    expect(landing).toContain("height: 1024");
   });
 
   it("exposes landing, résumé and evidence pages to crawlers", () => {

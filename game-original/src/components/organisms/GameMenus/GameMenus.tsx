@@ -180,8 +180,8 @@ export const StartMenu: React.FC<MenuProps> = ({
         <div className="game-menu__logo" aria-label={t('game_menu_logo_alt')}>
           <span className="game-menu__logo-kicker">{t('game_presents')}</span>
           <h1 id="game-title" className="game-menu__logo-title">
-            <span>ENTRE</span>
-            <span>CAMADAS</span>
+            <span>{t('game_title_line_one')}</span>
+            <span>{t('game_title_line_two')}</span>
           </h1>
           <span className="game-menu__logo-build">{t('game_build_home')}</span>
         </div>

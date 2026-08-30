@@ -40,7 +40,7 @@ export function PortfolioShortcuts({ locale, onOpenWork }: { locale: Locale; onO
         if (brandClicks >= 5) {
           brandClicks = 0;
           setDeveloperMode(true);
-          console.info("Charlles.dev: dev mode unlocked. The bug escaped into /game.");
+          console.info("Charlles.dev: dev mode unlocked. See you between the layers.");
         }
         return;
       }
@@ -85,7 +85,7 @@ export function PortfolioShortcuts({ locale, onOpenWork }: { locale: Locale; onO
           <Link role="menuitem" href={`/${locale}`}><IconGlyph name="route" className="size-4" />{content.home}</Link>
           <button role="menuitem" type="button" onClick={() => { onOpenWork(); setMenu(null); }}><IconGlyph name="github" className="size-4" />{content.projects}</button>
           <Link role="menuitem" href={`/${locale}/cv`}><IconGlyph name="solar-document" className="size-4" />{content.cv}</Link>
-          <Link role="menuitem" href={`/${locale}/game`}><IconGlyph name="robot" className="size-4" />{content.game}</Link>
+          <Link role="menuitem" href={`/${locale}/game/world`}><IconGlyph name="robot" className="size-4" />{content.game}</Link>
           <button role="menuitem" type="button" onClick={copyEmail}><IconGlyph name="mail" className="size-4" />{copied ? content.copied : content.email}</button>
           <small>Alt + K</small>
         </div>
@@ -95,7 +95,7 @@ export function PortfolioShortcuts({ locale, onOpenWork }: { locale: Locale; onO
           <button type="button" aria-label="Fechar" onClick={() => setDeveloperMode(false)}>×</button>
           <span>DEV MODE // 5 cliques confirmados</span>
           <strong>Um bug escapou para o laboratório.</strong>
-          <Link href={`/${locale}/game`}>{content.game}<IconGlyph name="arrow-right" className="size-4" /></Link>
+          <Link href={`/${locale}/game/world`}>{content.game}<IconGlyph name="arrow-right" className="size-4" /></Link>
         </div>
       )}
       {copied && (

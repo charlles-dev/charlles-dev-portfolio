@@ -20,7 +20,7 @@ interface TaskbarProps {
 export const Taskbar: React.FC<TaskbarProps> = ({ availableApps }) => {
   const { t, language, setLanguage } = useTranslation();
 
-  const { windows, activeWindowId, focusWindow, minimizeWindow } = useOS();
+  const { windows, activeWindowId, focusWindow, minimizeWindow, returnToGame } = useOS();
   const [isStartOpen, setIsStartOpen] = useState(false);
   const [, setTime] = useState(new Date());
   const [visibleTooltipId, setVisibleTooltipId] = useState<string | null>(null);
@@ -177,6 +177,18 @@ export const Taskbar: React.FC<TaskbarProps> = ({ availableApps }) => {
           <span className="taskbar__start-text">{t('start')}</span>
         </WinButton>
       </div>
+
+      <div className="taskbar__divider" />
+
+      <WinButton
+        onClick={returnToGame}
+        className="taskbar__return-btn"
+        variant="taskbar"
+        aria-label={t('back_to_room')}
+      >
+        <span aria-hidden="true">←</span>
+        <span className="taskbar__return-text">{t('back_to_room')}</span>
+      </WinButton>
 
       <div className="taskbar__divider" />
 
